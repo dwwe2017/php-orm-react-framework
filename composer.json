@@ -1,0 +1,16 @@
+{
+    "autoload": {
+        "psr-0": {
+            "Controllers": "./src/",
+            "Entities": "./src/",
+            "Repositories": "./src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.3",
+        "doctrine/orm": "2.6.3",
+        "webmasters/doctrine-extensions": "2.3.3",
+        "planetteamspeak/ts3-php-framework": "^1.1"
+    }
+}

@@ -1,0 +1,72 @@
+@charset "utf-8";
+
+body {
+    background-color: #ecf1f2;
+    margin: 0px;
+    padding: 10px;
+    font-family: Verdana, Helvetica, Arial, Sans-Serif;
+    font-size: 12px;
+    color: #2d4652;
+}
+
+h1 {
+    color: #2d4652;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+section h1 {
+    font-size: 14px;
+}
+
+strong {
+    font-weight: bold;
+}
+
+em {
+    font-style: italic;
+}
+
+form, ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+ul {
+    padding-left: 14px;
+}
+
+label {
+    display: block;
+    margin-top: 8px;
+}
+
+input[type="text"], input[type="password"], textarea {
+    display: block;
+    width: 90%;
+}
+
+a {
+    color: #2d4652;
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+section, footer, .errors, .links, .button {
+    margin-top: 16px;
+}
+
+form {
+    margin-bottom: 16px;
+}
+
+#random, #random a {
+    color: #008000;
+}
+
+.message, .errors {
+    color: #ff0000;
+}
