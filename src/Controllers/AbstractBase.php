@@ -11,47 +11,71 @@ abstract class AbstractBase
     protected $em;
     protected $template;
 
-    public function __construct($basePath, EntityManager $em)
+    /**
+     * AbstractBase constructor.
+     * @param string $basePath
+     * @param EntityManager $em
+     */
+    public function __construct(string $basePath, EntityManager $em)
     {
         $this->basePath = $basePath;
         $this->em = $em;
     }
 
-    public function run($action)
+    /**
+     * @param string $action
+     */
+    public function run(string $action): void
     {
         $this->addContext('action', $action);
 
         $methodName = $action . 'Action';
         $this->setTemplate($methodName);
 
-        if (method_exists($this, $methodName)) {
+        if (method_exists($this, $methodName))
+        {
             $this->$methodName();
-        } else {
+        }
+        else
+        {
             $this->render404();
         }
 
         $this->render();
     }
 
-    public function render404()
+    /**
+     *
+     */
+    public function render404(): void
     {
         header('HTTP/1.0 404 Not Found');
         die('Error 404');
     }
 
-    protected function getControllerShortName()
+    /**
+     * @return string|null
+     */
+    protected function getControllerShortName(): ?string
     {
         $className = get_class($this); // i.e. Controllers\IndexController or Controllers\Backend\IndexController
 
         return preg_replace('/^([A-Za-z]+\\\)+/', '', $className); // i.e. IndexController
     }
 
-    protected function getEntityManager()
+    /**
+     * @return EntityManager|null
+     */
+    protected function getEntityManager(): ?EntityManager
     {
         return $this->em;
     }
 
-    protected function setTemplate($template, $controller = null)
+    /**
+     * @param string $template
+     * @param string|null $controller
+     */
+    protected function setTemplate(string $template, ?string $controller = null): void
     {
         if (empty($controller)) {
             $controller = $this->getControllerShortName();
@@ -60,25 +84,40 @@ abstract class AbstractBase
         $this->template = $controller . '/' . $template . '.tpl.php';
     }
 
-    protected function getTemplate()
+    /**
+     * @return string|null
+     */
+    protected function getTemplate(): ?string
     {
         return $this->template;
     }
 
-    protected function addContext($key, $value)
+    /**
+     * @param $key
+     * @param $value
+     */
+    protected function addContext($key, $value): void
     {
         $this->context[$key] = $value;
     }
 
-    protected function setMessage($message)
+    /**
+     * @param $message
+     */
+    protected function setMessage(string $message): void
     {
         $_SESSION['message'] = $message; // Set flash message
     }
 
-    protected function getMessage()
+    /**
+     * @return string|null
+     */
+    protected function getMessage(): ?string
     {
-        $message = false;
-        if (isset($_SESSION['message'])) {
+        $message = null;
+
+        if (isset($_SESSION['message']))
+        {
             // Read and delete flash message from session
             $message = $_SESSION['message'];
             unset($_SESSION['message']);
@@ -87,15 +126,37 @@ abstract class AbstractBase
         return $message;
     }
 
-    protected function recall($action, $controller)
+    /**
+     * @param $action
+     * @param $controller
+     */
+    protected function recall(string $action, string $controller): void
     {
         $controllerName = __NAMESPACE__ . '\\' . ucfirst($controller) . 'Controller';
-        $controller = new $controllerName($this->basePath, $this->em);
-        $controller->run($action);
+
+        if(!class_exists($controllerName))
+        {
+            $this->render404();
+        }
+        elseif(!method_exists($controller, "run"))
+        {
+            $this->render404();
+        }
+        else
+        {
+            $controller = new $controllerName($this->basePath, $this->em);
+
+            $controller->run($action);
+        }
+
         exit;
     }
 
-    protected function redirect($action = null, $controller = null)
+    /**
+     * @param string|null $action
+     * @param string|null $controller
+     */
+    protected function redirect(?string $action = null, ?string $controller = null): void
     {
         $params = [];
 
@@ -116,7 +177,10 @@ abstract class AbstractBase
         exit;
     }
 
-    protected function render()
+    /**
+     *
+     */
+    protected function render(): void
     {
         extract($this->context);
 

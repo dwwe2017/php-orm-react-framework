@@ -2,3 +2,4 @@
 /.todo
 /vendor
 /config/default-config.php
+/config/license.php

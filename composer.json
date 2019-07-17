@@ -1,24 +1,20 @@
 {
     "autoload": {
         "psr-0": {
+            "Bootstrap": "./src/",
             "Controllers": "./src/",
             "Entities": "./src/",
             "Repositories": "./src/"
         }
     },
+    "config": {
+        "platform": {
+            "php": "7.3"
+        }
+    },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=7.3",
-        "ext-apc": "*",
-        "ext-intl": "*",
-        "ext-memcached": "*",
-        "ext-memcache": "*",
-        "ext-redis": "*",
-        "ext-xcache": "*",
-        "ext-sqlite": "*",
-        "ext-wincache": "*",
-        "ext-leveldb": "*",
-        "ext-couchbase": "*",
+        "php": "7.2 || 7.3",
         "doctrine/orm": "^2.6.3",
         "webmasters/doctrine-extensions": "^2.3.3",
         "planetteamspeak/ts3-php-framework": "^1.1",
