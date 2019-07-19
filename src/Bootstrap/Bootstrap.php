@@ -13,6 +13,7 @@ namespace Bootstrap;
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\FilesystemCache;
+use Doctrine\ORM\EntityManager;
 use Exception;
 use Exceptions\BootstrapException;
 use Webmasters\Doctrine\Bootstrap as WDB;
@@ -24,11 +25,6 @@ use Webmasters\Doctrine\ORM\Util\OptionsCollection;
  */
 class Bootstrap extends WDB
 {
-    /**
-     * @var string
-     */
-    protected $docRoot = "";
-
     /**
      * @var string
      */
@@ -52,14 +48,13 @@ class Bootstrap extends WDB
     /**
      * @noinspection PhpMissingParentConstructorInspection
      * Bootstrap constructor.
+     * @param string $baseDir
      * @param string $connection_option
      * @throws BootstrapException
      */
-    public function __construct($connection_option = "default")
+    public function __construct(string $baseDir, $connection_option = "default")
     {
-        $this->docRoot = realpath(__DIR__ . "/..");
-
-        $this->baseDir = dirname($this->docRoot);
+        $this->baseDir = $baseDir;
 
         $this->connectionOption = $connection_option;
 
@@ -70,6 +65,7 @@ class Bootstrap extends WDB
             throw new BootstrapException("The global configuration file default-config.php in the config directory was not found", E_ERROR);
         }
 
+        /** @noinspection PhpIncludeInspection */
         $this->configDefault = include_once $configDefaultPath;
 
         if(empty($this->configDefault) || !is_array($this->configDefault) || !key_exists("connection_options", $this->configDefault))
@@ -78,7 +74,7 @@ class Bootstrap extends WDB
         }
         elseif(!key_exists($this->connectionOption, $this->configDefault["connection_options"]) || count($this->configDefault["connection_options"][$this->connectionOption]) < 6)
         {
-            throw new BootstrapException("In the config global configuration file config-default.php in the config directory, no default database connection was set under the default field", E_ERROR);
+            throw new BootstrapException(sprintf("In the config global configuration file config-default.php in the config directory, no valid database connection was set under the field '%s'", $this->connectionOption), E_ERROR);
         }
         else
         {
@@ -116,14 +112,15 @@ class Bootstrap extends WDB
     }
 
     /**
+     * @param string $baseDir
      * @param string $connection_option
      * @return Bootstrap|null
      * @throws BootstrapException
      */
-    public static function init($connection_option = "default")
+    public static function init(string $baseDir, $connection_option = "default")
     {
         if (self::$singletonInstance == null) {
-            self::$singletonInstance = new Bootstrap($connection_option);
+            self::$singletonInstance = new Bootstrap($baseDir, $connection_option);
         }
 
         return self::$singletonInstance;
@@ -180,6 +177,14 @@ class Bootstrap extends WDB
     }
 
     /**
+     * @return EntityManager|null
+     */
+    public function getEntityManager(): ?EntityManager
+    {
+        return parent::getEm();
+    }
+
+    /**
      * @return array|mixed
      */
     public function getConnectionOptions()
@@ -193,14 +198,6 @@ class Bootstrap extends WDB
     public function getConfigDefault(): array
     {
         return $this->configDefault;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDocRoot(): string
-    {
-        return $this->docRoot;
     }
 
     /**

@@ -5,6 +5,7 @@
             "Controllers": "./src/",
             "Entities": "./src/",
             "Exceptions": "./src/",
+            "Interfaces": "./src/",
             "Repositories": "./src/",
             "Traits": "./src/",
             "Validators": "./src/"
@@ -28,6 +29,7 @@
         "phpfastcache/couchdb": "^1.0",
         "phpfastcache/riak-client": "^3.4",
         "predis/predis": "^1.1",
-        "mongodb/mongodb": "^1.4"
+        "mongodb/mongodb": "^1.4",
+        "ezyang/htmlpurifier": "^4.11"
     }
 }

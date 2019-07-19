@@ -2,7 +2,6 @@
 
 require_once 'inc/functions.inc.php';
 require_once 'inc/helper.inc.php';
-
 require_once 'inc/bootstrap.inc.php';
 
 // Session needed for flash messages
@@ -22,11 +21,11 @@ $controllerName = $controllerNamespace . ucfirst($controller) . 'Controller';
 
 if(class_exists($controllerName))
 {
-    $requestController = new $controllerName($basePath, $bootstrap);
+    $requestController = new $controllerName($basePath);
 
     if(!method_exists($requestController, "run"))
     {
-        $requestController = new Controllers\IndexController($basePath, $bootstrap);
+        $requestController = new Controllers\IndexController($basePath);
         $requestController->render404();
     }
     else
@@ -36,6 +35,6 @@ if(class_exists($controllerName))
 }
 else
 {
-    $requestController = new Controllers\IndexController($basePath, $bootstrap);
+    $requestController = new Controllers\IndexController($basePath);
     $requestController->render404();
 }

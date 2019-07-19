@@ -1,9 +1,18 @@
 <?php
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2019. DW Web-Engineering
+// https://www.teamspeak-interface.de
+// Developer: Daniel W.
+//
+// License Informations: This program may only be used in conjunction with a valid license.
+// To purchase a valid license please visit the website www.teamspeak-interface.de
 
 namespace Controllers;
 
-use Doctrine\ORM\EntityManager;
-use Webmasters\Doctrine\Bootstrap as WDB;
+
+use Bootstrap\Bootstrap;
+use Traits\AbstractBaseTrait;
+use Exceptions\BootstrapException;
 
 /**
  * Class AbstractBase
@@ -11,43 +20,39 @@ use Webmasters\Doctrine\Bootstrap as WDB;
  */
 abstract class AbstractBase
 {
-    /**
-     * @var string
-     */
-    protected $basePath = "";
-
-    /**
-     * @var array
-     */
-    protected $context = [];
-
-    /**
-     * @var WDB|null
-     */
-    protected $bootstrap = null;
-
-    /**
-     * @var EntityManager|null
-     */
-    protected $em = null;
-
-    /**
-     * @var string
-     */
-    protected $template = "";
+    use AbstractBaseTrait;
 
     /**
      * AbstractBase constructor.
      * @param string $basePath
-     * @param WDB $bootstrap
+     * @throws BootstrapException
      */
-    public function __construct(string $basePath, WDB $bootstrap)
+    public function __construct(string $basePath)
     {
         $this->basePath = $basePath;
 
-        $this->bootstrap = $bootstrap;
+        $this->init();
+    }
 
-        $this->em = $bootstrap->getEm();
+    /**
+     * @throws BootstrapException
+     */
+    private function init()
+    {
+        try
+        {
+            $this->bootstrap = Bootstrap::init(
+                $this->getBasePath(),
+                $this->getConnectionOption()
+            );
+
+            $this->entityManager = $this->bootstrap->getEntityManager();
+        }
+        catch (BootstrapException $e)
+        {
+            //@todo | Implement logging
+            throw $e;
+        }
     }
 
     /**
@@ -82,79 +87,6 @@ abstract class AbstractBase
     }
 
     /**
-     * @return string|null
-     */
-    protected function getControllerShortName(): ?string
-    {
-        $className = get_class($this); // i.e. Controllers\IndexController or Controllers\Backend\IndexController
-
-        return preg_replace('/^([A-Za-z]+\\\)+/', '', $className); // i.e. IndexController
-    }
-
-    /**
-     * @return EntityManager|null
-     */
-    protected function getEntityManager(): ?EntityManager
-    {
-        return $this->em;
-    }
-
-    /**
-     * @param string $template
-     * @param string|null $controller
-     */
-    protected function setTemplate(string $template, ?string $controller = null): void
-    {
-        if (empty($controller)) {
-            $controller = $this->getControllerShortName();
-        }
-
-        $this->template = $controller . '/' . $template . '.tpl.php';
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getTemplate(): ?string
-    {
-        return $this->template;
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     */
-    protected function addContext($key, $value): void
-    {
-        $this->context[$key] = $value;
-    }
-
-    /**
-     * @param $message
-     */
-    protected function setMessage(string $message): void
-    {
-        $_SESSION['message'] = $message; // Set flash message
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getMessage(): ?string
-    {
-        $message = null;
-
-        if (isset($_SESSION['message']))
-        {
-            // Read and delete flash message from session
-            $message = $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
-
-        return $message;
-    }
-
-    /**
      * @param $action
      * @param $controller
      */
@@ -172,7 +104,7 @@ abstract class AbstractBase
         }
         else
         {
-            $controller = new $controllerName($this->basePath, $this->em);
+            $controller = new $controllerName($this->basePath);
 
             $controller->run($action);
         }
@@ -212,9 +144,12 @@ abstract class AbstractBase
     {
         extract($this->context);
 
+        /** @noinspection PhpUnusedLocalVariableInspection*/
         $message = $this->getMessage(); // Get flash message
+        /** @noinspection PhpUnusedLocalVariableInspection*/
         $template = $this->getTemplate();
 
+        /** @noinspection PhpIncludeInspection */
         require_once $this->basePath . '/templates/layout.tpl.php';
     }
 }
