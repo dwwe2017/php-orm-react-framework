@@ -3,23 +3,51 @@
 namespace Controllers;
 
 use Doctrine\ORM\EntityManager;
+use Webmasters\Doctrine\Bootstrap as WDB;
 
+/**
+ * Class AbstractBase
+ * @package Controllers
+ */
 abstract class AbstractBase
 {
-    protected $basePath;
+    /**
+     * @var string
+     */
+    protected $basePath = "";
+
+    /**
+     * @var array
+     */
     protected $context = [];
-    protected $em;
-    protected $template;
+
+    /**
+     * @var WDB|null
+     */
+    protected $bootstrap = null;
+
+    /**
+     * @var EntityManager|null
+     */
+    protected $em = null;
+
+    /**
+     * @var string
+     */
+    protected $template = "";
 
     /**
      * AbstractBase constructor.
      * @param string $basePath
-     * @param EntityManager $em
+     * @param WDB $bootstrap
      */
-    public function __construct(string $basePath, EntityManager $em)
+    public function __construct(string $basePath, WDB $bootstrap)
     {
         $this->basePath = $basePath;
-        $this->em = $em;
+
+        $this->bootstrap = $bootstrap;
+
+        $this->em = $bootstrap->getEm();
     }
 
     /**

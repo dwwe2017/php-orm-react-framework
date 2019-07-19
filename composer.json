@@ -4,19 +4,24 @@
             "Bootstrap": "./src/",
             "Controllers": "./src/",
             "Entities": "./src/",
-            "Repositories": "./src/"
+            "Exceptions": "./src/",
+            "Repositories": "./src/",
+            "Traits": "./src/",
+            "Validators": "./src/"
         }
     },
     "config": {
         "platform": {
-            "php": "7.3"
+            "php": "7.2"
         }
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "7.2 || 7.3",
-        "doctrine/orm": "^2.6.3",
-        "webmasters/doctrine-extensions": "^2.3.3",
+        "php": "7.2",
+        "ext-json": "*",
+        "doctrine/orm": "^2.5.5",
+        "gedmo/doctrine-extensions": "^2.4.24",
+        "webmasters/doctrine-extensions": "^5.3.0",
         "planetteamspeak/ts3-php-framework": "^1.1",
         "phpfastcache/phpfastcache": "^7.0",
         "phpfastcache/phpssdb": "^1.0",

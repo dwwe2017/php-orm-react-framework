@@ -1,0 +1,5 @@
+# Prevent unauthorized access to non-user content
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule !(^|index\.php|\.(js|css|gif|jpeg|jpg|png))$ - [L,R=404]
+</IfModule>
