@@ -29,18 +29,19 @@ abstract class AbstractBase
      */
     public function __construct(string $basePath)
     {
-        $this->basePath = $basePath;
-
-        $this->init();
+        $this->init($basePath);
     }
 
     /**
+     * @param string $basePath
      * @throws BootstrapException
      */
-    private function init()
+    private function init(string $basePath)
     {
         try
         {
+            $this->basePath = $basePath;
+
             $this->bootstrap = Bootstrap::init(
                 $this->getBasePath(),
                 $this->getConnectionOption()
