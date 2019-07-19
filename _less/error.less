@@ -1,0 +1,58 @@
+/* ========================================================
+*
+* Melon - Flat & Responsive Admin Template
+*
+* ========================================================
+*
+* File: error.css
+* Description: Error page (e.g. 404) template styling
+*
+* ======================================================== */
+
+@import "general/mixins.less";
+@import "general/variables.less";
+
+// Error Page Specific Variables
+@errorWidth: 500px;
+
+.error {
+	background-color: @grayLighter;
+	padding-top: 20px;
+
+	.title, .footer {
+		margin: 0 auto;
+		text-align: center;
+
+		h1 {
+			color: @mainColor;
+			font-size: 120px;
+			text-shadow: 0 1px 0 #fff;
+
+			&.red {
+				color: @red;
+			}
+			&.blue {
+				color: @blue;
+			}
+		}
+	}
+
+	.actions {
+		max-width: @errorWidth;
+		margin: 0 auto;
+
+		.list-group {
+			.list-group-item {
+				i {
+					padding-right: 5px;
+
+					&.align-right {
+						float: right;
+						padding-left: 10px;
+						padding-right: 0;
+					}
+				}
+			}
+		}
+	}
+}

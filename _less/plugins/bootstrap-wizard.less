@@ -1,0 +1,89 @@
+//
+// bootstrap-wizard
+// --------------------------------------------------
+
+@import "../general/mixins.less";
+@import "../general/variables.less";
+
+.form-wizard {
+	.steps {
+		margin-bottom: 15px;
+
+		li {
+			padding: 0 15px;
+
+			&.active, &.done {
+				.step {
+					background: none;
+
+					.number {
+						color: #fff;
+					}
+				}
+			}
+
+			&.active {
+				.step {
+					color: @grayDarker;
+					font-weight: 600;
+
+					.number {
+						background-color: @mainColor;
+						border-color: darken(@mainColor, 10%);
+					}
+				}
+			}
+
+			&.done {
+				.step {
+					color: @green;
+					font-weight: 300;
+
+					.number {
+						background-color: @green;
+						border-color: darken(@green, 10%);
+					}
+
+					i {
+						display: inline;
+					}
+				}
+			}
+		}
+	}
+
+	.step {
+		color: lighten(@grayDark, 5%);
+
+		&:hover {
+			background-color: @grayLighter;
+		}
+
+		.number {
+			background-color: @grayMedium;
+			border: 1px solid @grayLight;
+			color: @grayDark;
+			display: inline-block;
+			text-align: center;
+			font-size: (@baseFontSize + 2px);
+			font-weight: 600;
+			padding: 8px;
+			margin-right: 10px;
+			height: 40px;
+			width: 40px;
+		}
+
+		i {
+			display: none;
+		}
+	}
+}
+
+// Responsive
+@media (max-width: 979px) {
+	.form-wizard {
+		.step {
+			text-align: left;
+		}
+	}
+}
