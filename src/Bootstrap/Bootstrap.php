@@ -141,6 +141,8 @@ class Bootstrap extends WDB
 
         if (!isset($options["cache"]))
         {
+            $cacheDriver = new ArrayCache();
+
             if (!$options["debug_mode"])
             {
                 if(function_exists("apc_store"))
@@ -149,12 +151,26 @@ class Bootstrap extends WDB
                 }
                 else
                 {
-                    $cacheDriver = new FilesystemCache(sprintf("%s/data/cache", $this->baseDir));
+                    $filesystemCacheDirExists = true;
+                    $filesystemCacheDirIsWritable = true;
+
+                    $filesystemCacheDir = sprintf("%s/data/cache", $this->baseDir);
+
+                    if(!file_exists($filesystemCacheDir))
+                    {
+                        $filesystemCacheDirExists = @mkdir($filesystemCacheDir, 0777, true);
+                    }
+
+                    if(!is_writable($filesystemCacheDir))
+                    {
+                        $filesystemCacheDirIsWritable = @chmod($filesystemCacheDir, 0777);
+                    }
+
+                    if($filesystemCacheDirExists && $filesystemCacheDirIsWritable)
+                    {
+                        $cacheDriver = new FilesystemCache(sprintf("%s/data/cache", $this->baseDir));
+                    }
                 }
-            }
-            else
-            {
-                $cacheDriver = new ArrayCache();
             }
 
             $options["cache"] = $cacheDriver;
