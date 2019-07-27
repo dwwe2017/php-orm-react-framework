@@ -10,9 +10,10 @@
 namespace Controllers;
 
 
-use Bootstrap\Bootstrap;
+use Core\Bootstrap;
 use Traits\AbstractBaseTrait;
-use Exceptions\BootstrapException;
+use Exceptions\ConfigException, Exceptions\DoctrineException, Exceptions\TemplateException, Exception;
+use View\Environment;
 
 /**
  * Class AbstractBase
@@ -25,34 +26,41 @@ abstract class AbstractBase
     /**
      * AbstractBase constructor.
      * @param string $basePath
-     * @throws BootstrapException
+     * @throws ConfigException
+     * @throws DoctrineException
+     * @throws TemplateException
      */
     public function __construct(string $basePath)
     {
-        $this->init($basePath);
+        $this->basePath = $basePath;
+        $this->config = Bootstrap::init($basePath);
+
+        $this->initDoctrine();
+        $this->initTemplate();
     }
 
     /**
-     * @param string $basePath
-     * @throws BootstrapException
+     * @throws DoctrineException
      */
-    private function init(string $basePath)
+    private function initDoctrine(): void
+    {
+        $this->doctrine = \Doctrine\Bootstrap::init($this->getConfig());
+        $this->entityManager = $this->doctrine->getEntityManager();
+    }
+
+    /**
+     * @throws TemplateException
+     */
+    private function initTemplate(): void
     {
         try
         {
-            $this->basePath = $basePath;
-
-            $this->bootstrap = Bootstrap::init(
-                $this->getBasePath(),
-                $this->getConnectionOption()
-            );
-
-            $this->entityManager = $this->bootstrap->getEntityManager();
+            $this->twig = \View\Bootstrap::init($this->getConfig());
         }
-        catch (BootstrapException $e)
+        catch (Exception $e)
         {
             //@todo | Implement logging
-            throw $e;
+            throw new TemplateException($e->getMessage(), $e->getCode(), $e);
         }
     }
 

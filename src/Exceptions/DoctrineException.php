@@ -12,10 +12,10 @@ namespace Exceptions;
 use Exception;
 use Throwable;
 
-class BootstrapException extends Exception
+class DoctrineException extends Exception
 {
     /**
-     * BootstrapException constructor.
+     * DoctrineException constructor.
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous

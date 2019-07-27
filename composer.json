@@ -1,12 +1,14 @@
 {
     "autoload": {
         "psr-0": {
-            "Bootstrap": "./src/",
             "Controllers": "./src/",
+            "Core": "./src/",
+            "Doctrine": "./src/",
             "Entities": "./src/",
             "Exceptions": "./src/",
             "Interfaces": "./src/",
             "Repositories": "./src/",
+            "View": "./src/",
             "Traits": "./src/",
             "Validators": "./src/"
         }
@@ -30,6 +32,8 @@
         "phpfastcache/riak-client": "^3.4",
         "predis/predis": "^1.1",
         "mongodb/mongodb": "^1.4",
-        "ezyang/htmlpurifier": "^4.11"
+        "ezyang/htmlpurifier": "^4.11",
+        "guzzlehttp/guzzle": "^6.3",
+        "twig/twig": "^2.11"
     }
 }

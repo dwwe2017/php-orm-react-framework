@@ -10,8 +10,10 @@
 namespace Traits;
 
 
+use Core\Bootstrap;
 use Doctrine\ORM\EntityManager;
-use Webmasters\Doctrine\Bootstrap;
+use View\Environment;
+use View\Loader\FilesystemLoader;
 
 /**
  * Trait AbstractBaseTrait
@@ -25,6 +27,11 @@ trait AbstractBaseTrait
     private $basePath = "";
 
     /**
+     * @var Bootstrap
+     */
+    private $config;
+
+    /**
      * @var array
      */
     private $context = [];
@@ -35,14 +42,19 @@ trait AbstractBaseTrait
     private $template = "";
 
     /**
+     * @var
+     */
+    private $twig;
+
+    /**
      * @var string
      */
     private $connectionOption = "default";
 
     /**
-     * @var Bootstrap|null
+     * @var \Doctrine\Bootstrap|null
      */
-    private $bootstrap = null;
+    private $doctrine = null;
 
     /**
      * @var EntityManager|null
@@ -50,11 +62,11 @@ trait AbstractBaseTrait
     private $entityManager = null;
 
     /**
-     * @return Bootstrap|null
+     * @return \Doctrine\Bootstrap|null
      */
-    protected function getBootstrap(): ?Bootstrap
+    protected function getDoctrine(): ?\Doctrine\Bootstrap
     {
-        return $this->bootstrap;
+        return $this->doctrine;
     }
 
     /**
@@ -63,6 +75,14 @@ trait AbstractBaseTrait
     protected function getBasePath(): string
     {
         return $this->basePath;
+    }
+
+    /**
+     * @return Bootstrap
+     */
+    protected function getConfig(): Bootstrap
+    {
+        return $this->config;
     }
 
     /**
@@ -101,13 +121,10 @@ trait AbstractBaseTrait
 
     /**
      * @param string $template
-     * @param string|null $controller
      */
-    protected function setTemplate(string $template, ?string $controller = null): void
+    protected function setTemplate(string $template): void
     {
-        if (empty($controller)) {
-            $controller = $this->getControllerShortName();
-        }
+        $controller = $this->getControllerShortName();
 
         $this->template = $controller . '/' . $template . '.tpl.php';
     }
