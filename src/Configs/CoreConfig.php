@@ -7,19 +7,19 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Core;
+namespace Configs;
 
 
 use Exceptions\ConfigException;
 
 /**
- * Class Bootstrap
- * @package Core
+ * Class CoreConfig
+ * @package Configs
  */
-class Bootstrap
+class CoreConfig
 {
     /**
-     * @var Bootstrap|null
+     * @var CoreConfig|null
      */
     private static $instance;
 
@@ -32,12 +32,6 @@ class Bootstrap
      * @var bool
      */
     private $debugMode = false;
-
-    /**
-     * @var string
-     */
-    private $connectionOption = "default";
-
     /**
      * @var array|null
      */
@@ -68,14 +62,11 @@ class Bootstrap
     /**
      * Bootstrap constructor.
      * @param string $base_dir
-     * @param string $connection_option
      * @throws ConfigException
      */
-    public function __construct(string $base_dir, $connection_option = "default")
+    public function __construct(string $base_dir)
     {
         $this->baseDir = $base_dir;
-
-        $this->connectionOption = $connection_option;
 
         $this->defaultVendorDir = sprintf("%s/vendor", $this->baseDir);
 
@@ -111,14 +102,13 @@ class Bootstrap
 
     /**
      * @param string $base_dir
-     * @param string $connection_option
-     * @return Bootstrap
+     * @return CoreConfig|null
      * @throws ConfigException
      */
-    public static function init(string $base_dir, $connection_option = "default")
+    public static function init(string $base_dir)
     {
         if (is_null(self::$instance)) {
-            self::$instance = new Bootstrap($base_dir, $connection_option);
+            self::$instance = new CoreConfig($base_dir);
         }
 
         return self::$instance;
@@ -183,14 +173,6 @@ class Bootstrap
     public function getConfig(): ?array
     {
         return $this->config;
-    }
-
-    /**
-     * @return string
-     */
-    public function getConnectionOption(): string
-    {
-        return $this->connectionOption;
     }
 
     /**

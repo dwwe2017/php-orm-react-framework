@@ -1,14 +1,12 @@
 {
     "autoload": {
         "psr-0": {
+            "Configs": "./src/",
             "Controllers": "./src/",
-            "Core": "./src/",
-            "Doctrine": "./src/",
             "Entities": "./src/",
             "Exceptions": "./src/",
             "Interfaces": "./src/",
             "Repositories": "./src/",
-            "View": "./src/",
             "Traits": "./src/",
             "Validators": "./src/"
         }
@@ -34,6 +32,7 @@
         "mongodb/mongodb": "^1.4",
         "ezyang/htmlpurifier": "^4.11",
         "guzzlehttp/guzzle": "^6.3",
-        "twig/twig": "^2.11"
+        "twig/twig": "^2.11",
+        "monolog/monolog": "^1.24"
     }
 }

@@ -10,10 +10,16 @@
 namespace Traits;
 
 
-use Core\Bootstrap;
+use Configs\CoreConfig;
+use Configs\DoctrineConfig;
+use Configs\LoggerConfig;
+use Configs\TemplateConfig;
 use Doctrine\ORM\EntityManager;
-use View\Environment;
-use View\Loader\FilesystemLoader;
+use Monolog\Logger;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig\TemplateWrapper;
 
 /**
  * Trait AbstractBaseTrait
@@ -27,9 +33,9 @@ trait AbstractBaseTrait
     private $basePath = "";
 
     /**
-     * @var Bootstrap
+     * @var CoreConfig|null
      */
-    private $config;
+    private $coreConfig = null;
 
     /**
      * @var array
@@ -39,12 +45,27 @@ trait AbstractBaseTrait
     /**
      * @var string
      */
-    private $template = "";
+    private $templatePath = "";
 
     /**
-     * @var
+     * @var TemplateConfig
      */
     private $twig;
+
+    /**
+     * @var TemplateWrapper
+     */
+    private $template;
+
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
+     * @var int
+     */
+    private $log_level = LoggerConfig::ERROR;
 
     /**
      * @var string
@@ -52,7 +73,7 @@ trait AbstractBaseTrait
     private $connectionOption = "default";
 
     /**
-     * @var \Doctrine\Bootstrap|null
+     * @var DoctrineConfig|null
      */
     private $doctrine = null;
 
@@ -62,9 +83,9 @@ trait AbstractBaseTrait
     private $entityManager = null;
 
     /**
-     * @return \Doctrine\Bootstrap|null
+     * @return DoctrineConfig|null
      */
-    protected function getDoctrine(): ?\Doctrine\Bootstrap
+    protected function getDoctrine(): ?DoctrineConfig
     {
         return $this->doctrine;
     }
@@ -78,11 +99,11 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return Bootstrap
+     * @return CoreConfig
      */
-    protected function getConfig(): Bootstrap
+    protected function getCoreConfig(): CoreConfig
     {
-        return $this->config;
+        return $this->coreConfig;
     }
 
     /**
@@ -120,21 +141,37 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @param string $template
+     * @param string $templatePath
      */
-    protected function setTemplate(string $template): void
+    protected function setTemplatePath(string $templatePath): void
     {
         $controller = $this->getControllerShortName();
 
-        $this->template = $controller . '/' . $template . '.tpl.php';
+        $this->templatePath = $controller . '/' . $templatePath . '.tpl.twig';
+    }
+
+    /**
+     * @param string|null $templatePath
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function setTemplate(?string $templatePath = null): void
+    {
+        if(!is_null($templatePath))
+        {
+            $this->setTemplatePath($templatePath);
+        }
+
+        $this->template = $this->twig->getTemplateWrapper($this->getTemplatePath());
     }
 
     /**
      * @return string|null
      */
-    protected function getTemplate(): ?string
+    protected function getTemplatePath(): ?string
     {
-        return $this->template;
+        return $this->templatePath;
     }
 
     /**
@@ -168,5 +205,21 @@ trait AbstractBaseTrait
         }
 
         return $message;
+    }
+
+    /**
+     * @return Logger
+     */
+    protected function getLogger(): Logger
+    {
+        return $this->logger;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLogLevel(): int
+    {
+        return $this->log_level;
     }
 }

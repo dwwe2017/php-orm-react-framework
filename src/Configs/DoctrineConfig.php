@@ -7,7 +7,7 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Doctrine;
+namespace Configs;
 
 
 use Doctrine\Common\Cache\ApcuCache;
@@ -20,10 +20,10 @@ use Webmasters\Doctrine\Bootstrap as WDB;
 use Webmasters\Doctrine\ORM\Util\OptionsCollection;
 
 /**
- * Class Bootstrap
- * @package Bootstrap
+ * Class DoctrineConfig
+ * @package Configs
  */
-class Bootstrap extends WDB
+class DoctrineConfig extends WDB
 {
     /**
      * @var string
@@ -31,28 +31,17 @@ class Bootstrap extends WDB
     protected $baseDir = "";
 
     /**
-     * @var bool
-     */
-    protected $debugMode = false;
-
-    /**
-     * @var string
-     */
-    protected $defaultEntityDir = "";
-
-    /**
      * @noinspection PhpMissingParentConstructorInspection
-     * Bootstrap constructor.
-     * @param \Core\Bootstrap $config
+     * DoctrineConfig constructor.
+     * @param CoreConfig $config
+     * @param string $connectionOption
      * @throws DoctrineException
      */
-    public function __construct(\Core\Bootstrap $config)
+    public function __construct(CoreConfig $config, $connectionOption = "default")
     {
         $this->baseDir = $config->getBaseDir();
 
-        $this->debugMode = $config->isDebugMode();
-
-        $connectionOption = $config->getConnectionOption();
+        $debugMode = $config->isDebugMode();
 
         $connectionOptions = $config->getProperties("connection_options");
 
@@ -87,7 +76,7 @@ class Bootstrap extends WDB
         // Merge with custom configuration parameters
         $applicationOptions += [
             "autogenerate_proxy_classes" => true,
-            "debug_mode" => $this->debugMode,
+            "debug_mode" => $debugMode,
             "proxy_dir" => sprintf("%s/data/proxy/%s", $this->baseDir, $connectionOption)
         ];
 
@@ -129,14 +118,15 @@ class Bootstrap extends WDB
     }
 
     /**
-     * @param \Core\Bootstrap $config
-     * @return Bootstrap|null
+     * @param CoreConfig $config
+     * @param string $connectionOption
+     * @return DoctrineConfig|null
      * @throws DoctrineException
      */
-    public static function init(\Core\Bootstrap $config)
+    public static function init(CoreConfig $config, $connectionOption = "default")
     {
         if (self::$singletonInstance == null) {
-            self::$singletonInstance = new Bootstrap($config);
+            self::$singletonInstance = new DoctrineConfig($config, $connectionOption);
         }
 
         return self::$singletonInstance;
@@ -144,7 +134,6 @@ class Bootstrap extends WDB
 
     /**
      * @param $options
-     * @throws DoctrineException
      */
     protected function setApplicationOptions($options): void
     {
@@ -168,7 +157,7 @@ class Bootstrap extends WDB
                     $filesystemCacheDirExists = true;
                     $filesystemCacheDirIsWritable = true;
 
-                    $filesystemCacheDir = sprintf("%s/data/cache", $this->baseDir);
+                    $filesystemCacheDir = sprintf("%s/data/cache/doctrine", $this->baseDir);
 
                     if(!file_exists($filesystemCacheDir))
                     {
@@ -190,46 +179,6 @@ class Bootstrap extends WDB
             $options["cache"] = $cacheDriver;
         }
 
-        $defaultTemplateCompilationPath = sprintf("%s/data/cache/compilation", $this->baseDir);
-
-        $defaultTemplateCompilationOptions = array(
-            "debug" => $options["debug_mode"],
-            "charset " => "utf-8",
-            "base_template_class" => "\\Twig\\Template",
-            "cache" => $defaultTemplateCompilationPath,
-            "auto_reload" => !$options["debug_mode"],
-            "strict_variables" => !$options["debug_mode"],
-            "autoescape" => "html",
-            "optimizations" => $options["debug_mode"] ? -1 : 0,
-        );
-
-        if (!isset($options["template_options"]))
-        {
-            $options["template_options"] = $defaultTemplateCompilationOptions;
-        }
-        else
-        {
-            $options["template_options"] += $defaultTemplateCompilationOptions;
-        }
-
-        $templateCompilationPath = $options["template_options"]["cache"];
-
-        if(!file_exists($templateCompilationPath))
-        {
-            if(!@mkdir($templateCompilationPath, 0777, true))
-            {
-                throw new DoctrineException(sprintf("The required directory '%s' for template compilation can not be found and/or be created, please check the directory permissions or create it manually.", $templateCompilationPath), E_ERROR);
-            }
-        }
-
-        if(!is_writable($templateCompilationPath))
-        {
-            if(!@chmod($templateCompilationPath, 0777))
-            {
-                throw new DoctrineException(sprintf("The required directory '%s' for template compilation can not be written, please check the directory permissions.", $templateCompilationPath), E_ERROR);
-            }
-        }
-
         $this->applicationOptions = new OptionsCollection($options);
     }
 
@@ -239,13 +188,5 @@ class Bootstrap extends WDB
     public function getEntityManager(): ?EntityManager
     {
         return parent::getEm();
-    }
-
-    /**
-     * @return string
-     */
-    public function getBaseDir(): string
-    {
-        return $this->baseDir;
     }
 }

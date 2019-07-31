@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{# block layout_head #}
+{% include "layout.default.head.tpl.twig" %}
+
+<body>
+
+{# block layout_header #}
+{% include "layout.default.header.tpl.twig" %}
+
+<div id="container">
+
+    {# block layout_sidebar #}
+    {% include "layout.default.sidebar.tpl.twig" %}
+
+    <div id="content">
+
+        <div class="container">
+
+            {# block layout_breadcrumb #}
+            {% include "layout.default.breadcrumb.tpl.twig" %}
+
+            {# block layout_breadcrumb #}
+            {% include "layout.default.page.header.tpl.twig" %}
+
+            <div class="row">
+
+                {% block page_content %}
+                {% endblock page_content %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{# block layout_js #}
+{% include "layout.default.js.tpl.twig" %}
+</body>
+</html>

@@ -10,10 +10,12 @@
 namespace Controllers;
 
 
-use Core\Bootstrap;
+use Configs\CoreConfig;
+use Configs\DoctrineConfig;
+use Configs\LoggerConfig;
+use Configs\TemplateConfig;
 use Traits\AbstractBaseTrait;
-use Exceptions\ConfigException, Exceptions\DoctrineException, Exceptions\TemplateException, Exception;
-use View\Environment;
+use Exceptions\ConfigException, Exceptions\DoctrineException, Exceptions\TemplateException, Exceptions\LoggerException;
 
 /**
  * Class AbstractBase
@@ -28,15 +30,20 @@ abstract class AbstractBase
      * @param string $basePath
      * @throws ConfigException
      * @throws DoctrineException
+     * @throws LoggerException
      * @throws TemplateException
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function __construct(string $basePath)
     {
         $this->basePath = $basePath;
-        $this->config = Bootstrap::init($basePath);
+        $this->coreConfig = CoreConfig::init($basePath);
 
         $this->initDoctrine();
         $this->initTemplate();
+        $this->initLogger();
     }
 
     /**
@@ -44,7 +51,11 @@ abstract class AbstractBase
      */
     private function initDoctrine(): void
     {
-        $this->doctrine = \Doctrine\Bootstrap::init($this->getConfig());
+        $this->doctrine = DoctrineConfig::init(
+            $this->getCoreConfig(),
+            $this->getConnectionOption()
+        );
+
         $this->entityManager = $this->doctrine->getEntityManager();
     }
 
@@ -53,19 +64,25 @@ abstract class AbstractBase
      */
     private function initTemplate(): void
     {
-        try
-        {
-            $this->twig = \View\Bootstrap::init($this->getConfig());
-        }
-        catch (Exception $e)
-        {
-            //@todo | Implement logging
-            throw new TemplateException($e->getMessage(), $e->getCode(), $e);
-        }
+        $this->twig = TemplateConfig::init(
+            $this->getCoreConfig()
+        );
+    }
+
+    /**
+     * @throws LoggerException
+     */
+    private function initLogger(): void
+    {
+        $this->logger = LoggerConfig::init(
+            $this->getCoreConfig(),
+            $this->getLogLevel()
+        );
     }
 
     /**
      * @param string $action
+     * @throws \Throwable
      */
     public function run(string $action): void
     {
@@ -73,6 +90,8 @@ abstract class AbstractBase
 
         $methodName = $action . 'Action';
         $this->setTemplate($methodName);
+
+        $this->template = $this->twig->getTemplateWrapper($this->getTemplatePath());
 
         if (method_exists($this, $methodName))
         {
@@ -147,18 +166,11 @@ abstract class AbstractBase
     }
 
     /**
-     *
+     * @throws \Throwable
      */
     protected function render(): void
     {
-        extract($this->context);
-
-        /** @noinspection PhpUnusedLocalVariableInspection*/
-        $message = $this->getMessage(); // Get flash message
-        /** @noinspection PhpUnusedLocalVariableInspection*/
-        $template = $this->getTemplate();
-
-        /** @noinspection PhpIncludeInspection */
-        require_once $this->basePath . '/templates/layout.tpl.php';
+        $this->addContext("message", $this->getMessage());
+        echo $this->template->render($this->context);
     }
 }
