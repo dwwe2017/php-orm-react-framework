@@ -1,0 +1,51 @@
+{% extends "layout.default.tpl.twig" %}
+
+{% block layout_body %}
+    <body>
+
+    {% block layout_header %}
+        {# block layout_header #}
+        {% include "layout.default.header.tpl.twig" %}
+    {% endblock layout_header %}
+
+    <div id="container">
+
+        {% block layout_sidebar %}
+            {# block layout_sidebar #}
+            {% include "layout.default.sidebar.tpl.twig" %}
+        {% endblock layout_sidebar %}
+
+        <div id="content">
+
+            <div class="container">
+
+                {% block layout_breadcrumb %}
+                    {# block layout_breadcrumb #}
+                    {% include "layout.default.breadcrumb.tpl.twig" %}
+                {% endblock layout_breadcrumb %}
+
+                {% block layout_page_header %}
+                    {# block layout_page_header #}
+                    {% include "layout.default.page.header.tpl.twig" %}
+                {% endblock layout_page_header %}
+
+                <div class="row">
+
+                    {% block page_content %}
+                    {% endblock page_content %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% block layout_js %}
+        {# block layout_js #}
+        {% include "layout.default.js.tpl.twig" %}
+    {% endblock layout_js %}
+
+    </body>
+{% endblock layout_body %}
