@@ -36,7 +36,7 @@
  * -------------------------- */
 [class^="icon-"],
 [class*=" icon-"] {
-  font-family: FontAwesome;
+  font-family: FontAwesome, Arial, Helvetica, sans-serif;
   font-weight: normal;
   font-style: normal;
   text-decoration: inherit;
@@ -166,7 +166,7 @@ a [class*=" icon-"] {
   line-height: normal;
   vertical-align: baseline;
   background-image: none;
-  background-position: 0% 0%;
+  background-position: 0 0;
   background-repeat: repeat;
   margin-top: 0;
 }

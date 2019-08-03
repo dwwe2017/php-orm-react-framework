@@ -200,7 +200,7 @@
           // stop window scroll
           if (e.preventDefault && !releaseScroll) { e.preventDefault(); }
           if (!releaseScroll) { e.returnValue = false; }
-        }
+        };
 
         function scrollContent(x, isWheel, isJump)
         {
@@ -254,7 +254,7 @@
           {
             document.attachEvent("onmousewheel", _onWheel)
           }
-        }
+        };
 
         // attach scroll events
         attachWheel();

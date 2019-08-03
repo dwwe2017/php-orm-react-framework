@@ -56,8 +56,8 @@ div.button * {
 }
 .highContrastDetect {
   background: url("../../../plugins/uniform/images/bg-input.png") repeat-x 0 0;
-  width: 0px;
-  height: 0px;
+  width: 0;
+  height: 0;
 }
 /* Input & Textarea */
 input.uniform-input,
@@ -116,7 +116,7 @@ div.selector select {
   position: absolute;
   height: 22px;
   top: 2px;
-  left: 0px;
+  left: 0;
   width: 100%;
 }
 div.selector.active {
@@ -423,9 +423,9 @@ select.uniform-multiselect.hover,
 select.uniform-multiselect.focus,
 textarea.uniform.hover,
 textarea.uniform.focus {
-  -webkit-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   border-color: #999;
 }
 /* PRESENTATION */
@@ -473,7 +473,7 @@ div.radio {
 }
 /* Uploader */
 div.uploader span.action {
-  text-shadow: white 0px 1px 0px;
+  text-shadow: white 0 1px 0;
   background-color: #fff;
   font-size: 11px;
   font-weight: bold;

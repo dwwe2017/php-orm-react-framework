@@ -11,13 +11,15 @@ namespace Handlers;
 
 
 use Configs\CoreConfig;
+use Exception;
 use Exceptions\MinifyJsException;
-use MatthiasMullie\Minify\JS;
+use JShrink\Minifier;
+use Phpfastcache\Helper\Psr16Adapter;
 
-class MinifyJsHandler extends JS
+class MinifyJsHandler extends Minifier
 {
     /**
-     * @var MinifyJsHandler|JS|null
+     * @var MinifyJsHandler|null
      */
     private static $instance = null;
 
@@ -44,36 +46,35 @@ class MinifyJsHandler extends JS
     /**
      * @var array
      */
-    private $jsData = [];
+    private $jsContent = [];
 
     /**
-     * @noinspection PhpMissingParentConstructorInspection
+     * @var Psr16Adapter
+     * @todo implement caching
+     */
+    private $cache;
+
+    /**
      * MinifyJsHandler constructor.
      * @param CoreConfig $config
      * @throws MinifyJsException
      */
-    public function __construct($config)
+    public function __construct(CoreConfig $config)
     {
-        if ($config instanceof CoreConfig) {
-            $this->baseDir = $config->getBaseDir();
+        $this->baseDir = $config->getBaseDir();
 
-            $this->defaultMinifyJsDir = sprintf("%s/data/cache/js", $this->baseDir);
+        $this->defaultMinifyJsDir = sprintf("%s/data/cache/js", $this->baseDir);
 
-            $this->defaultMinifyJsFile = sprintf("%s/minified.js", $this->defaultMinifyJsDir);
-
-            if (!file_exists($this->defaultMinifyJsDir)) {
-                if (!@mkdir($this->defaultMinifyJsDir, 0777, true)) {
-                    throw new MinifyJsException(sprintf("The required directory '%s' can not be created, please check the directory permissions or create it manually.", $this->defaultMinifyJsDir), E_ERROR);
-                }
+        if (!file_exists($this->defaultMinifyJsDir)) {
+            if (!@mkdir($this->defaultMinifyJsDir, 0777, true)) {
+                throw new MinifyJsException(sprintf("The required directory '%s' can not be created, please check the directory permissions or create it manually.", $this->defaultMinifyJsDir), E_ERROR);
             }
+        }
 
-            if (!is_writable($this->defaultMinifyJsDir)) {
-                if (!@chmod($this->defaultMinifyJsDir, 0777)) {
-                    throw new MinifyJsException(sprintf("The required directory '%s' can not be written, please check the directory permissions.", $this->defaultMinifyJsDir), E_ERROR);
-                }
+        if (!is_writable($this->defaultMinifyJsDir)) {
+            if (!@chmod($this->defaultMinifyJsDir, 0777)) {
+                throw new MinifyJsException(sprintf("The required directory '%s' can not be written, please check the directory permissions.", $this->defaultMinifyJsDir), E_ERROR);
             }
-        } else {
-            parent::__construct($config);
         }
     }
 
@@ -107,10 +108,10 @@ class MinifyJsHandler extends JS
         );
 
         foreach ($defaultJsPaths as $jsPath) {
-            $this->addJs($jsPath);
+            $this->addJsContent($jsPath);
         }
 
-        $this->addJs(
+        $this->addJsContent(
             "$(document).ready(function(){
                 \"use strict\";
 
@@ -123,7 +124,7 @@ class MinifyJsHandler extends JS
 
     /**
      * @param CoreConfig $config
-     * @return MinifyJsHandler|JS|null
+     * @return MinifyJsHandler|null
      * @throws MinifyJsException
      */
     public static function init(CoreConfig $config)
@@ -137,20 +138,37 @@ class MinifyJsHandler extends JS
     }
 
     /**
-     * @return string
+     * @param bool $clearOldFiles
+     * @return bool|int
+     * @throws MinifyJsException
      */
-    public function compileAndGet()
+    public function compileAndGet($clearOldFiles = true)
     {
         $this->defaultMinifyJsFile = sprintf("%s/%s.js", $this->defaultMinifyJsDir, md5(self::$md5checksum));
 
-        if (!file_exists($this->getDefaultMinifyJsFile())) {
-            foreach ($this->jsData as $jsPath) {
-                $this->add($jsPath);
+        if ($clearOldFiles) {
+            $oldDate = time() - 3600;
+            $cachedFiles = scandir($this->defaultMinifyJsDir);
+            foreach ($cachedFiles as $file) {
+                $filepath = sprintf("%s/%s", $this->defaultMinifyJsDir, $file);
+                $fileMtime = @filemtime($filepath);
+                if (strlen($file) == 35 && ($fileMtime === false || $fileMtime < $oldDate)) {
+                    @unlink($filepath);
+                }
             }
         }
 
         if (!file_exists($this->getDefaultMinifyJsFile())) {
-            return $this->minify($this->getDefaultMinifyJsFile());
+            $content = "";
+            foreach ($this->jsContent as $item) {
+                $content .= is_file($item) ? file_get_contents($item) : trim($item);
+            }
+
+            try {
+                return @file_put_contents($this->getDefaultMinifyJsFile(), self::minify($content));
+            } catch (Exception $e) {
+                throw new MinifyJsException($e->getMessage(), $e->getCode(), $e);
+            }
         }
 
         return true;
@@ -158,9 +176,9 @@ class MinifyJsHandler extends JS
 
     /**
      * @param bool $relative
-     * @return string
+     * @return string|null
      */
-    public function getDefaultMinifyJsFile($relative = false): string
+    public function getDefaultMinifyJsFile($relative = false): ?string
     {
         return $relative ? substr(str_replace($this->baseDir, "", $this->defaultMinifyJsFile), 1) : $this->defaultMinifyJsFile;
     }
@@ -170,7 +188,7 @@ class MinifyJsHandler extends JS
      * @param bool $codeAsString
      * @throws MinifyJsException
      */
-    public function addJs(string $fileOrString, $codeAsString = false)
+    public function addJsContent(string $fileOrString, $codeAsString = false)
     {
         if ($codeAsString) {
             self::$md5checksum .= trim(md5($fileOrString));
@@ -183,6 +201,6 @@ class MinifyJsHandler extends JS
             self::$md5checksum .= date('YmdHis', $fileMtime ? $fileMtime : NULL) . $fileOrString;
         }
 
-        $this->jsData[] = $fileOrString;
+        $this->jsContent[] = $fileOrString;
     }
 }

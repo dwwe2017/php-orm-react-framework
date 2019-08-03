@@ -99,8 +99,7 @@ body {
   padding: 25px 0;
 }
 .page-title h3 {
-  margin: 0;
-  margin-bottom: 10px;
+  margin: 0 0 10px;
   color: #555555;
   font-weight: 400;
   font-size: 20px;
@@ -344,7 +343,6 @@ span.red {
   white-space: nowrap;
   overflow-x: hidden;
   text-align: left;
-  padding-left: 0;
   max-width: none;
   margin-left: 0 !important;
   margin-right: 0;
@@ -403,10 +401,7 @@ span.red {
   color: #ffffff;
   font-size: 13px;
   text-shadow: 0 1px 0 #000000;
-  padding-top: 14px;
-  padding-bottom: 14px;
-  padding-left: 18px;
-  padding-right: 18px;
+  padding: 14px 18px;
 }
 .navbar .nav > li > a:hover,
 .navbar .nav > li > a:focus {
@@ -509,7 +504,6 @@ span.red {
   position: absolute !important;
   float: left !important;
   background-color: #fff !important;
-  border: 1px solid #ccc !important;
   border: 1px solid rgba(0, 0, 0, 0.15) !important;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175) !important;
   -moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175) !important;
@@ -521,9 +515,9 @@ span.red {
   font-size: 10px;
 }
 .dropdown-menu {
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
   -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
   -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
@@ -606,7 +600,7 @@ span.red {
 .dropdown-menu.extended li p {
   padding: 6px 15px;
   background-color: #334d63;
-  margin: 0px;
+  margin: 0;
   font-size: 13px;
   font-weight: 600;
   color: #fff;
@@ -730,7 +724,7 @@ span.red {
 #sidebar .slimScrollBar {
   width: 5px !important;
   background-color: #878787 !important;
-  right: 0px !important;
+  right: 0 !important;
   border-left: 1px solid #555555;
   border-right: 1px solid #555555;
   -webkit-border-radius: 0 !important;
@@ -741,8 +735,7 @@ span.red {
   box-sizing: content-box;
 }
 #sidebar .sidebar-search {
-  margin: 15px;
-  margin-right: 23px;
+  margin: 15px 23px 15px 15px;
 }
 #sidebar .sidebar-search .input-box {
   border-bottom: 1px solid #d9d9d9 !important;
@@ -869,8 +862,7 @@ span.red {
   position: relative;
   margin: 0;
   border: 0;
-  padding: 15px 15px;
-  padding-left: 20px;
+  padding: 15px 15px 15px 20px;
   color: #555555;
   text-decoration: none;
   text-shadow: 0 1px 0 #fff;
@@ -930,9 +922,7 @@ span.red {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4) inset;
 }
 #sidebar ul#nav ul.sub-menu ul.sub-menu {
-  margin: 5px;
-  margin-right: 0;
-  margin-left: 40px;
+  margin: 5px 0 5px 40px;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
@@ -1134,7 +1124,7 @@ span.red {
   background: #fff;
 }
 .breadcrumb > li + li:before {
-  font-family: FontAwesome;
+  font-family: FontAwesome, Arial, Helvetica, sans-serif;
   font-weight: normal;
   font-style: normal;
   text-decoration: inherit;
@@ -1152,18 +1142,15 @@ span.red {
   background-color: #f3f3f3;
   background-image: none;
   filter: none;
-  border: 0;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
   padding: 6px 13px;
   text-shadow: none;
-  font-size: 14px;
   font-weight: normal;
   color: #333333;
   font-size: 13px;
   cursor: pointer;
-  border: 1px solid #d9d9d9;
   border: 1px solid rgba(0, 0, 0, 0.13);
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -1263,7 +1250,7 @@ span.red {
 .ui-widget-header .ui-state-default + .dropdown-toggle .caret,
 .ColVis_MasterButton + .dropdown-toggle .caret,
 .fc-state-default + .dropdown-toggle .caret {
-  margin-left: 0px;
+  margin-left: 0;
 }
 /* * * * * * * * * * * *
  * Sizes
@@ -1277,7 +1264,7 @@ span.red {
   font-size: 12px;
 }
 .btn-xs {
-  padding: 0px 10px;
+  padding: 0 10px;
   font-size: 11px;
 }
 /* * * * * * * * * * * *
@@ -1573,7 +1560,7 @@ span.red {
  * Icon Buttons
  * * * * * * * * * * * */
 .btn-icon {
-  margin: 10px 0px;
+  margin: 10px 0;
   padding: 10px;
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
@@ -1630,9 +1617,9 @@ span.red {
 /* # Widgets
 ================================================== */
 .widget {
-  margin-top: 0px;
+  margin-top: 0;
   margin-bottom: 25px;
-  padding: 0px;
+  padding: 0;
   /* Divider */
 
 }
@@ -1655,9 +1642,8 @@ span.red {
   color: #555555;
   font-size: 14px;
   font-weight: bold;
-  margin: 0;
   padding: 0;
-  margin-bottom: 7px;
+  margin: 0 0 7px;
 }
 .widget .widget-header h4 i {
   font-size: 14px;
@@ -1786,8 +1772,7 @@ span.red {
   font-size: 11px;
   color: #555555;
   opacity: 0.7;
-  margin: -10px;
-  margin-top: 10px;
+  margin: 10px -10px -10px;
   background-color: #f9f9f9;
   border-top: 1px solid #d9d9d9;
 }
@@ -1910,8 +1895,8 @@ code {
  * Feed List
  * * * * * * * * * * * */
 .feeds {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 .feeds li {
@@ -2022,17 +2007,17 @@ a.list-group-item.active {
   background-color: #f9f9f9;
 }
 .widget.box > .widget-content.no-padding > .list-group {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 .widget.box > .widget-content.no-padding > .list-group > .list-group-item {
-  border-left: 0px;
-  border-right: 0px;
+  border-left: 0;
+  border-right: 0;
 }
 .widget.box > .widget-content.no-padding > .list-group > .list-group-item:first-child {
-  border-top: 0px;
+  border-top: 0;
 }
 .widget.box > .widget-content.no-padding > .list-group > .list-group-item:last-child {
-  border-bottom: 0px;
+  border-bottom: 0;
 }
 /* * * * * * * * * * * *
  * Wells
@@ -2608,7 +2593,7 @@ label > span.required {
 }
 .radio > div.radio input[type="radio"],
 .checkbox > div.checker input[type="checkbox"] {
-  margin-left: 0px;
+  margin-left: 0;
 }
 /* # Tables
 ================================================== */
@@ -2649,7 +2634,7 @@ label > span.required {
 }
 .table-no-inner-border tr th,
 .table-no-inner-border tr td {
-  border-left-width: 0px;
+  border-left-width: 0;
 }
 .table-no-inner-border tr th:first-child,
 .table-no-inner-border tr td:first-child {
@@ -2714,9 +2699,8 @@ label > span.required {
 }
 .widget.box .widget-content:not(.no-padding) .table-footer {
   border: none;
-  background-color: none;
-  padding: 8px 0;
-  padding-bottom: 3px;
+  background-color: transparent;
+  padding: 8px 0 3px;
 }
 /* * * * * * * * * * * *
  * Pagination
@@ -3111,7 +3095,7 @@ ul.stats li.light strong {
   padding-top: 8px;
   padding-bottom: 10px;
   line-height: 12px;
-  margin-top: 0px;
+  margin-top: 0;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
@@ -3134,7 +3118,7 @@ ul.stats li.light strong {
 }
 .tabbable-custom > .nav-tabs {
   border: none;
-  margin: 0px;
+  margin: 0;
   top: 0;
 }
 .tabbable-custom > .nav-tabs > li {

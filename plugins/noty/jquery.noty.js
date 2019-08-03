@@ -544,4 +544,4 @@ window.noty = function noty(options) {
     // End of the BC
 
     return jQuery.notyRenderer.init(options);
-}
+};

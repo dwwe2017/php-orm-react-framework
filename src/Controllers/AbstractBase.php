@@ -109,8 +109,6 @@ abstract class AbstractBase
             $this->getCoreConfig()
         );
 
-        $this->cssHandler->addCss("test", true);
-
         $this->jsHandler = MinifyJsHandler::init(
             $this->getCoreConfig()
         );

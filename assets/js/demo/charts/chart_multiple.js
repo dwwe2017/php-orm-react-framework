@@ -37,7 +37,7 @@ $(document).ready(function(){
 		// zip the generated y values with the x values
 		var res = [];
 		for (var i = 0; i < data_used_ram.length; ++i)
-		res.push([i, data_used_ram[i]])
+		res.push([i, data_used_ram[i]]);
 		return res;
 	}
 

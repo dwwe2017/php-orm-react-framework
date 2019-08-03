@@ -96,7 +96,7 @@
     margin-bottom: 0;
   }
   .navbar .navbar-inner {
-    padding: 0px;
+    padding: 0;
   }
   .navbar .container {
     width: auto;
@@ -109,8 +109,8 @@
     display: none;
   }
   .navbar-fixed-top {
-    margin-right: 0px;
-    margin-left: 0px;
+    margin-right: 0;
+    margin-left: 0;
   }
   #container.fixed-header {
     margin-top: 0;
@@ -174,7 +174,7 @@
     font-size: 12px;
   }
   #sidebar ul#nav li ul.sub-menu {
-    margin-left: 0px;
+    margin-left: 0;
   }
   #sidebar ul#nav li ul.sub-menu li a {
     font-size: 11px;
@@ -224,8 +224,8 @@
 -------------------------------------------------- */
 @media (max-width: 767px) {
   body {
-    padding-left: 0px;
-    padding-right: 0px;
+    padding-left: 0;
+    padding-right: 0;
   }
   html {
     overflow-x: hidden;
@@ -297,7 +297,7 @@
   }
   #container {
     position: relative;
-    left: 0px;
+    left: 0;
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -349,7 +349,7 @@
     display: none;
   }
   .daterangepicker.dropdown-menu {
-    min-width: 0px !important;
+    min-width: 0 !important;
   }
   .daterangepicker.opensleft .calendar.right {
     float: none;

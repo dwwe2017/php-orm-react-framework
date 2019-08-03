@@ -97,7 +97,7 @@ $(document).ready(function(){
 			_parse: function( value ) {
 				if ( typeof value === "string" ) {
 					// already a timestamp
-					if ( Number( value ) == value ) {
+					if ( Number( value ) === value ) {
 						return Number( value );
 					}
 					return +Globalize.parseDate( value );

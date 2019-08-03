@@ -83,7 +83,7 @@
   left: -50%;
 }
 .has-switch > div.switch-on {
-  left: 0%;
+  left: 0;
 }
 .has-switch input[type=radio],
 .has-switch input[type=checkbox] {
@@ -130,7 +130,8 @@
   margin-bottom: -1px;
   z-index: 100;
   width: 34%;
-  border-left: 1px solid #d9d9d9;
+  border-left-width: 1px;
+  border-left-style: solid;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
 
   color: #555555;
@@ -142,7 +143,6 @@
   background-image: -o-linear-gradient(top, #ffffff, #ffffff);
   background-image: linear-gradient(to bottom, #ffffff, #ffffff);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffffffff', GradientType=0);
   border-color: #ffffff #ffffff #d9d9d9;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #ffffff;
@@ -194,14 +194,12 @@
 
   color: #555555;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-  background-color: #ffffff;
   background-image: -moz-linear-gradient(top, #ffffff, #ffffff);
   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#ffffff));
   background-image: -webkit-linear-gradient(top, #ffffff, #ffffff);
   background-image: -o-linear-gradient(top, #ffffff, #ffffff);
   background-image: linear-gradient(to bottom, #ffffff, #ffffff);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffffffff', GradientType=0);
   border-color: #ffffff #ffffff #d9d9d9;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #ffffff;

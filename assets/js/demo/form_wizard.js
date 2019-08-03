@@ -47,7 +47,7 @@ $(document).ready(function(){
 				$(this).html(input.attr("data-title"));
 			}
 		});
-	}
+	};
 
 	var handleTitle = function(tab, navigation, index) {
 		var total = navigation.find('li').length;
@@ -64,7 +64,7 @@ $(document).ready(function(){
 			$(li_list[i]).addClass("done");
 		}
 
-		if (current == 1) {
+		if (current === 1) {
 			wizard.find('.button-previous').hide();
 		} else {
 			wizard.find('.button-previous').show();
@@ -78,7 +78,7 @@ $(document).ready(function(){
 			wizard.find('.button-next').show();
 			wizard.find('.button-submit').hide();
 		}
-	}
+	};
 
 	// Form wizard example
 	wizard.bootstrapWizard({
@@ -88,7 +88,7 @@ $(document).ready(function(){
 			success.hide();
 			error.hide();
 
-			if (clickedIndex >= index && form.valid() == false) {
+			if (clickedIndex >= index && form.valid() === false) {
 				return false;
 			}
 
@@ -98,7 +98,7 @@ $(document).ready(function(){
 			success.hide();
 			error.hide();
 
-			if (form.valid() == false) {
+			if (form.valid() === false) {
 				return false;
 			}
 

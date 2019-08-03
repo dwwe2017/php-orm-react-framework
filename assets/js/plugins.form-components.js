@@ -13,7 +13,7 @@ var FormComponents = function() {
 		if ($.fn.autosize) {
 			$('textarea.auto').autosize();
 		}
-	}
+	};
 
 	/**************************
 	 * Input limiter          *
@@ -34,8 +34,8 @@ var FormComponents = function() {
 				var limited_input_name = $(this).attr('name');
 				var limitText = $.fn.inputlimiter.defaults.limitText;
 				var data_limit = $(this).data('limit');
-				limitText = limitText.replace(/\%n/g, data_limit);
-				limitText = limitText.replace(/\%s/g, (data_limit <= 1 ? '' : 's'));
+				limitText = limitText.replace(/%n/g, data_limit);
+				limitText = limitText.replace(/%s/g, (data_limit <= 1 ? '' : 's'));
 
 				$.extend(true, $.fn.inputlimiter.defaults, {
 					boxId: 'limit-text-' + limited_input_name,
@@ -47,7 +47,7 @@ var FormComponents = function() {
 				});
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * Uniform                *
@@ -56,7 +56,7 @@ var FormComponents = function() {
 		if ($.fn.uniform) {
 			$(':radio.uniform, :checkbox.uniform').uniform();
 		}
-	}
+	};
 
 	/**************************
 	 * Tags                   *
@@ -70,7 +70,7 @@ var FormComponents = function() {
 				defaultText: 'add a tag'
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * Select2                *
@@ -93,7 +93,7 @@ var FormComponents = function() {
 				minimumResultsForSearch: "-1"
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * Fileinput              *
@@ -111,7 +111,7 @@ var FormComponents = function() {
 				$input.fileInput($input.data());
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * Spinner                *
@@ -122,7 +122,7 @@ var FormComponents = function() {
 				$(this).spinner();
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * Dual Select Boxes      *
@@ -131,7 +131,7 @@ var FormComponents = function() {
 		if ($.configureBoxes) {
 			$.configureBoxes();
 		}
-	}
+	};
 
 	/**************************
 	 * Validation             *
@@ -236,7 +236,7 @@ var FormComponents = function() {
 				}
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * WYSIWYG                *
@@ -252,7 +252,7 @@ var FormComponents = function() {
 				$(this).wysihtml5();
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * Multiselect            *
@@ -263,7 +263,7 @@ var FormComponents = function() {
 				$(this).multiselect();
 			});
 		}
-	}
+	};
 
 	return {
 

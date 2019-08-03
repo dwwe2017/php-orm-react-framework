@@ -464,7 +464,7 @@
 .ui-datepicker-row-break {
   clear: both;
   width: 100%;
-  font-size: 0em;
+  font-size: 0;
 }
 /* RTL support */
 .ui-datepicker-rtl {
@@ -575,8 +575,8 @@
 .ui-datepicker td .ui-state-active {
   background-color: #4d7496 !important;
   margin-bottom: 0;
-  font-size: normal;
-  text-shadow: 0;
+  font-size: initial;
+  text-shadow: none;
   color: #ffffff !important;
 }
 .ui-datepicker td .ui-state-hover {

@@ -40,7 +40,7 @@
 	{
 		factory( jQuery );
 	}
-}
+};
 (/** @lends <global> */function( $ ) {
 	"use strict";
 	/** 

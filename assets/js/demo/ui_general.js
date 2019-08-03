@@ -43,7 +43,7 @@ $(document).ready(function(){
 			layout: self.data('layout'),
 			timeout: 2000,
 			modal: self.data('modal'),
-			buttons: (self.data('type') != 'confirm') ? false : [
+			buttons: (self.data('type') !== 'confirm') ? false : [
 				{
 					addClass: 'btn btn-primary', text: 'Ok', onClick: function($noty) {
 						$noty.close();

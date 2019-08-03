@@ -11,13 +11,16 @@ namespace Handlers;
 
 
 use Configs\CoreConfig;
+use CssMin;
+use Exception;
 use Exceptions\MinifyCssException;
-use MatthiasMullie\Minify\CSS;
+use Phpfastcache\CacheManager;
+use Phpfastcache\Helper\Psr16Adapter;
 
-class MinifyCssHandler extends CSS
+class MinifyCssHandler
 {
     /**
-     * @var MinifyCssHandler|CSS|null
+     * @var MinifyCssHandler|null
      */
     private static $instance = null;
 
@@ -44,34 +47,35 @@ class MinifyCssHandler extends CSS
     /**
      * @var array
      */
-    private $cssData = [];
+    private $cssContent = [];
 
     /**
-     * @noinspection PhpMissingParentConstructorInspection
-     * MinifyCssConfig constructor.
+     * @var Psr16Adapter
+     * @todo implement caching
+     */
+    private $cache;
+
+    /**
+     * MinifyCssHandler constructor.
      * @param CoreConfig $config
      * @throws MinifyCssException
      */
-    public function __construct($config)
+    public function __construct(CoreConfig $config)
     {
-        if ($config instanceof CoreConfig) {
-            $this->baseDir = $config->getBaseDir();
+        $this->baseDir = $config->getBaseDir();
 
-            $this->defaultMinifyCssDir = sprintf("%s/data/cache/css", $this->baseDir);
+        $this->defaultMinifyCssDir = sprintf("%s/data/cache/css", $this->baseDir);
 
-            if (!file_exists($this->defaultMinifyCssDir)) {
-                if (!@mkdir($this->defaultMinifyCssDir, 0777, true)) {
-                    throw new MinifyCssException(sprintf("The required directory '%s' can not be created, please check the directory permissions or create it manually.", $this->defaultMinifyCssDir), E_ERROR);
-                }
+        if (!file_exists($this->defaultMinifyCssDir)) {
+            if (!@mkdir($this->defaultMinifyCssDir, 0777, true)) {
+                throw new MinifyCssException(sprintf("The required directory '%s' can not be created, please check the directory permissions or create it manually.", $this->defaultMinifyCssDir), E_ERROR);
             }
+        }
 
-            if (!is_writable($this->defaultMinifyCssDir)) {
-                if (!@chmod($this->defaultMinifyCssDir, 0777)) {
-                    throw new MinifyCssException(sprintf("The required directory '%s' can not be written, please check the directory permissions.", $this->defaultMinifyCssDir), E_ERROR);
-                }
+        if (!is_writable($this->defaultMinifyCssDir)) {
+            if (!@chmod($this->defaultMinifyCssDir, 0777)) {
+                throw new MinifyCssException(sprintf("The required directory '%s' can not be written, please check the directory permissions.", $this->defaultMinifyCssDir), E_ERROR);
             }
-        } else {
-            parent::__construct($config);
         }
     }
 
@@ -86,13 +90,10 @@ class MinifyCssHandler extends CSS
 
         $defaultCssPaths = array(
             sprintf("%s/bootstrap/css/bootstrap.min.css", $this->baseDir),
-            sprintf("%s/plugins/jquery-ui/jquery.ui.1.10.2.ie.css", $this->baseDir),
             sprintf("%s/assets/css/main.css", $this->baseDir),
             sprintf("%s/assets/css/plugins.css", $this->baseDir),
             sprintf("%s/assets/css/responsive.css", $this->baseDir),
-            sprintf("%s/assets/css/icons.css", $this->baseDir),
-            sprintf("%s/assets/css/fontawesome/font-awesome.min.css", $this->baseDir),
-            sprintf("%s/assets/css/fontawesome/font-awesome-ie7.min.css", $this->baseDir)
+            sprintf("%s/assets/css/icons.css", $this->baseDir)
         );
 
         foreach ($defaultCssPaths as $cssPath) {
@@ -102,13 +103,13 @@ class MinifyCssHandler extends CSS
 
     /**
      * @param CoreConfig $config
-     * @return MinifyCssHandler|CSS|null
+     * @return MinifyCssHandler|null
      * @throws MinifyCssException
      */
     public static function init(CoreConfig $config)
     {
         if (is_null(self::$instance)) {
-            self::$instance = new MinifyCssHandler($config);
+            self::$instance = new self($config);
         }
 
         self::$instance->setDefaults();
@@ -116,20 +117,37 @@ class MinifyCssHandler extends CSS
     }
 
     /**
-     * @return string
+     * @param bool $clearOldFiles
+     * @return bool|int
+     * @throws MinifyCssException
      */
-    public function compileAndGet()
+    public function compileAndGet($clearOldFiles = true)
     {
         $this->defaultMinifyCssFile = sprintf("%s/%s.css", $this->defaultMinifyCssDir, md5(self::$md5checksum));
 
-        if (!file_exists($this->getDefaultMinifyCssFile())) {
-            foreach ($this->cssData as $jsPath) {
-                $this->add($jsPath);
+        if ($clearOldFiles) {
+            $oldDate = time() - 3600;
+            $cachedFiles = scandir($this->defaultMinifyCssDir);
+            foreach ($cachedFiles as $file) {
+                $filepath = sprintf("%s/%s", $this->defaultMinifyCssDir, $file);
+                $fileMtime = @filemtime($filepath);
+                if (strlen($file) == 35 && ($fileMtime === false || $fileMtime < $oldDate)) {
+                    @unlink($filepath);
+                }
             }
         }
 
         if (!file_exists($this->getDefaultMinifyCssFile())) {
-            return $this->minify($this->getDefaultMinifyCssFile());
+            $content = "";
+            foreach ($this->cssContent as $item) {
+                $content .= is_file($item) ? file_get_contents($item) : trim($item);
+            }
+
+            try {
+                return @file_put_contents($this->getDefaultMinifyCssFile(), CssMin::minify($content));
+            } catch (Exception $e) {
+                throw new MinifyCssException($e->getMessage(), $e->getCode(), $e);
+            }
         }
 
         return true;
@@ -137,9 +155,9 @@ class MinifyCssHandler extends CSS
 
     /**
      * @param bool $relative
-     * @return string
+     * @return string|null
      */
-    public function getDefaultMinifyCssFile($relative = false): string
+    public function getDefaultMinifyCssFile($relative = false): ?string
     {
         return $relative ? substr(str_replace($this->baseDir, "", $this->defaultMinifyCssFile), 1) : $this->defaultMinifyCssFile;
     }
@@ -162,6 +180,6 @@ class MinifyCssHandler extends CSS
             self::$md5checksum .= date('YmdHis', $fileMtime ? $fileMtime : NULL) . $fileOrString;
         }
 
-        $this->cssData[] = $fileOrString;
+        $this->cssContent[] = $fileOrString;
     }
 }

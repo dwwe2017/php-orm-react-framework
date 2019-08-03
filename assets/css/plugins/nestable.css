@@ -78,7 +78,7 @@
   width: 100%;
   text-align: center;
   text-indent: 0;
-  font-family: 'FontAwesome';
+  font-family: FontAwesome, Arial, Helvetica, sans-serif;
 }
 .dd-item > button[data-action="collapse"]:before {
   content: '\f068';

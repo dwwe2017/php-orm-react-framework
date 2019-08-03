@@ -13,7 +13,7 @@ var Plugins = function() {
 		$.browser={};(function(){$.browser.msie=false;
 		$.browser.version=0;if(navigator.userAgent.match(/MSIE ([0-9]+)\./)){
 		$.browser.msie=true;$.browser.version=RegExp.$1;}})();
-	}
+	};
 
 	/**
 	 * Daterangepicker
@@ -75,7 +75,7 @@ var Plugins = function() {
 
 			$('.range span').html(moment().subtract('days', 29).format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
 		}
-	}
+	};
 
 	/**
 	 * Sparklines
@@ -112,7 +112,7 @@ var Plugins = function() {
 				$(this).sparkline('html', Plugins.getSparklineStatboxDefaults());
 			})
 		}
-	}
+	};
 
 	/**************************
 	 * Tooltips               *
@@ -138,14 +138,14 @@ var Plugins = function() {
 			trigger: 'focus',
 			container: 'body'
 		});
-	}
+	};
 
 	/**************************
 	 * Popovers               *
 	 **************************/
 	var initPopovers = function() {
 		$('.bs-popover').popover();
-	}
+	};
 
 	/**************************
 	 * Noty                   *
@@ -169,7 +169,7 @@ var Plugins = function() {
 				}
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * Easy Pie Chart         *
@@ -189,7 +189,7 @@ var Plugins = function() {
 				lineWidth: 10
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * DataTables             *
@@ -222,7 +222,7 @@ var Plugins = function() {
 					if (search_input.parent().hasClass('input-group')) return;
 
 					//search_input.attr('placeholder', 'Search')
-					search_input.addClass('form-control')
+					search_input.addClass('form-control');
 					search_input.wrap('<div class="input-group"></div>');
 					search_input.parent().prepend('<span class="input-group-addon"><i class="icon-search"></i></span>');
 					//search_input.parent().prepend('<span class="input-group-addon"><i class="icon-search"></i></span>').css('width', '250px');
@@ -398,7 +398,7 @@ var Plugins = function() {
 				}
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * Flot Defaults          *
@@ -501,7 +501,7 @@ var Plugins = function() {
 				}
 			});
 		}
-	}
+	};
 
 	/**************************
 	 * Sparkline Statbox Defaults
@@ -513,7 +513,7 @@ var Plugins = function() {
 		barWidth: '4px',
 		barSpacing: '1px',
 		barColor: '#fff'
-	}
+	};
 
 	/**************************
 	 * ColorPicker            *
@@ -522,7 +522,7 @@ var Plugins = function() {
 		if ($.fn.colorpicker) {
 			$('.bs-colorpicker').colorpicker();
 		}
-	}
+	};
 
 	/**************************
 	 * Template               *
@@ -534,7 +534,7 @@ var Plugins = function() {
 
 			});
 		}
-	}
+	};
 
 	return {
 

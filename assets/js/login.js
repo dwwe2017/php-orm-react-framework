@@ -13,7 +13,7 @@ var Login = function() {
 		if ($.fn.uniform) {
 			$(':radio.uniform, :checkbox.uniform').uniform();
 		}
-	}
+	};
 
 	/* * * * * * * * * * * *
 	 * Sign In / Up Switcher
@@ -42,7 +42,7 @@ var Login = function() {
 				$('.sign-up').show();
 			});
 		});
-	}
+	};
 
 	/* * * * * * * * * * * *
 	 * Forgot Password
@@ -62,7 +62,7 @@ var Login = function() {
 			// to reduce redundancy
 			$('.forgot-password-link').click();
 		});
-	}
+	};
 
 	/* * * * * * * * * * * *
 	 * Validation Defaults
@@ -143,7 +143,7 @@ var Login = function() {
 				}
 			});
 		}
-	}
+	};
 
 	/* * * * * * * * * * * *
 	 * Validation for Login
@@ -166,7 +166,7 @@ var Login = function() {
 				}
 			});
 		}
-	}
+	};
 
 	/* * * * * * * * * * * *
 	 * Validation for Forgot Password
@@ -194,7 +194,7 @@ var Login = function() {
 				}
 			});
 		}
-	}
+	};
 
 	/* * * * * * * * * * * *
 	 * Validation for Registering
@@ -214,7 +214,7 @@ var Login = function() {
 				}
 			});
 		}
-	}
+	};
 
 	return {
 

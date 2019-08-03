@@ -172,7 +172,7 @@
                 id = $(this).attr('id');
 		$('#'+id+'_tagsinput .tag').remove();
 		$.fn.tagsInput.importTags(this,str);
-	}
+	};
 		
 	$.fn.tagsInput = function(options) { 
     var settings = jQuery.extend({

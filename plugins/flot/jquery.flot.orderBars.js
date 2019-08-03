@@ -120,7 +120,7 @@
         }
 
         function findPosition(serie){
-            var pos = 0
+            var pos = 0;
             for (var i = 0; i < orderedBarSeries.length; ++i) {
                 if (serie == orderedBarSeries[i]){
                     pos = i;
@@ -186,4 +186,4 @@
         version: "0.2"
     });
 
-})(jQuery)
+})(jQuery);

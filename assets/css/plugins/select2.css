@@ -510,7 +510,7 @@ disabled look for disabled choices in the results dropdown
   overflow: hidden;
   position: absolute;
   outline: 0;
-  left: 0px;
+  left: 0;
 }
 .select2-display-none {
   display: none;

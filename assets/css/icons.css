@@ -73,103 +73,103 @@
 /* Icon Definitions
 ================================================== */
 .icol-accept {
-  background-position: 0px 0px;
+  background-position: 0 0;
 }
 .icol-add {
-  background-position: -16px 0px;
+  background-position: -16px 0;
 }
 .icol-alarm {
-  background-position: -32px 0px;
+  background-position: -32px 0;
 }
 .icol-anchor {
-  background-position: -48px 0px;
+  background-position: -48px 0;
 }
 .icol-application {
-  background-position: -64px 0px;
+  background-position: -64px 0;
 }
 .icol-application2 {
-  background-position: -80px 0px;
+  background-position: -80px 0;
 }
 .icol-application-add {
-  background-position: -96px 0px;
+  background-position: -96px 0;
 }
 .icol-application-cascade {
-  background-position: -112px 0px;
+  background-position: -112px 0;
 }
 .icol-application-delete {
-  background-position: -128px 0px;
+  background-position: -128px 0;
 }
 .icol-application-double {
-  background-position: -144px 0px;
+  background-position: -144px 0;
 }
 .icol-application-edit {
-  background-position: -160px 0px;
+  background-position: -160px 0;
 }
 .icol-application-error {
-  background-position: -176px 0px;
+  background-position: -176px 0;
 }
 .icol-application-form {
-  background-position: -192px 0px;
+  background-position: -192px 0;
 }
 .icol-application-get {
-  background-position: -208px 0px;
+  background-position: -208px 0;
 }
 .icol-application-go {
-  background-position: -224px 0px;
+  background-position: -224px 0;
 }
 .icol-application-home {
-  background-position: -240px 0px;
+  background-position: -240px 0;
 }
 .icol-application-key {
-  background-position: -256px 0px;
+  background-position: -256px 0;
 }
 .icol-application-lightning {
-  background-position: -272px 0px;
+  background-position: -272px 0;
 }
 .icol-application-link {
-  background-position: -288px 0px;
+  background-position: -288px 0;
 }
 .icol-application-osx {
-  background-position: -304px 0px;
+  background-position: -304px 0;
 }
 .icol-application-osx-terminal {
-  background-position: -320px 0px;
+  background-position: -320px 0;
 }
 .icol-application-put {
-  background-position: -336px 0px;
+  background-position: -336px 0;
 }
 .icol-application-side-boxes {
-  background-position: -352px 0px;
+  background-position: -352px 0;
 }
 .icol-application-side-contract {
-  background-position: -368px 0px;
+  background-position: -368px 0;
 }
 .icol-application-side-expand {
-  background-position: -384px 0px;
+  background-position: -384px 0;
 }
 .icol-application-side-list {
-  background-position: -400px 0px;
+  background-position: -400px 0;
 }
 .icol-application-side-tree {
-  background-position: -416px 0px;
+  background-position: -416px 0;
 }
 .icol-application-split {
-  background-position: -432px 0px;
+  background-position: -432px 0;
 }
 .icol-application-tile-horizontal {
-  background-position: -448px 0px;
+  background-position: -448px 0;
 }
 .icol-application-tile-vertical {
-  background-position: -464px 0px;
+  background-position: -464px 0;
 }
 .icol-application-view-columns {
-  background-position: -480px 0px;
+  background-position: -480px 0;
 }
 .icol-application-view-detail {
-  background-position: -496px 0px;
+  background-position: -496px 0;
 }
 .icol-application-view-gallery {
-  background-position: 0px -16px;
+  background-position: 0 -16px;
 }
 .icol-application-view-icons {
   background-position: -16px -16px;
@@ -265,7 +265,7 @@
   background-position: -496px -16px;
 }
 .icol-bookmark {
-  background-position: 0px -32px;
+  background-position: 0 -32px;
 }
 .icol-bookmark-book {
   background-position: -16px -32px;
@@ -361,7 +361,7 @@
   background-position: -496px -32px;
 }
 .icol-chart-pie {
-  background-position: 0px -48px;
+  background-position: 0 -48px;
 }
 .icol-clipboard-paste-image {
   background-position: -16px -48px;
@@ -457,7 +457,7 @@
   background-position: -496px -48px;
 }
 .icol-cross-octagon {
-  background-position: 0px -64px;
+  background-position: 0 -64px;
 }
 .icol-cross-octagon-fram {
   background-position: -16px -64px;
@@ -553,7 +553,7 @@
   background-position: -496px -64px;
 }
 .icol-doc-page-previous {
-  background-position: 0px -80px;
+  background-position: 0 -80px;
 }
 .icol-doc-pdf {
   background-position: -16px -80px;
@@ -649,7 +649,7 @@
   background-position: -496px -80px;
 }
 .icol-emoticon-happy {
-  background-position: 0px -96px;
+  background-position: 0 -96px;
 }
 .icol-emoticon-smile {
   background-position: -16px -96px;
@@ -745,7 +745,7 @@
   background-position: -496px -96px;
 }
 .icol-heart-break {
-  background-position: 0px -112px;
+  background-position: 0 -112px;
 }
 .icol-heart-empty {
   background-position: -16px -112px;
@@ -841,7 +841,7 @@
   background-position: -496px -112px;
 }
 .icol-lightbulb-off {
-  background-position: 0px -128px;
+  background-position: 0 -128px;
 }
 .icol-lightning {
   background-position: -16px -128px;
@@ -937,7 +937,7 @@
   background-position: -496px -128px;
 }
 .icol-page {
-  background-position: 0px -144px;
+  background-position: 0 -144px;
 }
 .icol-page-2 {
   background-position: -16px -144px;
@@ -1033,7 +1033,7 @@
   background-position: -496px -144px;
 }
 .icol-page-white-stack {
-  background-position: 0px -160px;
+  background-position: 0 -160px;
 }
 .icol-page-white-star {
   background-position: -16px -160px;
@@ -1129,7 +1129,7 @@
   background-position: -496px -160px;
 }
 .icol-printer {
-  background-position: 0px -176px;
+  background-position: 0 -176px;
 }
 .icol-projection-screen {
   background-position: -16px -176px;
@@ -1225,7 +1225,7 @@
   background-position: -496px -176px;
 }
 .icol-shape-move-front {
-  background-position: 0px -192px;
+  background-position: 0 -192px;
 }
 .icol-shape-square {
   background-position: -16px -192px;
@@ -1321,7 +1321,7 @@
   background-position: -496px -192px;
 }
 .icol-sport-golf {
-  background-position: 0px -208px;
+  background-position: 0 -208px;
 }
 .icol-sport-raquet {
   background-position: -16px -208px;
@@ -1417,7 +1417,7 @@
   background-position: -496px -208px;
 }
 .icol-text-horizontalrule {
-  background-position: 0px -224px;
+  background-position: 0 -224px;
 }
 .icol-text-indent {
   background-position: -16px -224px;
@@ -1513,7 +1513,7 @@
   background-position: -496px -224px;
 }
 .icol-ui-tab-disable {
-  background-position: 0px -240px;
+  background-position: 0 -240px;
 }
 .icol-ui-tab-side {
   background-position: -16px -240px;
@@ -1609,67 +1609,67 @@
   background-position: -496px -240px;
 }
 .icos-abacus {
-  background-position: 0px 0px;
+  background-position: 0 0;
 }
 .icos-acces-denied-sign {
-  background-position: -18px 0px;
+  background-position: -18px 0;
 }
 .icos-address-book-2 {
-  background-position: -36px 0px;
+  background-position: -36px 0;
 }
 .icos-address-book {
-  background-position: -54px 0px;
+  background-position: -54px 0;
 }
 .icos-admin-user-2 {
-  background-position: -72px 0px;
+  background-position: -72px 0;
 }
 .icos-admin-user {
-  background-position: -90px 0px;
+  background-position: -90px 0;
 }
 .icos-airplane {
-  background-position: -108px 0px;
+  background-position: -108px 0;
 }
 .icos-alarm-bell-2 {
-  background-position: -126px 0px;
+  background-position: -126px 0;
 }
 .icos-alarm-bell {
-  background-position: -144px 0px;
+  background-position: -144px 0;
 }
 .icos-alarm-clock {
-  background-position: -162px 0px;
+  background-position: -162px 0;
 }
 .icos-alert-2 {
-  background-position: -180px 0px;
+  background-position: -180px 0;
 }
 .icos-alert {
-  background-position: -198px 0px;
+  background-position: -198px 0;
 }
 .icos-android {
-  background-position: -216px 0px;
+  background-position: -216px 0;
 }
 .icos-apartment-building {
-  background-position: -234px 0px;
+  background-position: -234px 0;
 }
 .icos-archive {
-  background-position: -252px 0px;
+  background-position: -252px 0;
 }
 .icos-arrow-down {
-  background-position: -270px 0px;
+  background-position: -270px 0;
 }
 .icos-arrow-left {
-  background-position: -288px 0px;
+  background-position: -288px 0;
 }
 .icos-arrow-right {
-  background-position: -306px 0px;
+  background-position: -306px 0;
 }
 .icos-arrow-up {
-  background-position: -324px 0px;
+  background-position: -324px 0;
 }
 .icos-bag {
-  background-position: -342px 0px;
+  background-position: -342px 0;
 }
 .icos-balloons {
-  background-position: 0px -18px;
+  background-position: 0 -18px;
 }
 .icos-bandaid {
   background-position: -18px -18px;
@@ -1729,7 +1729,7 @@
   background-position: -342px -18px;
 }
 .icos-book {
-  background-position: 0px -36px;
+  background-position: 0 -36px;
 }
 .icos-bookmark {
   background-position: -18px -36px;
@@ -1789,7 +1789,7 @@
   background-position: -342px -36px;
 }
 .icos-chart-6 {
-  background-position: 0px -54px;
+  background-position: 0 -54px;
 }
 .icos-chart-7 {
   background-position: -18px -54px;
@@ -1849,7 +1849,7 @@
   background-position: -342px -54px;
 }
 .icos-coverflow {
-  background-position: 0px -72px;
+  background-position: 0 -72px;
 }
 .icos-create {
   background-position: -18px -72px;
@@ -1909,7 +1909,7 @@
   background-position: -342px -72px;
 }
 .icos-eject {
-  background-position: 0px -90px;
+  background-position: 0 -90px;
 }
 .icos-electricity-input {
   background-position: -18px -90px;
@@ -1969,7 +1969,7 @@
   background-position: -342px -90px;
 }
 .icos-film-strip {
-  background-position: 0px -108px;
+  background-position: 0 -108px;
 }
 .icos-film {
   background-position: -18px -108px;
@@ -2029,7 +2029,7 @@
   background-position: -342px -108px;
 }
 .icos-hd-2 {
-  background-position: 0px -126px;
+  background-position: 0 -126px;
 }
 .icos-hd-3 {
   background-position: -18px -126px;
@@ -2089,7 +2089,7 @@
   background-position: -342px -126px;
 }
 .icos-iphone-4 {
-  background-position: 0px -144px;
+  background-position: 0 -144px;
 }
 .icos-ipod-classic {
   background-position: -18px -144px;
@@ -2149,7 +2149,7 @@
   background-position: -342px -144px;
 }
 .icos-locked {
-  background-position: 0px -162px;
+  background-position: 0 -162px;
 }
 .icos-looking-glass {
   background-position: -18px -162px;
@@ -2209,7 +2209,7 @@
   background-position: -342px -162px;
 }
 .icos-monitor {
-  background-position: 0px -180px;
+  background-position: 0 -180px;
 }
 .icos-month-calendar {
   background-position: -18px -180px;
@@ -2269,7 +2269,7 @@
   background-position: -342px -180px;
 }
 .icos-pdf-documents {
-  background-position: 0px -198px;
+  background-position: 0 -198px;
 }
 .icos-pencil-2 {
   background-position: -18px -198px;
@@ -2329,7 +2329,7 @@
   background-position: -342px -198px;
 }
 .icos-previous-track {
-  background-position: 0px -216px;
+  background-position: 0 -216px;
 }
 .icos-price-tag {
   background-position: -18px -216px;
@@ -2389,7 +2389,7 @@
   background-position: -342px -216px;
 }
 .icos-scissors-2 {
-  background-position: 0px -234px;
+  background-position: 0 -234px;
 }
 .icos-scissors {
   background-position: -18px -234px;
@@ -2449,7 +2449,7 @@
   background-position: -342px -234px;
 }
 .icos-single-powerpoint-document {
-  background-position: 0px -252px;
+  background-position: 0 -252px;
 }
 .icos-single-user {
   background-position: -18px -252px;
@@ -2509,7 +2509,7 @@
   background-position: -342px -252px;
 }
 .icos-suitcase {
-  background-position: 0px -270px;
+  background-position: 0 -270px;
 }
 .icos-sweater {
   background-position: -18px -270px;
@@ -2569,7 +2569,7 @@
   background-position: -342px -270px;
 }
 .icos-under-construction {
-  background-position: 0px -288px;
+  background-position: 0 -288px;
 }
 .icos-unfavorite {
   background-position: -18px -288px;
@@ -2629,7 +2629,7 @@
   background-position: -342px -288px;
 }
 .icos-word-document {
-  background-position: 0px -306px;
+  background-position: 0 -306px;
 }
 .icos-word-documents-2 {
   background-position: -18px -306px;

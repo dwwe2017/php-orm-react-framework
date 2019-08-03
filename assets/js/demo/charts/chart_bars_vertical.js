@@ -21,7 +21,7 @@ $(document).ready(function(){
 	for (var i = 0; i <= 7; i += 1)
 		d3.push([i, parseInt(Math.random() * 30)]);
 
-	var ds = new Array();
+	var ds = [];
 
 	ds.push({
 		label: "Bar #1",

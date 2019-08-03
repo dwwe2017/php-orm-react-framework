@@ -408,4 +408,4 @@ ResponsiveDatatablesHelper.prototype.disable = function (disable) {
 
         this.tableElement.off('click', 'span.responsiveExpander', this.showRowDetailEventHandler);
     }
-}
+};

@@ -1,10 +1,9 @@
 {% block layout_js %}
     <!--=== JavaScript ===-->
     {% if minified_js != false %}
-        <script type="text/javascript" src="assets/js/libs/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="{{ minified_js }}"></script>
     {% else %}
-        <script type="text/javascript" src="assets/js/libs/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="assets/js/libs/jquery-3.4.1.min.js"></script>
         <script type="text/javascript" src="plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js"></script>
 
         <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>

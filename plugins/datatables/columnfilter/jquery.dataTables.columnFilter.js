@@ -347,7 +347,7 @@
                     if (escape(aData[j]) == currentFilter
                         || escape(aData[j]) == escape(currentFilter)
                         )
-                        selected = 'selected '
+                        selected = 'selected ';
                     r += '<option ' + selected + ' value="' + escape(aData[j]) + '">' + aData[j] + '</option>';
                 }
                 else {
@@ -736,7 +736,7 @@
                 var fnSearch_ = function () {
                     var id = oTable.attr("id");
                     return $("#" + id + "_range_from_" + aiCustomSearch_Indexes[j]).val() + properties.sRangeSeparator + $("#" + id + "_range_to_" + aiCustomSearch_Indexes[j]).val()
-                }
+                };
                 afnSearch_.push(fnSearch_);
             }
 
