@@ -15,6 +15,8 @@ use Configs\DoctrineConfig;
 use Configs\LoggerConfig;
 use Configs\TemplateConfig;
 use Doctrine\ORM\EntityManager;
+use Handlers\MinifyCssHandler;
+use Handlers\MinifyJsHandler;
 use Monolog\Logger;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -30,7 +32,7 @@ trait AbstractBaseTrait
     /**
      * @var string
      */
-    private $basePath = "";
+    private $baseDir = "";
 
     /**
      * @var CoreConfig|null
@@ -56,6 +58,16 @@ trait AbstractBaseTrait
      * @var TemplateWrapper
      */
     private $template;
+
+    /**
+     * @var MinifyCssHandler
+     */
+    private $cssHandler;
+
+    /**
+     * @var MinifyJsHandler
+     */
+    private $jsHandler;
 
     /**
      * @var Logger
@@ -93,9 +105,9 @@ trait AbstractBaseTrait
     /**
      * @return string
      */
-    protected function getBasePath(): string
+    protected function getBaseDir(): string
     {
-        return $this->basePath;
+        return $this->baseDir;
     }
 
     /**

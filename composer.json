@@ -5,6 +5,7 @@
             "Controllers": "./src/",
             "Entities": "./src/",
             "Exceptions": "./src/",
+            "Handlers": "./src/",
             "Interfaces": "./src/",
             "Repositories": "./src/",
             "Traits": "./src/",
@@ -33,6 +34,8 @@
         "ezyang/htmlpurifier": "^4.11",
         "guzzlehttp/guzzle": "^6.3",
         "twig/twig": "^2.11",
-        "monolog/monolog": "^1.24"
+        "monolog/monolog": "^1.24",
+        "dwwe/whoops": "^1.0",
+        "matthiasmullie/minify": "^1.3"
     }
 }

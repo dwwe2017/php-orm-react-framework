@@ -14,8 +14,20 @@ use Configs\CoreConfig;
 use Configs\DoctrineConfig;
 use Configs\LoggerConfig;
 use Configs\TemplateConfig;
+use Exceptions\ConfigException;
+use Exceptions\DoctrineException;
+use Exceptions\LoggerException;
+use Exceptions\MinifyCssException;
+use Exceptions\MinifyJsException;
+use Exceptions\TemplateException;
+use Handlers\ErrorHandler;
+use Handlers\MinifyCssHandler;
+use Handlers\MinifyJsHandler;
+use Throwable;
 use Traits\AbstractBaseTrait;
-use Exceptions\ConfigException, Exceptions\DoctrineException, Exceptions\TemplateException, Exceptions\LoggerException;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * Class AbstractBase
@@ -27,26 +39,85 @@ abstract class AbstractBase
 
     /**
      * AbstractBase constructor.
-     * @param string $basePath
+     * @param string $baseDir
      * @throws ConfigException
      * @throws DoctrineException
      * @throws LoggerException
+     * @throws MinifyCssException
+     * @throws MinifyJsException
      * @throws TemplateException
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
      */
-    public function __construct(string $basePath)
+    public function __construct(string $baseDir)
     {
-        $this->basePath = $basePath;
-        $this->coreConfig = CoreConfig::init($basePath);
-
-        $this->initDoctrine();
-        $this->initTemplate();
-        $this->initLogger();
+        $this->baseDir = $baseDir;
+        $this->initCore();
     }
 
     /**
+     * @throws ConfigException
+     * @throws DoctrineException
+     * @throws LoggerException
+     * @throws MinifyCssException
+     * @throws MinifyJsException
+     * @throws TemplateException
+     */
+    private function initCore()
+    {
+        $this->coreConfig = CoreConfig::init($this->getBaseDir());
+
+        // 1. Logging
+        $this->initLogger();
+
+        // 2. Error handling, etc
+        $this->initHandlers();
+
+        // 3. Database, ORM
+        $this->initDoctrine();
+
+        // 4. Twig template engine
+        $this->initTemplate();
+    }
+
+    /**
+     * 1. Logging
+     * @throws LoggerException
+     */
+    private function initLogger(): void
+    {
+        $this->logger = LoggerConfig::init(
+            $this->getCoreConfig(),
+            $this->getLogLevel()
+        );
+    }
+
+    /**
+     * 2. Error handling, etc
+     */
+
+    /**
+     * @throws MinifyCssException
+     * @throws MinifyJsException
+     */
+    private function initHandlers(): void
+    {
+        ErrorHandler::init(
+            $this->getCoreConfig(),
+            $this->getLogger()
+        );
+
+        $this->cssHandler = MinifyCssHandler::init(
+            $this->getCoreConfig()
+        );
+
+        $this->cssHandler->addCss("test", true);
+
+        $this->jsHandler = MinifyJsHandler::init(
+            $this->getCoreConfig()
+        );
+    }
+
+    /**
+     * 3. Database, ORM
      * @throws DoctrineException
      */
     private function initDoctrine(): void
@@ -60,6 +131,7 @@ abstract class AbstractBase
     }
 
     /**
+     * 4. Twig template engine
      * @throws TemplateException
      */
     private function initTemplate(): void
@@ -70,19 +142,11 @@ abstract class AbstractBase
     }
 
     /**
-     * @throws LoggerException
-     */
-    private function initLogger(): void
-    {
-        $this->logger = LoggerConfig::init(
-            $this->getCoreConfig(),
-            $this->getLogLevel()
-        );
-    }
-
-    /**
      * @param string $action
-     * @throws \Throwable
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws Throwable
      */
     public function run(string $action): void
     {
@@ -90,8 +154,6 @@ abstract class AbstractBase
 
         $methodName = $action . 'Action';
         $this->setTemplate($methodName);
-
-        $this->template = $this->twig->getTemplateWrapper($this->getTemplatePath());
 
         if (method_exists($this, $methodName))
         {
@@ -132,7 +194,7 @@ abstract class AbstractBase
         }
         else
         {
-            $controller = new $controllerName($this->basePath);
+            $controller = new $controllerName($this->baseDir);
 
             $controller->run($action);
         }
@@ -166,11 +228,17 @@ abstract class AbstractBase
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function render(): void
     {
+        $this->cssHandler->compileAndGet();
+        $this->jsHandler->compileAndGet();
+
         $this->addContext("message", $this->getMessage());
+        $this->addContext("minified_css", $this->cssHandler->getDefaultMinifyCssFile(true));
+        $this->addContext("minified_js", $this->jsHandler->getDefaultMinifyJsFile(true));
+
         echo $this->template->render($this->context);
     }
 }

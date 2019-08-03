@@ -92,7 +92,7 @@ class LoggerConfig
             $this->defaultLogger = new Logger(strtoupper($application));
             $this->defaultLogger->pushHandler(new StreamHandler($defaultLogFile, $level));
             $this->defaultLogger->pushHandler(new FirePHPHandler($level));
-            $this->defaultLogger->debug("Logger successfully initialized");
+            //$this->defaultLogger->debug("Logger successfully initialized");
         }
         catch (\Exception $e)
         {
@@ -104,16 +104,16 @@ class LoggerConfig
      * @param CoreConfig $config
      * @param int $level
      * @param string $application
-     * @return LoggerConfig|null
+     * @return Logger|null
      * @throws LoggerException
      */
     public static function init(CoreConfig $config, $level = self::ERROR, $application = "tsi")
     {
-        if (self::$instance == null) {
+        if (is_null(self::$instance)) {
             self::$instance = new LoggerConfig($config, $level, $application);
         }
 
-        return self::$instance;
+        return self::$instance->getDefaultLogger();
     }
 
     /**

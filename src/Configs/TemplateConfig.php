@@ -53,7 +53,6 @@ class TemplateConfig
      * TemplateConfig constructor.
      * @param CoreConfig $config
      * @param string $templates_root
-     * @param string $base_template
      * @throws TemplateException
      */
     public function __construct(CoreConfig $config, string $templates_root = "templates")
@@ -105,7 +104,6 @@ class TemplateConfig
     /**
      * @param CoreConfig $config
      * @param string $templates_root
-     * @param string $base_template
      * @return TemplateConfig|null
      * @throws TemplateException
      */
@@ -119,35 +117,11 @@ class TemplateConfig
     }
 
     /**
-     * @return Environment|null
-     */
-    public function getTwig(): ?Environment
-    {
-        return $this->twig;
-    }
-
-    /**
      * @return array
      */
     public function getOptions(): array
     {
         return $this->options;
-    }
-
-    /**
-     * @return FilesystemLoader|null
-     */
-    public function getLoader(): ?FilesystemLoader
-    {
-        return $this->loader;
-    }
-
-    /**
-     * @param string $baseTemplate
-     */
-    public function setBaseTemplate(string $baseTemplate): void
-    {
-        $this->baseTemplate = $baseTemplate;
     }
 
     /**

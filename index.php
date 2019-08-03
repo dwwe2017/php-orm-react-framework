@@ -1,14 +1,14 @@
 <?php
 
+use Handlers\ErrorHandler;
+
 require_once 'inc/functions.inc.php';
 require_once 'inc/helper.inc.php';
 require_once 'inc/bootstrap.inc.php';
 
-// Session needed for flash messages
 session_start();
 
-// Path to our index.php
-$basePath = dirname(__FILE__);
+$baseDir = dirname(__FILE__);
 
 $controller = $_GET['controller'] ?? 'index';
 $controller = preg_replace("/[^a-z]/", "", $controller);
@@ -21,11 +21,11 @@ $controllerName = $controllerNamespace . ucfirst($controller) . 'Controller';
 
 if(class_exists($controllerName))
 {
-    $requestController = new $controllerName($basePath);
+    $requestController = new $controllerName($baseDir);
 
     if(!method_exists($requestController, "run"))
     {
-        $requestController = new Controllers\IndexController($basePath);
+        $requestController = new Controllers\IndexController($baseDir);
         $requestController->render404();
     }
     else
@@ -35,6 +35,7 @@ if(class_exists($controllerName))
 }
 else
 {
-    $requestController = new Controllers\IndexController($basePath);
+    $requestController = new Controllers\IndexController($baseDir);
     $requestController->render404();
 }
+

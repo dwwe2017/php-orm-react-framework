@@ -1,44 +1,48 @@
 {% block layout_js %}
     <!--=== JavaScript ===-->
+    {% if minified_js != false %}
+        <script type="text/javascript" src="assets/js/libs/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="{{ minified_js }}"></script>
+    {% else %}
+        <script type="text/javascript" src="assets/js/libs/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js"></script>
 
-    <script type="text/javascript" src="assets/js/libs/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js"></script>
+        <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="assets/js/libs/lodash.compat.min.js"></script>
 
-    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="assets/js/libs/lodash.compat.min.js"></script>
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+        <script src="assets/js/libs/html5shiv.js"></script>
+        <![endif]-->
 
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script src="assets/js/libs/html5shiv.js"></script>
-    <![endif]-->
+        <!-- Smartphone Touch Events -->
+        <script type="text/javascript" src="plugins/touchpunch/jquery.ui.touch-punch.min.js"></script>
+        <script type="text/javascript" src="plugins/event.swipe/jquery.event.move.js"></script>
+        <script type="text/javascript" src="plugins/event.swipe/jquery.event.swipe.js"></script>
 
-    <!-- Smartphone Touch Events -->
-    <script type="text/javascript" src="plugins/touchpunch/jquery.ui.touch-punch.min.js"></script>
-    <script type="text/javascript" src="plugins/event.swipe/jquery.event.move.js"></script>
-    <script type="text/javascript" src="plugins/event.swipe/jquery.event.swipe.js"></script>
+        <!-- General -->
+        <script type="text/javascript" src="assets/js/libs/breakpoints.js"></script>
+        <script type="text/javascript" src="plugins/respond/respond.min.js"></script> <!-- Polyfill for min/max-width CSS3 Media Queries (only for IE8) -->
+        <script type="text/javascript" src="plugins/cookie/jquery.cookie.min.js"></script>
+        <script type="text/javascript" src="plugins/slimscroll/jquery.slimscroll.min.js"></script>
+        <script type="text/javascript" src="plugins/slimscroll/jquery.slimscroll.horizontal.min.js"></script>
 
-    <!-- General -->
-    <script type="text/javascript" src="assets/js/libs/breakpoints.js"></script>
-    <script type="text/javascript" src="plugins/respond/respond.min.js"></script> <!-- Polyfill for min/max-width CSS3 Media Queries (only for IE8) -->
-    <script type="text/javascript" src="plugins/cookie/jquery.cookie.min.js"></script>
-    <script type="text/javascript" src="plugins/slimscroll/jquery.slimscroll.min.js"></script>
-    <script type="text/javascript" src="plugins/slimscroll/jquery.slimscroll.horizontal.min.js"></script>
+        <!-- App -->
+        <script type="text/javascript" src="assets/js/app.js"></script>
+        <script type="text/javascript" src="assets/js/plugins.js"></script>
+        <script type="text/javascript" src="assets/js/plugins.form-components.js"></script>
 
-    <!-- App -->
-    <script type="text/javascript" src="assets/js/app.js"></script>
-    <script type="text/javascript" src="assets/js/plugins.js"></script>
-    <script type="text/javascript" src="assets/js/plugins.form-components.js"></script>
+        {% autoescape "js" %}
+            <script>
+                $(document).ready(function(){
+                    "use strict";
 
-    {% autoescape "js" %}
-        <script>
-            $(document).ready(function(){
-                "use strict";
-
-                App.init(); // Init layout and core plugins
-                Plugins.init(); // Init all plugins
-                FormComponents.init(); // Init all form-specific plugins
-            });
-        </script>
-    {% endautoescape %}
+                    App.init(); // Init layout and core plugins
+                    Plugins.init(); // Init all plugins
+                    FormComponents.init(); // Init all form-specific plugins
+                });
+            </script>
+        {% endautoescape %}
+    {% endif %}
 
 {% endblock layout_js %}
