@@ -51,11 +51,11 @@ class TemplateConfig
 
     /**
      * TemplateConfig constructor.
-     * @param CoreConfig $config
+     * @param DefaultConfig $config
      * @param string $templates_root
      * @throws TemplateException
      */
-    public function __construct(CoreConfig $config, string $templates_root = "templates")
+    public function __construct(DefaultConfig $config, string $templates_root = "templates")
     {
         $baseDir = $config->getBaseDir();
 
@@ -102,12 +102,12 @@ class TemplateConfig
     }
 
     /**
-     * @param CoreConfig $config
+     * @param DefaultConfig $config
      * @param string $templates_root
      * @return TemplateConfig|null
      * @throws TemplateException
      */
-    public static function init(CoreConfig $config, string $templates_root = "templates")
+    public static function init(DefaultConfig $config, string $templates_root = "templates")
     {
         if (self::$instance == null) {
             self::$instance = new TemplateConfig($config, $templates_root);

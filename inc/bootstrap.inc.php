@@ -2,11 +2,13 @@
 
 use Handlers\ErrorHandler;
 
-
-require_once __DIR__ . '/../vendor/autoload.php';
+/**
+ * @var $autoload Composer\Autoload\ClassLoader
+ */
+$autoload = require_once __DIR__ . '/../autoload.php';
 
 /**
- * Without transferring the CoreConfig, the error handling itself attempts to obtain the config
+ * Without transferring the DefaultConfig, the error handling itself attempts to obtain the config
  * and sets the debug mode to true in the event of an error, whereby all errors are output in a readable manner.
  */
 ErrorHandler::init();

@@ -10,7 +10,7 @@
 namespace Controllers;
 
 
-use Configs\CoreConfig;
+use Configs\DefaultConfig;
 use Configs\DoctrineConfig;
 use Configs\LoggerConfig;
 use Configs\TemplateConfig;
@@ -24,7 +24,7 @@ use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Throwable;
-use Traits\AbstractBaseTrait;
+use Traits\ControllerTraits\AbstractBaseTrait;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -63,7 +63,7 @@ abstract class AbstractBase
      */
     private function initCore()
     {
-        $this->coreConfig = CoreConfig::init($this->getBaseDir());
+        $this->coreConfig = DefaultConfig::init($this->getBaseDir());
 
         // 1. Logging
         $this->initLogger();

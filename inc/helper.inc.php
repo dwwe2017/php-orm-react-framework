@@ -1,4 +1,8 @@
 <?php
+/**
+ * View Helper functions
+ */
+
 
 /**
  * Default view helper function for user input to be reissued or saved

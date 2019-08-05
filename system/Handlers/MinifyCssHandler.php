@@ -10,7 +10,7 @@
 namespace Handlers;
 
 
-use Configs\CoreConfig;
+use Configs\DefaultConfig;
 use CssMin;
 use Exception;
 use Exceptions\MinifyCssException;
@@ -57,10 +57,10 @@ class MinifyCssHandler
 
     /**
      * MinifyCssHandler constructor.
-     * @param CoreConfig $config
+     * @param DefaultConfig $config
      * @throws MinifyCssException
      */
-    public function __construct(CoreConfig $config)
+    public function __construct(DefaultConfig $config)
     {
         $this->baseDir = $config->getBaseDir();
 
@@ -102,11 +102,11 @@ class MinifyCssHandler
     }
 
     /**
-     * @param CoreConfig $config
+     * @param DefaultConfig $config
      * @return MinifyCssHandler|null
      * @throws MinifyCssException
      */
-    public static function init(CoreConfig $config)
+    public static function init(DefaultConfig $config)
     {
         if (is_null(self::$instance)) {
             self::$instance = new self($config);

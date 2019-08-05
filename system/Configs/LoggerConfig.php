@@ -10,6 +10,7 @@
 namespace Configs;
 
 
+use Exception;
 use Exceptions\LoggerException;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\StreamHandler;
@@ -53,12 +54,12 @@ class LoggerConfig
 
     /**
      * LoggerConfig constructor.
-     * @param CoreConfig $config
+     * @param DefaultConfig $config
      * @param int $level
      * @param string $application
      * @throws LoggerException
      */
-    public function __construct(CoreConfig $config, $level = self::ERROR, $application = "tsi")
+    public function __construct(DefaultConfig $config, $level = self::ERROR, $application = "tsi")
     {
         if($config->isDebugMode())
         {
@@ -92,22 +93,21 @@ class LoggerConfig
             $this->defaultLogger = new Logger(strtoupper($application));
             $this->defaultLogger->pushHandler(new StreamHandler($defaultLogFile, $level));
             $this->defaultLogger->pushHandler(new FirePHPHandler($level));
-            //$this->defaultLogger->debug("Logger successfully initialized");
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             throw new LoggerException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
     /**
-     * @param CoreConfig $config
+     * @param DefaultConfig $config
      * @param int $level
      * @param string $application
      * @return Logger|null
      * @throws LoggerException
      */
-    public static function init(CoreConfig $config, $level = self::ERROR, $application = "tsi")
+    public static function init(DefaultConfig $config, $level = self::ERROR, $application = "tsi")
     {
         if (is_null(self::$instance)) {
             self::$instance = new LoggerConfig($config, $level, $application);

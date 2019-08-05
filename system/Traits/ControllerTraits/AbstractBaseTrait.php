@@ -7,10 +7,10 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Traits;
+namespace Traits\ControllerTraits;
 
 
-use Configs\CoreConfig;
+use Configs\DefaultConfig;
 use Configs\DoctrineConfig;
 use Configs\LoggerConfig;
 use Configs\TemplateConfig;
@@ -35,7 +35,7 @@ trait AbstractBaseTrait
     private $baseDir = "";
 
     /**
-     * @var CoreConfig|null
+     * @var DefaultConfig|null
      */
     private $coreConfig = null;
 
@@ -111,9 +111,9 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return CoreConfig
+     * @return DefaultConfig
      */
-    protected function getCoreConfig(): CoreConfig
+    protected function getCoreConfig(): DefaultConfig
     {
         return $this->coreConfig;
     }

@@ -13,13 +13,13 @@ namespace Configs;
 use Exceptions\ConfigException;
 
 /**
- * Class CoreConfig
+ * Class DefaultConfig
  * @package Configs
  */
-class CoreConfig
+class DefaultConfig
 {
     /**
-     * @var CoreConfig|null
+     * @var DefaultConfig|null
      */
     private static $instance;
 
@@ -102,13 +102,13 @@ class CoreConfig
 
     /**
      * @param string $base_dir
-     * @return CoreConfig|null
+     * @return DefaultConfig|null
      * @throws ConfigException
      */
     public static function init(string $base_dir)
     {
         if (is_null(self::$instance)) {
-            self::$instance = new CoreConfig($base_dir);
+            self::$instance = new DefaultConfig($base_dir);
         }
 
         return self::$instance;
@@ -189,6 +189,20 @@ class CoreConfig
     public function getTsiOptions(): array
     {
         return $this->tsiOptions;
+    }
+
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
+    public function getTsiOptionsProperty(string $key)
+    {
+        if(key_exists($key, $this->tsiOptions))
+        {
+            return $this->tsiOptions[$key];
+        }
+
+        return null;
     }
 
     /**

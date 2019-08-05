@@ -10,7 +10,7 @@
 namespace Handlers;
 
 
-use Configs\CoreConfig;
+use Configs\DefaultConfig;
 use Configs\LoggerConfig;
 use Exceptions\ConfigException;
 use Monolog\Logger;
@@ -46,10 +46,10 @@ class ErrorHandler
 
     /**
      * ErrorHandler constructor.
-     * @param CoreConfig|null $config
+     * @param DefaultConfig|null $config
      * @param Logger|null $logger
      */
-    public function __construct(CoreConfig $config = null, Logger $logger = null)
+    public function __construct(DefaultConfig $config = null, Logger $logger = null)
     {
         $whoops = new Run();
 
@@ -59,7 +59,7 @@ class ErrorHandler
 
             try
             {
-                $config = CoreConfig::init($baseDir);
+                $config = DefaultConfig::init($baseDir);
                 $baseDir = $config->getBaseDir();
                 $debugMode = $config->isDebugMode();
             }
@@ -73,7 +73,7 @@ class ErrorHandler
         {
             $this->logger = $logger;
         }
-        elseif($config instanceof CoreConfig)
+        elseif($config instanceof DefaultConfig)
         {
             $this->initLogger($config);
         }
@@ -135,11 +135,11 @@ class ErrorHandler
     }
 
     /**
-     * @param CoreConfig|null $config
+     * @param DefaultConfig|null $config
      * @param Logger|null $logger
      * @return ErrorHandler|null
      */
-    public static function init(CoreConfig $config = null, Logger $logger = null)
+    public static function init(DefaultConfig $config = null, Logger $logger = null)
     {
         if(is_null(self::$instance))
         {
@@ -150,9 +150,9 @@ class ErrorHandler
     }
 
     /**
-     * @param CoreConfig $config
+     * @param DefaultConfig $config
      */
-    private function initLogger(CoreConfig $config): void
+    private function initLogger(DefaultConfig $config): void
     {
         try
         {

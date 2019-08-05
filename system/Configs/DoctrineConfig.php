@@ -33,11 +33,11 @@ class DoctrineConfig extends WDB
     /**
      * @noinspection PhpMissingParentConstructorInspection
      * DoctrineConfig constructor.
-     * @param CoreConfig $config
+     * @param DefaultConfig $config
      * @param string $connectionOption
      * @throws DoctrineException
      */
-    public function __construct(CoreConfig $config, $connectionOption = "default")
+    public function __construct(DefaultConfig $config, $connectionOption = "default")
     {
         $this->baseDir = $config->getBaseDir();
 
@@ -60,7 +60,7 @@ class DoctrineConfig extends WDB
             $connectionOptions = $connectionOptions[$connectionOption];
         }
 
-        $configDefaultEntityDir = sprintf("%s/src/Entities", $this->baseDir);
+        $configDefaultEntityDir = sprintf("%s/system/Entities", $this->baseDir);
 
         if(!file_exists($configDefaultEntityDir))
         {
@@ -118,12 +118,12 @@ class DoctrineConfig extends WDB
     }
 
     /**
-     * @param CoreConfig $config
+     * @param DefaultConfig $config
      * @param string $connectionOption
      * @return DoctrineConfig|null
      * @throws DoctrineException
      */
-    public static function init(CoreConfig $config, $connectionOption = "default")
+    public static function init(DefaultConfig $config, $connectionOption = "default")
     {
         if (self::$singletonInstance == null) {
             self::$singletonInstance = new DoctrineConfig($config, $connectionOption);
