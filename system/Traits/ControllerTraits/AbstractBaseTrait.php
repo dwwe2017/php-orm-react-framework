@@ -145,11 +145,30 @@ trait AbstractBaseTrait
     /**
      * @return string|null
      */
+    protected function getModuleName(): ?string
+    {
+        $className = get_class($this); // i.e. Controllers\MainController or Controllers\Backend\MainController
+        $isModule =  (strcasecmp(substr($className, 0, 7), "Modules") === 0);
+        $nameParts = $isModule ? explode("\\", $className) : null;
+        return $isModule ? $nameParts[1] : null;
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getModuleTemplatesPath(): ?string
+    {
+        $moduleName = $this->getModuleName();
+        return $moduleName ? sprintf("modules/%s/templates", $moduleName) : null;
+    }
+
+    /**
+     * @return string|null
+     */
     protected function getControllerShortName(): ?string
     {
-        $className = get_class($this); // i.e. Controllers\IndexController or Controllers\Backend\IndexController
-
-        return preg_replace('/^([A-Za-z]+\\\)+/', '', $className); // i.e. IndexController
+        $className = get_class($this); // i.e. Controllers\MainController or Controllers\Backend\MainController
+        return preg_replace('/^([A-Za-z]+\\\)+/', '', $className); // i.e. MainController
     }
 
     /**
@@ -158,8 +177,7 @@ trait AbstractBaseTrait
     protected function setTemplatePath(string $templatePath): void
     {
         $controller = $this->getControllerShortName();
-
-        $this->templatePath = $controller . '/' . $templatePath . '.tpl.twig';
+        $this->templatePath .= $controller . '/' . $templatePath . '.tpl.twig';
     }
 
     /**

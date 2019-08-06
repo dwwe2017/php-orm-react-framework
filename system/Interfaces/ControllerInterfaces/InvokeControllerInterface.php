@@ -7,22 +7,17 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Modules\Dashboard\Controllers;
+namespace Interfaces\ControllerInterfaces;
 
-
-use Controllers\MainController;
 
 /**
- * Class MainController
- * @package Modules\Dashboard\Controllers
+ * Interface InvokeControllerInterface
+ * @package Interfaces\ControllerInterfaces
  */
-class IndexController extends MainController
+interface InvokeControllerInterface
 {
     /**
-     *
+     * @return mixed|null
      */
-    public function indexAction(): void
-    {
-
-    }
+    public function indexAction();
 }

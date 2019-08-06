@@ -52,10 +52,11 @@ class TemplateConfig
     /**
      * TemplateConfig constructor.
      * @param DefaultConfig $config
+     * @param string|null $modules_root
      * @param string $templates_root
      * @throws TemplateException
      */
-    public function __construct(DefaultConfig $config, string $templates_root = "templates")
+    public function __construct(DefaultConfig $config, ?string $modules_root = "modules", string $templates_root = "templates")
     {
         $baseDir = $config->getBaseDir();
 
@@ -96,21 +97,25 @@ class TemplateConfig
             }
         }
 
-        $this->loader = new FilesystemLoader($templates_root, $baseDir);
+        $this->loader = new FilesystemLoader([
+            !is_null($modules_root) ? $modules_root : "modules",
+            !is_null($templates_root) ? $templates_root : "templates"],
+            $baseDir);
 
         $this->twig = new Environment($this->loader, $this->options);
     }
 
     /**
      * @param DefaultConfig $config
+     * @param string|null $modules_root
      * @param string $templates_root
      * @return TemplateConfig|null
      * @throws TemplateException
      */
-    public static function init(DefaultConfig $config, string $templates_root = "templates")
+    public static function init(DefaultConfig $config, ?string $modules_root = "modules", string $templates_root = "templates")
     {
         if (self::$instance == null) {
-            self::$instance = new TemplateConfig($config, $templates_root);
+            self::$instance = new TemplateConfig($config, $modules_root, $templates_root);
         }
 
         return self::$instance;

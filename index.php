@@ -11,7 +11,7 @@ session_start();
 $module = $_GET['module'] ?? null;
 $module = is_null($module) ? $module : preg_replace("/[^a-z]/", "", $module);
 
-$controller = $_GET['controller'] ?? 'index';
+$controller = $_GET['controller'] ?? (!is_null($module) ? 'index' : 'main');
 $controller = preg_replace("/[^a-z]/", "", $controller);
 
 $action = $_GET['action'] ?? 'index';
@@ -28,7 +28,7 @@ if(class_exists($controllerName))
 
     if(!method_exists($requestController, "run"))
     {
-        $requestController = new Controllers\IndexController($baseDir);
+        $requestController = new Controllers\MainController($baseDir);
         $requestController->render404();
     }
     else
@@ -38,7 +38,7 @@ if(class_exists($controllerName))
 }
 else
 {
-    $requestController = new Controllers\IndexController($baseDir);
+    $requestController = new Controllers\MainController($baseDir);
     $requestController->render404();
 }
 

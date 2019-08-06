@@ -135,7 +135,8 @@ abstract class AbstractBase
     private function initTemplate(): void
     {
         $this->twig = TemplateConfig::init(
-            $this->getCoreConfig()
+            $this->getCoreConfig(),
+            $this->getModuleTemplatesPath()
         );
     }
 
@@ -145,8 +146,9 @@ abstract class AbstractBase
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws Throwable
+     * @return void
      */
-    public function run(string $action): void
+    public function run(string $action)
     {
         $this->addContext('action', $action);
 
@@ -178,7 +180,7 @@ abstract class AbstractBase
      * @param $action
      * @param $controller
      */
-    protected function recall(string $action, string $controller): void
+    protected function recall(string $controller, string $action): void
     {
         $controllerName = __NAMESPACE__ . '\\' . ucfirst($controller) . 'Controller';
 
@@ -201,12 +203,17 @@ abstract class AbstractBase
     }
 
     /**
-     * @param string|null $action
+     * @param string|null $module
      * @param string|null $controller
+     * @param string|null $action
      */
-    protected function redirect(?string $action = null, ?string $controller = null): void
+    protected function redirect(?string $module = null, ?string $controller = null, ?string $action = null): void
     {
         $params = [];
+
+        if(!empty($module)){
+            $params[] = 'module=' . $module;
+        }
 
         if (!empty($controller)) {
             $params[] = 'controller=' . $controller;
