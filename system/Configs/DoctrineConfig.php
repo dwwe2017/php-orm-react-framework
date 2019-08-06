@@ -16,6 +16,7 @@ use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use Exceptions\DoctrineException;
+use Interfaces\ConfigInterfaces\DoctrineConfigInterface;
 use Webmasters\Doctrine\Bootstrap as WDB;
 use Webmasters\Doctrine\ORM\Util\OptionsCollection;
 
@@ -23,7 +24,7 @@ use Webmasters\Doctrine\ORM\Util\OptionsCollection;
  * Class DoctrineConfig
  * @package Configs
  */
-class DoctrineConfig extends WDB
+class DoctrineConfig extends WDB implements DoctrineConfigInterface
 {
     /**
      * @var string

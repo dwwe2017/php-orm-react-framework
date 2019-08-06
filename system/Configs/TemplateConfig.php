@@ -11,6 +11,7 @@ namespace Configs;
 
 
 use Exceptions\TemplateException;
+use Interfaces\ConfigInterfaces\TemplateConfigInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -22,7 +23,7 @@ use Twig\TemplateWrapper;
  * Class TemplateConfig
  * @package Configs
  */
-class TemplateConfig
+class TemplateConfig implements TemplateConfigInterface
 {
     /**
      * @var TemplateConfig|null
@@ -32,37 +33,45 @@ class TemplateConfig
     /**
      * @var FilesystemLoader|null
      */
-    protected $loader;
+    private $loader;
 
     /**
      * @var Environment|null
      */
-    protected $twig;
+    private $twig;
 
     /**
      * @var array
      */
-    protected $options = [];
+    private $options = [];
+
+    /**
+     * @var string
+     */
+    private $template = "default";
 
     /**
      * @var TemplateWrapper
      */
-    protected $templateWrapper;
+    private $templateWrapper;
 
     /**
      * TemplateConfig constructor.
      * @param DefaultConfig $config
-     * @param string|null $modules_root
-     * @param string $templates_root
+     * @param string|null $moduleViewsDir
+     * @param string $defaultTemplatesDir
+     * @param string $defaultViewsDir
      * @throws TemplateException
      */
-    public function __construct(DefaultConfig $config, ?string $modules_root = "modules", string $templates_root = "templates")
+    public function __construct(DefaultConfig $config, ?string $moduleViewsDir = "modules", string $defaultTemplatesDir = "templates", string $defaultViewsDir = "views")
     {
         $baseDir = $config->getBaseDir();
 
         $debugMode = $config->isDebugMode();
 
         $this->options = $config->getProperties("template_options");
+
+        $this->template = $config->getTsiOptionsProperty("template");
 
         $defaultTemplateCompilationPath = sprintf("%s/data/cache/compilation", $baseDir);
 
@@ -97,25 +106,31 @@ class TemplateConfig
             }
         }
 
-        $this->loader = new FilesystemLoader([
-            !is_null($modules_root) ? $modules_root : "modules",
-            !is_null($templates_root) ? $templates_root : "templates"],
-            $baseDir);
+        $moduleViewsDir = !is_null($moduleViewsDir) ? $moduleViewsDir : "modules";
+        $defaultViewsDir = !is_null($defaultViewsDir) ? $defaultViewsDir : "views";
+        $defaultTemplatesDir = sprintf("%s/%s", !is_null($defaultTemplatesDir)
+            ? $defaultTemplatesDir : "templates", $this->template);
+
+        $filesystemLoaderPaths = file_exists(sprintf("%s/%s", $baseDir, $moduleViewsDir))
+            ? [$moduleViewsDir, $defaultViewsDir, $defaultTemplatesDir] : [$defaultViewsDir, $defaultTemplatesDir];
+
+        $this->loader = new FilesystemLoader($filesystemLoaderPaths, $baseDir);
 
         $this->twig = new Environment($this->loader, $this->options);
     }
 
     /**
      * @param DefaultConfig $config
-     * @param string|null $modules_root
-     * @param string $templates_root
+     * @param string|null $moduleViewsDir
+     * @param string $defaultTemplatesDir
+     * @param string $defaultViewsDir
      * @return TemplateConfig|null
      * @throws TemplateException
      */
-    public static function init(DefaultConfig $config, ?string $modules_root = "modules", string $templates_root = "templates")
+    public static function init(DefaultConfig $config, ?string $moduleViewsDir = "modules", string $defaultTemplatesDir = "templates", string $defaultViewsDir = "views")
     {
         if (self::$instance == null) {
-            self::$instance = new TemplateConfig($config, $modules_root, $templates_root);
+            self::$instance = new TemplateConfig($config, $moduleViewsDir, $defaultTemplatesDir, $defaultViewsDir);
         }
 
         return self::$instance;

@@ -11,12 +11,13 @@ namespace Configs;
 
 
 use Exceptions\ConfigException;
+use Interfaces\ConfigInterfaces\DefaultConfigInterface;
 
 /**
  * Class DefaultConfig
  * @package Configs
  */
-class DefaultConfig
+class DefaultConfig implements DefaultConfigInterface
 {
     /**
      * @var DefaultConfig|null
@@ -32,6 +33,7 @@ class DefaultConfig
      * @var bool
      */
     private $debugMode = false;
+
     /**
      * @var array|null
      */
@@ -56,7 +58,8 @@ class DefaultConfig
      * @var array
      */
     private $defaultTsiOptions = [
-        "debug_mode" => false
+        "debug_mode" => false,
+        "template" => "default"
     ];
 
     /**

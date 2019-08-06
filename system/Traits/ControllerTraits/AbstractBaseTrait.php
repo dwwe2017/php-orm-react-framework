@@ -145,21 +145,21 @@ trait AbstractBaseTrait
     /**
      * @return string|null
      */
-    protected function getModuleName(): ?string
+    protected function getModuleShortName(): ?string
     {
         $className = get_class($this); // i.e. Controllers\MainController or Controllers\Backend\MainController
         $isModule =  (strcasecmp(substr($className, 0, 7), "Modules") === 0);
-        $nameParts = $isModule ? explode("\\", $className) : null;
+        $nameParts = $isModule ? explode("\\", $className) : null;  // i.e. Dashboard
         return $isModule ? $nameParts[1] : null;
     }
 
     /**
      * @return string|null
      */
-    protected function getModuleTemplatesPath(): ?string
+    protected function getModuleViewsDir(): ?string
     {
-        $moduleName = $this->getModuleName();
-        return $moduleName ? sprintf("modules/%s/templates", $moduleName) : null;
+        $moduleName = $this->getModuleShortName();
+        return $moduleName ? sprintf("modules/%s/views", $moduleName) : null;
     }
 
     /**

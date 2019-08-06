@@ -12,6 +12,7 @@ namespace Configs;
 
 use Exception;
 use Exceptions\LoggerException;
+use Interfaces\ConfigInterfaces\LoggerConfigInterface;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -20,28 +21,8 @@ use Monolog\Logger;
  * Class LoggerConfig
  * @package Configs
  */
-class LoggerConfig
+class LoggerConfig implements LoggerConfigInterface
 {
-    /**
-     *
-     */
-
-    const DEBUG = Logger::DEBUG;
-
-    const INFO = Logger::INFO;
-
-    const NOTICE = Logger::NOTICE;
-
-    const WARNING = Logger::WARNING;
-
-    const ERROR = Logger::ERROR;
-
-    const CRITICAL = Logger::CRITICAL;
-
-    const ALERT = Logger::ALERT;
-
-    const EMERGENCY = Logger::EMERGENCY;
-
     /**
      * @var LoggerConfig|null
      */

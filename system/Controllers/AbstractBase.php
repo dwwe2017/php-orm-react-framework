@@ -136,7 +136,7 @@ abstract class AbstractBase
     {
         $this->twig = TemplateConfig::init(
             $this->getCoreConfig(),
-            $this->getModuleTemplatesPath()
+            $this->getModuleViewsDir()
         );
     }
 
