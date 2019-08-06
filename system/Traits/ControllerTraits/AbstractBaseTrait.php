@@ -45,11 +45,6 @@ trait AbstractBaseTrait
     private $context = [];
 
     /**
-     * @var string
-     */
-    private $templatePath = "";
-
-    /**
      * @var TemplateConfig
      */
     private $twig;
@@ -58,6 +53,11 @@ trait AbstractBaseTrait
      * @var TemplateWrapper
      */
     private $template;
+
+    /**
+     * @var string
+     */
+    private $view = "";
 
     /**
      * @var MinifyCssHandler
@@ -77,7 +77,7 @@ trait AbstractBaseTrait
     /**
      * @var int
      */
-    private $log_level = LoggerConfig::ERROR;
+    private $logLevel = LoggerConfig::ERROR;
 
     /**
      * @var string
@@ -174,10 +174,10 @@ trait AbstractBaseTrait
     /**
      * @param string $templatePath
      */
-    protected function setTemplatePath(string $templatePath): void
+    protected function setView(string $templatePath): void
     {
         $controller = $this->getControllerShortName();
-        $this->templatePath .= $controller . '/' . $templatePath . '.tpl.twig';
+        $this->view .= $controller . '/' . $templatePath . '.tpl.twig';
     }
 
     /**
@@ -190,18 +190,18 @@ trait AbstractBaseTrait
     {
         if(!is_null($templatePath))
         {
-            $this->setTemplatePath($templatePath);
+            $this->setView($templatePath);
         }
 
-        $this->template = $this->twig->getTemplateWrapper($this->getTemplatePath());
+        $this->template = $this->twig->getTemplateWrapper($this->getView());
     }
 
     /**
      * @return string|null
      */
-    protected function getTemplatePath(): ?string
+    protected function getView(): ?string
     {
-        return $this->templatePath;
+        return $this->view;
     }
 
     /**
@@ -250,6 +250,6 @@ trait AbstractBaseTrait
      */
     public function getLogLevel(): int
     {
-        return $this->log_level;
+        return $this->logLevel;
     }
 }

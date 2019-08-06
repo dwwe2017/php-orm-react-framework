@@ -63,7 +63,7 @@ class TemplateConfig implements TemplateConfigInterface
      * @param string $defaultViewsDir
      * @throws TemplateException
      */
-    public function __construct(DefaultConfig $config, ?string $moduleViewsDir = "modules", string $defaultTemplatesDir = "templates", string $defaultViewsDir = "views")
+    public function __construct(DefaultConfig $config, ?string $moduleViewsDir = null, string $defaultTemplatesDir = "templates", string $defaultViewsDir = "views")
     {
         $baseDir = $config->getBaseDir();
 
@@ -106,13 +106,12 @@ class TemplateConfig implements TemplateConfigInterface
             }
         }
 
-        $moduleViewsDir = !is_null($moduleViewsDir) ? $moduleViewsDir : "modules";
         $defaultViewsDir = !is_null($defaultViewsDir) ? $defaultViewsDir : "views";
         $defaultTemplatesDir = sprintf("%s/%s", !is_null($defaultTemplatesDir)
             ? $defaultTemplatesDir : "templates", $this->template);
 
-        $filesystemLoaderPaths = file_exists(sprintf("%s/%s", $baseDir, $moduleViewsDir))
-            ? [$moduleViewsDir, $defaultViewsDir, $defaultTemplatesDir] : [$defaultViewsDir, $defaultTemplatesDir];
+        $filesystemLoaderPaths = empty($moduleViewsDir) ? [$defaultViewsDir, $defaultTemplatesDir]
+            : [$moduleViewsDir, $defaultViewsDir, $defaultTemplatesDir];
 
         $this->loader = new FilesystemLoader($filesystemLoaderPaths, $baseDir);
 
