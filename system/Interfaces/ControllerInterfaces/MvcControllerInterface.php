@@ -11,10 +11,10 @@ namespace Interfaces\ControllerInterfaces;
 
 
 /**
- * Interface MainControllerInterface
+ * Interface MvcControllerInterface
  * @package Interfaces\ControllerInterfaces
  */
-interface MainControllerInterface
+interface MvcControllerInterface
 {
     /**
      * @return void

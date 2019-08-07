@@ -35,6 +35,11 @@ class ErrorHandler
     private static $instance;
 
     /**
+     * @var string
+     */
+    private static $instance_key = "";
+
+    /**
      * @var bool
      */
     private static $registered = false;
@@ -52,44 +57,34 @@ class ErrorHandler
     public function __construct(DefaultConfig $config = null, Logger $logger = null)
     {
         $whoops = new Run();
+        $debugMode = false;
+        $baseDir = sprintf("%s/../..", __DIR__);
 
-        if(is_null($config))
-        {
-            $baseDir = sprintf("%s/../..", __DIR__);
-
-            try
-            {
+        if (!is_null($config)) {
+            try {
                 $config = DefaultConfig::init($baseDir);
                 $baseDir = $config->getBaseDir();
                 $debugMode = $config->isDebugMode();
-            }
-            catch (ConfigException $e)
-            {
+            } catch (ConfigException $e) {
                 $debugMode = true;
+                $baseDir = sprintf("%s/../..", __DIR__);
             }
         }
 
-        if($logger instanceof Logger)
-        {
+        if ($logger instanceof Logger) {
             $this->logger = $logger;
-        }
-        elseif($config instanceof DefaultConfig)
-        {
+        } elseif ($config instanceof DefaultConfig) {
             $this->initLogger($config);
         }
 
-        if (Misc::isAjaxRequest())
-        {
+        if (Misc::isAjaxRequest()) {
             $jsonHandler = new JsonResponseHandler();
             $jsonHandler->addTraceToOutput(true);
             $whoops->prependHandler($jsonHandler);
-        }
-        elseif($debugMode)
-        {
+        } elseif ($debugMode) {
             $pretty_page_handler = new PrettyPageHandler();
             $pretty_page_handler->setApplicationRootPath($baseDir);
-            $pretty_page_handler->addDataTableCallback('Details', function(Inspector $inspector)
-            {
+            $pretty_page_handler->addDataTableCallback('Details', function (Inspector $inspector) {
                 $data = array();
                 $exception = $inspector->getException();
                 $data['Exception class'] = get_class($exception);
@@ -98,10 +93,8 @@ class ErrorHandler
             });
 
             $whoops->prependHandler($pretty_page_handler);
-            $whoops->prependHandler(function ($exception, Inspector $inspector, $whoops)
-            {
-                $inspector->getFrames()->map(function (Frame $frame)
-                {
+            $whoops->prependHandler(function ($exception, Inspector $inspector, $whoops) {
+                $inspector->getFrames()->map(function (Frame $frame) {
                     if ($function = $frame->getFunction()) {
                         $frame->addComment("This frame is within function '$function'", 'cpt-obvious');
                     }
@@ -109,23 +102,21 @@ class ErrorHandler
                     return $frame;
                 });
             });
-        }
-        else
-        {
+        } else {
+
+            $errorTpl = sprintf("%/templates/Handlers/errors/whoops.php", $baseDir);
             $plain_text_handler = new PlainTextHandler();
             $plain_text_handler->addTraceToOutput(true);
+            $plain_text_handler->setTemplate($errorTpl);
 
-            if($this->logger instanceof Logger)
-            {
+            if ($this->logger instanceof Logger) {
                 $plain_text_handler->setLogger($this->logger);
-                $plain_text_handler->loggerOnly(true);
             }
 
             $whoops->prependHandler($plain_text_handler);
         }
 
-        if(self::$registered)
-        {
+        if (self::$registered) {
             $whoops->unregister();
         }
 
@@ -141,9 +132,9 @@ class ErrorHandler
      */
     public static function init(DefaultConfig $config = null, Logger $logger = null)
     {
-        if(is_null(self::$instance))
-        {
+        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instance_key) {
             self::$instance = new ErrorHandler($config, $logger);
+            self::$instance_key = serialize(self::$instance_key);
         }
 
         return self::$instance;
@@ -154,12 +145,9 @@ class ErrorHandler
      */
     private function initLogger(DefaultConfig $config): void
     {
-        try
-        {
+        try {
             $this->logger = LoggerConfig::init($config, LoggerConfig::EMERGENCY);
-        }
-        catch (LoggerException $e)
-        {
+        } catch (LoggerException $e) {
             $this->logger = null;
         }
     }

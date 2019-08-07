@@ -63,7 +63,7 @@ class TemplateConfig implements TemplateConfigInterface
      * @param string $defaultViewsDir
      * @throws TemplateException
      */
-    public function __construct(DefaultConfig $config, ?string $moduleViewsDir = null, string $defaultTemplatesDir = "templates", string $defaultViewsDir = "views")
+    public function __construct(DefaultConfig $config, ?string $moduleViewsDir = null, string $defaultTemplatesDir = "templates/Controllers", string $defaultViewsDir = "views")
     {
         $baseDir = $config->getBaseDir();
 
@@ -126,7 +126,7 @@ class TemplateConfig implements TemplateConfigInterface
      * @return TemplateConfig|null
      * @throws TemplateException
      */
-    public static function init(DefaultConfig $config, ?string $moduleViewsDir = "modules", string $defaultTemplatesDir = "templates", string $defaultViewsDir = "views")
+    public static function init(DefaultConfig $config, ?string $moduleViewsDir = "modules", string $defaultTemplatesDir = "templates/Controllers", string $defaultViewsDir = "views")
     {
         if (self::$instance == null) {
             self::$instance = new TemplateConfig($config, $moduleViewsDir, $defaultTemplatesDir, $defaultViewsDir);

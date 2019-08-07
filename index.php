@@ -11,7 +11,7 @@ session_start();
 $module = $_GET['module'] ?? null;
 $module = is_null($module) ? $module : preg_replace("/[^a-z]/", "", $module);
 
-$controller = $_GET['controller'] ?? (!is_null($module) ? 'index' : 'main');
+$controller = $_GET['controller'] ?? (!is_null($module) ? 'index' : 'mvc');
 $controller = preg_replace("/[^a-z]/", "", $controller);
 
 $action = $_GET['action'] ?? 'index';
@@ -22,23 +22,16 @@ $controllerNamespace = is_null($module) ? 'Controllers\\'
 
 $controllerName = $controllerNamespace . ucfirst($controller) . 'Controller';
 
-if(class_exists($controllerName))
-{
+if (class_exists($controllerName)) {
     $requestController = new $controllerName($baseDir);
-
-    if(!method_exists($requestController, "run"))
-    {
-        $requestController = new Controllers\MainController($baseDir);
+    if (!method_exists($requestController, "run")) {
+        $requestController = new Controllers\MvcController($baseDir);
         $requestController->render404();
-    }
-    else
-    {
+    } else {
         $requestController->run($action);
     }
-}
-else
-{
-    $requestController = new Controllers\MainController($baseDir);
+} else {
+    $requestController = new Controllers\MvcController($baseDir);
     $requestController->render404();
 }
 

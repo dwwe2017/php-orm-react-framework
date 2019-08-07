@@ -24,6 +24,11 @@ class AutoloadHandler
     private static $instance = null;
 
     /**
+     * @var string
+     */
+    private static $instance_key = "";
+
+    /**
      * @var ClassLoader
      */
     private $classLoader;
@@ -39,10 +44,9 @@ class AutoloadHandler
 
         $modulesDir = sprintf("%s/modules", $baseDir);
 
-        foreach (scandir($modulesDir) as $item)
-        {
+        foreach (scandir($modulesDir) as $item) {
             $path = sprintf("%s/%s", $modulesDir, $item);
-            if($item == "." || $item == ".." || is_file($path)){
+            if ($item == "." || $item == ".." || is_file($path)) {
                 continue;
             }
 
@@ -60,9 +64,9 @@ class AutoloadHandler
      */
     public static function init(string $baseDir, ClassLoader $classLoader)
     {
-        if(is_null(self::$instance))
-        {
+        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instance_key) {
             self::$instance = new self($baseDir, $classLoader);
+            self::$instance_key = serialize(self::$instance);
         }
 
         return self::$instance;

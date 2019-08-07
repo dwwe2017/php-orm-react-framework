@@ -10,13 +10,13 @@
 namespace Modules\Dashboard\Controllers;
 
 
-use Controllers\MainController;
+use Controllers\MvcController;
 
 /**
- * Class MainController
+ * Class MvcController
  * @package Modules\Dashboard\Controllers
  */
-class IndexController extends MainController
+class IndexController extends MvcController
 {
     /**
      *

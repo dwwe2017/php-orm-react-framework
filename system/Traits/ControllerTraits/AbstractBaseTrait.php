@@ -147,8 +147,8 @@ trait AbstractBaseTrait
      */
     protected function getModuleShortName(): ?string
     {
-        $className = get_class($this); // i.e. Controllers\MainController or Controllers\Backend\MainController
-        $isModule =  (strcasecmp(substr($className, 0, 7), "Modules") === 0);
+        $className = get_class($this); // i.e. Controllers\MvcController or Controllers\Backend\MvcController
+        $isModule = (strcasecmp(substr($className, 0, 7), "Modules") === 0);
         $nameParts = $isModule ? explode("\\", $className) : null;  // i.e. Dashboard
         return $isModule ? $nameParts[1] : null;
     }
@@ -167,8 +167,8 @@ trait AbstractBaseTrait
      */
     protected function getControllerShortName(): ?string
     {
-        $className = get_class($this); // i.e. Controllers\MainController or Controllers\Backend\MainController
-        return preg_replace('/^([A-Za-z]+\\\)+/', '', $className); // i.e. MainController
+        $className = get_class($this); // i.e. Controllers\MvcController or Controllers\Backend\MvcController
+        return preg_replace('/^([A-Za-z]+\\\)+/', '', $className); // i.e. MvcController
     }
 
     /**
@@ -188,8 +188,7 @@ trait AbstractBaseTrait
      */
     public function setTemplate(?string $templatePath = null): void
     {
-        if(!is_null($templatePath))
-        {
+        if (!is_null($templatePath)) {
             $this->setView($templatePath);
         }
 
@@ -228,8 +227,7 @@ trait AbstractBaseTrait
     {
         $message = null;
 
-        if (isset($_SESSION['message']))
-        {
+        if (isset($_SESSION['message'])) {
             $message = $_SESSION['message'];
             unset($_SESSION['message']);
         }

@@ -14,6 +14,7 @@ use Configs\DefaultConfig;
 use Configs\DoctrineConfig;
 use Configs\LoggerConfig;
 use Configs\TemplateConfig;
+use Exception;
 use Exceptions\ConfigException;
 use Exceptions\DoctrineException;
 use Exceptions\LoggerException;
@@ -153,10 +154,10 @@ abstract class AbstractBase
         $this->addContext('action', $action);
 
         $methodName = $action . 'Action';
-        $this->setTemplate($methodName);
 
         if (method_exists($this, $methodName))
         {
+            $this->setTemplate($methodName);
             $this->$methodName();
         }
         else
@@ -173,7 +174,8 @@ abstract class AbstractBase
     public function render404(): void
     {
         header('HTTP/1.0 404 Not Found');
-        die('Error 404');
+        $error = require_once sprintf("%s/templates/Handlers/errors/error404.php", $this->getBaseDir());
+        die($error);
     }
 
     /**

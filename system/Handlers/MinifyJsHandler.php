@@ -26,6 +26,11 @@ class MinifyJsHandler extends Minifier
     /**
      * @var string
      */
+    private static $instance_key = "";
+
+    /**
+     * @var string
+     */
     private static $md5checksum = "";
 
     /**
@@ -129,8 +134,9 @@ class MinifyJsHandler extends Minifier
      */
     public static function init(DefaultConfig $config)
     {
-        if (is_null(self::$instance)) {
+        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instance_key) {
             self::$instance = new self($config);
+            self::$instance_key = serialize(self::$instance);
         }
 
         self::$instance->setDefaults();

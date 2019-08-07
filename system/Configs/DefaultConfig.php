@@ -73,23 +73,17 @@ class DefaultConfig implements DefaultConfigInterface
 
         $this->defaultVendorDir = sprintf("%s/vendor", $this->baseDir);
 
-        if(!file_exists($this->defaultVendorDir))
-        {
+        if (!file_exists($this->defaultVendorDir)) {
             throw new ConfigException(sprintf("The directory '%s' does not exist, please check the installation manually", $this->defaultVendorDir), E_ERROR);
-        }
-        elseif(!is_readable($this->defaultVendorDir))
-        {
+        } elseif (!is_readable($this->defaultVendorDir)) {
             throw new ConfigException(sprintf("The directory '%s' can not be loaded, please check the directory permissions", $this->defaultVendorDir), E_ERROR);
         }
 
         $this->configDefaultPath = sprintf("%s/config/default-config.php", $this->baseDir);
 
-        if(!file_exists($this->configDefaultPath))
-        {
+        if (!file_exists($this->configDefaultPath)) {
             throw new ConfigException(sprintf("The global configuration file '%s' is missing", $this->configDefaultPath), E_ERROR);
-        }
-        elseif(!is_readable($this->configDefaultPath))
-        {
+        } elseif (!is_readable($this->configDefaultPath)) {
             throw new ConfigException(sprintf("The global configuration file '%s' can not be loaded, please check the directory permissions", $this->configDefaultPath), E_ERROR);
         }
 
@@ -123,16 +117,11 @@ class DefaultConfig implements DefaultConfigInterface
      */
     public function getProperties(string $property): array
     {
-        if(!is_array($this->config))
-        {
+        if (!is_array($this->config)) {
             return $this->config;
-        }
-        elseif(!key_exists($property, $this->config))
-        {
+        } elseif (!key_exists($property, $this->config)) {
             return $this->config;
-        }
-        else
-        {
+        } else {
             return $this->config[$property];
         }
     }
@@ -146,8 +135,7 @@ class DefaultConfig implements DefaultConfigInterface
     {
         $result = $this->getProperties($parent_key);
 
-        if(!empty($result) && key_exists($property, $result))
-        {
+        if (!empty($result) && key_exists($property, $result)) {
             $result = $result[$property];
         }
 
@@ -200,8 +188,7 @@ class DefaultConfig implements DefaultConfigInterface
      */
     public function getTsiOptionsProperty(string $key)
     {
-        if(key_exists($key, $this->tsiOptions))
-        {
+        if (key_exists($key, $this->tsiOptions)) {
             return $this->tsiOptions[$key];
         }
 

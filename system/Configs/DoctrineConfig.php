@@ -48,27 +48,20 @@ class DoctrineConfig extends WDB implements DoctrineConfigInterface
 
         $configDefaultPath = $config->getConfigDefaultPath();
 
-        if(empty($connectionOptions))
-        {
+        if (empty($connectionOptions)) {
             throw new DoctrineException(sprintf("The global configuration file '%s' did not specify a valid database connection", $configDefaultPath), E_ERROR);
-        }
-        elseif(!key_exists($connectionOption, $connectionOptions) || count($connectionOptions[$connectionOption]) < 6)
-        {
+        } elseif (!key_exists($connectionOption, $connectionOptions) || count($connectionOptions[$connectionOption]) < 6) {
             throw new DoctrineException(sprintf("The '%s' field of the global configuration file '%s' does not contain a valid database connection", $connectionOption, $configDefaultPath), E_ERROR);
-        }
-        else
-        {
+        } else {
             $connectionOptions = $connectionOptions[$connectionOption];
         }
 
         $configDefaultEntityDir = sprintf("%s/system/Entities", $this->baseDir);
 
-        if(!file_exists($configDefaultEntityDir))
-        {
+        if (!file_exists($configDefaultEntityDir)) {
             throw new DoctrineException(sprintf("The directory '%s' does not exist, please check the installation manually", $configDefaultEntityDir), E_ERROR);
         }
-        if(!is_readable($configDefaultEntityDir))
-        {
+        if (!is_readable($configDefaultEntityDir)) {
             throw new DoctrineException(sprintf("The directory '%s' can not be loaded, please check the directory permissions", $configDefaultEntityDir), E_ERROR);
         }
 
@@ -90,30 +83,23 @@ class DoctrineConfig extends WDB implements DoctrineConfigInterface
 
         $configProxyDir = $applicationOptions["proxy_dir"];
 
-        if(!file_exists($configProxyDir))
-        {
-            if(!@mkdir($configProxyDir, 0777, true))
-            {
+        if (!file_exists($configProxyDir)) {
+            if (!@mkdir($configProxyDir, 0777, true)) {
                 throw new DoctrineException(sprintf("The required proxy directory '%s' can not be created, please check the directory permissions or create it manually.", $configProxyDir), E_ERROR);
             }
         }
 
-        if(!is_writable($configProxyDir))
-        {
-            if(!@chmod($configProxyDir, 0777))
-            {
+        if (!is_writable($configProxyDir)) {
+            if (!@chmod($configProxyDir, 0777)) {
                 throw new DoctrineException(sprintf("The required proxy directory '%s' can not be written, please check the directory permissions.", $configProxyDir), E_ERROR);
             }
         }
 
-        try
-        {
+        try {
             $this->setConnectionOptions($connectionOptions);
             $this->setApplicationOptions($applicationOptions);
             $this->errorMode();
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             throw new DoctrineException($e->getMessage(), $e->getCode());
         }
     }
@@ -138,40 +124,31 @@ class DoctrineConfig extends WDB implements DoctrineConfigInterface
      */
     protected function setApplicationOptions($options): void
     {
-        if (!isset($options["entity_namespace"]))
-        {
+        if (!isset($options["entity_namespace"])) {
             $options["entity_namespace"] = basename($options["entity_dir"]);
         }
 
-        if (!isset($options["cache"]))
-        {
+        if (!isset($options["cache"])) {
             $cacheDriver = new ArrayCache();
 
-            if (!$options["debug_mode"])
-            {
-                if(function_exists("apc_store"))
-                {
+            if (!$options["debug_mode"]) {
+                if (function_exists("apc_store")) {
                     $cacheDriver = new ApcuCache();
-                }
-                else
-                {
+                } else {
                     $filesystemCacheDirExists = true;
                     $filesystemCacheDirIsWritable = true;
 
                     $filesystemCacheDir = sprintf("%s/data/cache/doctrine", $this->baseDir);
 
-                    if(!file_exists($filesystemCacheDir))
-                    {
+                    if (!file_exists($filesystemCacheDir)) {
                         $filesystemCacheDirExists = @mkdir($filesystemCacheDir, 0777, true);
                     }
 
-                    if(!is_writable($filesystemCacheDir))
-                    {
+                    if (!is_writable($filesystemCacheDir)) {
                         $filesystemCacheDirIsWritable = @chmod($filesystemCacheDir, 0777);
                     }
 
-                    if($filesystemCacheDirExists && $filesystemCacheDirIsWritable)
-                    {
+                    if ($filesystemCacheDirExists && $filesystemCacheDirIsWritable) {
                         $cacheDriver = new FilesystemCache(sprintf("%s/data/cache", $this->baseDir));
                     }
                 }

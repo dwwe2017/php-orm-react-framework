@@ -42,8 +42,7 @@ class LoggerConfig implements LoggerConfigInterface
      */
     public function __construct(DefaultConfig $config, $level = self::ERROR, $application = "tsi")
     {
-        if($config->isDebugMode())
-        {
+        if ($config->isDebugMode()) {
             $level = self::DEBUG;
         }
 
@@ -53,30 +52,23 @@ class LoggerConfig implements LoggerConfigInterface
         $defaultLogDir = sprintf("%s/log/%s", $baseDir, $application);
         $defaultLogFile = sprintf("%s/%s.log", $defaultLogDir, date("Y_m_d"));
 
-        if(!file_exists($defaultLogDir))
-        {
-            if(!@mkdir($defaultLogDir, 0777, true))
-            {
+        if (!file_exists($defaultLogDir)) {
+            if (!@mkdir($defaultLogDir, 0777, true)) {
                 throw new LoggerException(sprintf("The required log directory '%s' can not be created, please check the directory permissions or create it manually.", $defaultLogDir), E_ERROR);
             }
         }
 
-        if(!is_writable($defaultLogDir))
-        {
-            if(!@chmod($defaultLogDir, 0777))
-            {
+        if (!is_writable($defaultLogDir)) {
+            if (!@chmod($defaultLogDir, 0777)) {
                 throw new LoggerException(sprintf("The required log directory '%s' can not be written, please check the directory permissions.", $defaultLogDir), E_ERROR);
             }
         }
 
-        try
-        {
+        try {
             $this->defaultLogger = new Logger(strtoupper($application));
             $this->defaultLogger->pushHandler(new StreamHandler($defaultLogFile, $level));
             $this->defaultLogger->pushHandler(new FirePHPHandler($level));
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             throw new LoggerException($e->getMessage(), $e->getCode(), $e);
         }
     }
