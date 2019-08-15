@@ -10,90 +10,116 @@
 namespace Configs;
 
 
-use Exception;
+use Configula\ConfigFactory;
+use Configula\ConfigValues;
 use Exceptions\LoggerException;
-use Interfaces\ConfigInterfaces\LoggerConfigInterface;
-use Monolog\Handler\FirePHPHandler;
-use Monolog\Handler\StreamHandler;
+use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Monolog\Logger;
 
 /**
  * Class LoggerConfig
  * @package Configs
  */
-class LoggerConfig implements LoggerConfigInterface
+class LoggerConfig implements VendorExtensionConfigInterface
 {
-    /**
-     * @var LoggerConfig|null
-     */
-    private static $instance = null;
+    const DEBUG = Logger::DEBUG;
+
+    const INFO = Logger::INFO;
+
+    const NOTICE = Logger::NOTICE;
+
+    const WARNING = Logger::WARNING;
+
+    const ERROR = Logger::ERROR;
+
+    const CRITICAL = Logger::CRITICAL;
+
+    const ALERT = Logger::ALERT;
+
+    const EMERGENCY = Logger::EMERGENCY;
 
     /**
-     * @var Logger|null
+     * @var self|null
      */
-    private $defaultLogger = null;
+    public static $instance = null;
+
+    /**
+     * @var string
+     */
+    private static $instanceKey = "";
+
+    /**
+     * @var ConfigValues
+     */
+    private $config;
+
+    /**
+     * @var ConfigValues
+     */
+    private $configValues = null;
 
     /**
      * LoggerConfig constructor.
-     * @param DefaultConfig $config
-     * @param int $level
-     * @param string $application
+     * @param ConfigValues $config
      * @throws LoggerException
      */
-    public function __construct(DefaultConfig $config, $level = self::ERROR, $application = "tsi")
+    public function __construct(ConfigValues $config)
     {
-        if ($config->isDebugMode()) {
-            $level = self::DEBUG;
-        }
+        $this->config = $config;
 
-        $baseDir = $config->getBaseDir();
-        $application = trim(str_replace(" ", "", $application));
+        $defaultOptions = $this->getOptionsDefault();
+        $loggerOptionsDefault = ["logger_options" => $defaultOptions["logger_options"]];
+        $loggerOptions = ["logger_options" => $this->config->get("logger_options")];
+        $loggerConfig = ConfigFactory::fromArray($loggerOptionsDefault)->mergeValues($loggerOptions);
 
-        $defaultLogDir = sprintf("%s/log/%s", $baseDir, $application);
-        $defaultLogFile = sprintf("%s/%s.log", $defaultLogDir, date("Y_m_d"));
+        $logDir = $loggerConfig->get("logger_options.log_dir");
 
-        if (!file_exists($defaultLogDir)) {
-            if (!@mkdir($defaultLogDir, 0777, true)) {
-                throw new LoggerException(sprintf("The required log directory '%s' can not be created, please check the directory permissions or create it manually.", $defaultLogDir), E_ERROR);
+        if (!file_exists($logDir)) {
+            if (!@mkdir($logDir, 0777, true)) {
+                throw new LoggerException(sprintf("The required log directory '%s' can not be created, please check the directory permissions or create it manually.", $logDir), E_ERROR);
             }
         }
 
-        if (!is_writable($defaultLogDir)) {
-            if (!@chmod($defaultLogDir, 0777)) {
-                throw new LoggerException(sprintf("The required log directory '%s' can not be written, please check the directory permissions.", $defaultLogDir), E_ERROR);
+        if (!is_writable($logDir)) {
+            if (!@chmod($logDir, 0777)) {
+                throw new LoggerException(sprintf("The required log directory '%s' can not be written, please check the directory permissions.", $logDir), E_ERROR);
             }
         }
 
-        try {
-            $this->defaultLogger = new Logger(strtoupper($application));
-            $this->defaultLogger->pushHandler(new StreamHandler($defaultLogFile, $level));
-            $this->defaultLogger->pushHandler(new FirePHPHandler($level));
-        } catch (Exception $e) {
-            throw new LoggerException($e->getMessage(), $e->getCode(), $e);
-        }
+        $this->configValues = $loggerConfig;
     }
 
     /**
-     * @param DefaultConfig $config
-     * @param int $level
-     * @param string $application
-     * @return Logger|null
+     * @param ConfigValues $config
+     * @return ConfigValues
      * @throws LoggerException
      */
-    public static function init(DefaultConfig $config, $level = self::ERROR, $application = "tsi")
+    public static function init(ConfigValues $config): ConfigValues
     {
-        if (is_null(self::$instance)) {
-            self::$instance = new LoggerConfig($config, $level, $application);
+        if (is_null(self::$instance) || self::$instanceKey !== serialize(self::$instance)) {
+            self::$instance = new self($config);
+            self::$instanceKey = serialize(self::$instance);
         }
 
-        return self::$instance->getDefaultLogger();
+        return self::$instance->configValues;
     }
 
     /**
-     * @return Logger|null
+     * @return array
      */
-    public function getDefaultLogger(): ?Logger
+    public function getOptionsDefault(): array
     {
-        return $this->defaultLogger;
+        $isDebug = $this->config->get("debug_mode");
+        $level = $isDebug ? self::DEBUG : self::ERROR;
+        $baseDir = $this->config->get("base_dir");
+        $defaultLogDir = sprintf("%s/log", $baseDir);
+
+        return [
+            "logger_options" => [
+                "debug_mode" => $isDebug,
+                "log_dir" => $defaultLogDir,
+                "log_level" => $level
+            ]
+        ];
     }
 }

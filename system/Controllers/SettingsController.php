@@ -7,16 +7,18 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Interfaces\ConfigInterfaces;
+namespace Controllers;
 
 
-/**
- * Interface DefaultConfigInterface
- * @package Interfaces\ConfigInterfaces
- */
-interface DefaultConfigInterface
+use Interfaces\ControllerInterfaces\MvcControllerInterface;
+
+class SettingsController extends AbstractBase implements MvcControllerInterface
 {
-    public function __construct(string $base_dir);
-
-    public static function init(string $base_dir);
+    /**
+     *
+     */
+    public function indexAction(): void
+    {
+        // TODO: Implement indexAction() method.
+    }
 }

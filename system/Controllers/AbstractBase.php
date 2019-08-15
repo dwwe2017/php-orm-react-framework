@@ -10,20 +10,17 @@
 namespace Controllers;
 
 
-use Configs\DefaultConfig;
-use Configs\DoctrineConfig;
-use Configs\LoggerConfig;
-use Configs\TemplateConfig;
-use Exception;
-use Exceptions\ConfigException;
 use Exceptions\DoctrineException;
+use Exceptions\ConfigException;
 use Exceptions\LoggerException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
 use Exceptions\TemplateException;
-use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
+use Helpers\AbsolutePathHelper;
+use Managers\ModuleManager;
+use Managers\ServiceManager;
 use Throwable;
 use Traits\ControllerTraits\AbstractBaseTrait;
 use Twig\Error\LoaderError;
@@ -31,7 +28,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 /**
- * Class AbstractBase
+ * Class Config
  * @package Controllers
  */
 abstract class AbstractBase
@@ -41,59 +38,46 @@ abstract class AbstractBase
     /**
      * AbstractBase constructor.
      * @param string $baseDir
-     * @throws ConfigException
      * @throws DoctrineException
      * @throws LoggerException
      * @throws MinifyCssException
      * @throws MinifyJsException
      * @throws TemplateException
+     * @throws ConfigException
      */
     public function __construct(string $baseDir)
     {
         $this->baseDir = $baseDir;
-        $this->initCore();
+
+        $this->initModule();
+        $this->initHelpers();
+        $this->initHandlers();
+        $this->initServices();
     }
 
     /**
-     * @throws ConfigException
      * @throws DoctrineException
      * @throws LoggerException
-     * @throws MinifyCssException
-     * @throws MinifyJsException
      * @throws TemplateException
+     * @throws ConfigException
      */
-    private function initCore()
+    private function initModule()
     {
-        $this->coreConfig = DefaultConfig::init($this->getBaseDir());
-
-        // 1. Logging
-        $this->initLogger();
-
-        // 2. Error handling, etc
-        $this->initHandlers();
-
-        // 3. Database, ORM
-        $this->initDoctrine();
-
-        // 4. Twig template engine
-        $this->initTemplate();
+        $this->moduleManager = ModuleManager::init($this);
+        $this->config = $this->getModuleManager()->getConfig();
     }
 
     /**
-     * 1. Logging
+     * @throws DoctrineException
      * @throws LoggerException
      */
-    private function initLogger(): void
+    private function initServices()
     {
-        $this->logger = LoggerConfig::init(
-            $this->getCoreConfig(),
-            $this->getLogLevel()
-        );
+        $this->serviceManager = ServiceManager::init($this->getModuleManager());
+        $this->loggerService = $this->getServiceManager()->getLoggerService();
+        $this->doctrineService = $this->getServiceManager()->getDoctrineService();
+        $this->templateService = $this->getServiceManager()->getTemplateService();
     }
-
-    /**
-     * 2. Error handling, etc
-     */
 
     /**
      * @throws MinifyCssException
@@ -101,53 +85,30 @@ abstract class AbstractBase
      */
     private function initHandlers(): void
     {
-        ErrorHandler::init(
-            $this->getCoreConfig(),
-            $this->getLogger()
-        );
-
         $this->cssHandler = MinifyCssHandler::init(
-            $this->getCoreConfig()
+            $this->getConfig()
         );
 
         $this->jsHandler = MinifyJsHandler::init(
-            $this->getCoreConfig()
+            $this->getConfig()
         );
     }
 
     /**
-     * 3. Database, ORM
-     * @throws DoctrineException
+     *
      */
-    private function initDoctrine(): void
+    private function initHelpers(): void
     {
-        $this->doctrine = DoctrineConfig::init(
-            $this->getCoreConfig(),
-            $this->getConnectionOption()
-        );
-
-        $this->entityManager = $this->doctrine->getEntityManager();
-    }
-
-    /**
-     * 4. Twig template engine
-     * @throws TemplateException
-     */
-    private function initTemplate(): void
-    {
-        $this->twig = TemplateConfig::init(
-            $this->getCoreConfig(),
-            $this->getModuleViewsDir()
-        );
+        $this->absolutePathHelper = AbsolutePathHelper::init($this->getBaseDir());
     }
 
     /**
      * @param string $action
-     * @throws LoaderError
+     * @return void
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws Throwable
-     * @return void
+     * @throws LoaderError
      */
     public function run(string $action)
     {
@@ -155,13 +116,10 @@ abstract class AbstractBase
 
         $methodName = $action . 'Action';
 
-        if (method_exists($this, $methodName))
-        {
+        if (method_exists($this, $methodName)) {
             $this->setTemplate($methodName);
             $this->$methodName();
-        }
-        else
-        {
+        } else {
             $this->render404();
         }
 
@@ -174,8 +132,9 @@ abstract class AbstractBase
     public function render404(): void
     {
         header('HTTP/1.0 404 Not Found');
-        $error = require_once sprintf("%s/templates/Handlers/errors/error404.php", $this->getBaseDir());
-        die($error);
+        /** @noinspection PhpIncludeInspection */
+        $error = require_once $this->getAbsolutePathHelper()->{"templates/Handlers/errors/error404.php"};
+        exit($error);
     }
 
     /**
@@ -186,16 +145,11 @@ abstract class AbstractBase
     {
         $controllerName = __NAMESPACE__ . '\\' . ucfirst($controller) . 'Controller';
 
-        if(!class_exists($controllerName))
-        {
+        if (!class_exists($controllerName)) {
             $this->render404();
-        }
-        elseif(!method_exists($controller, "run"))
-        {
+        } elseif (!method_exists($controller, "run")) {
             $this->render404();
-        }
-        else
-        {
+        } else {
             $controller = new $controllerName($this->baseDir);
 
             $controller->run($action);
@@ -213,7 +167,7 @@ abstract class AbstractBase
     {
         $params = [];
 
-        if(!empty($module)){
+        if (!empty($module)) {
             $params[] = 'module=' . $module;
         }
 

@@ -12,8 +12,10 @@ namespace Handlers;
 
 use Configs\DefaultConfig;
 use Configs\LoggerConfig;
+use Configula\ConfigValues;
 use Exceptions\ConfigException;
 use Monolog\Logger;
+use Services\LoggerService;
 use Whoops\Exception\Frame;
 use Whoops\Exception\Inspector;
 use Whoops\Handler\JsonResponseHandler;
@@ -51,29 +53,28 @@ class ErrorHandler
 
     /**
      * ErrorHandler constructor.
-     * @param DefaultConfig|null $config
+     * @param ConfigValues|null $config
      * @param Logger|null $logger
      */
-    public function __construct(DefaultConfig $config = null, Logger $logger = null)
+    public function __construct(ConfigValues $config = null, Logger $logger = null)
     {
         $whoops = new Run();
         $debugMode = false;
-        $baseDir = sprintf("%s/../..", __DIR__);
+        $baseDir = realpath(sprintf("%s/../..", __DIR__));
 
-        if (!is_null($config)) {
+        if (is_null($config)) {
             try {
                 $config = DefaultConfig::init($baseDir);
-                $baseDir = $config->getBaseDir();
-                $debugMode = $config->isDebugMode();
+                $baseDir = $config->get("base_dir");
+                $debugMode = $config->get("debug_mode");
             } catch (ConfigException $e) {
                 $debugMode = true;
-                $baseDir = sprintf("%s/../..", __DIR__);
             }
         }
 
         if ($logger instanceof Logger) {
             $this->logger = $logger;
-        } elseif ($config instanceof DefaultConfig) {
+        } elseif ($config instanceof ConfigValues) {
             $this->initLogger($config);
         }
 
@@ -103,7 +104,6 @@ class ErrorHandler
                 });
             });
         } else {
-
             $errorTpl = sprintf("%/templates/Handlers/errors/whoops.php", $baseDir);
             $plain_text_handler = new PlainTextHandler();
             $plain_text_handler->addTraceToOutput(true);
@@ -126,11 +126,11 @@ class ErrorHandler
     }
 
     /**
-     * @param DefaultConfig|null $config
+     * @param ConfigValues|null $config
      * @param Logger|null $logger
      * @return ErrorHandler|null
      */
-    public static function init(DefaultConfig $config = null, Logger $logger = null)
+    public static function init(ConfigValues $config = null, Logger $logger = null)
     {
         if (is_null(self::$instance) || serialize(self::$instance) !== self::$instance_key) {
             self::$instance = new ErrorHandler($config, $logger);
@@ -141,12 +141,12 @@ class ErrorHandler
     }
 
     /**
-     * @param DefaultConfig $config
+     * @param ConfigValues $config
      */
-    private function initLogger(DefaultConfig $config): void
+    private function initLogger(ConfigValues $config): void
     {
         try {
-            $this->logger = LoggerConfig::init($config, LoggerConfig::EMERGENCY);
+            $this->logger = LoggerService::init(LoggerConfig::init($config));
         } catch (LoggerException $e) {
             $this->logger = null;
         }

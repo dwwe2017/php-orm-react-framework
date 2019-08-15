@@ -1,0 +1,46 @@
+<?php
+/**
+ * Global Configuration Override
+ *
+ * You can use this file for overriding configuration values from modules, etc.
+ * You would place values in here that are agnostic to the environment and not
+ * sensitive to security.
+ *
+ * @NOTE: In practice, this file will typically be INCLUDED in your source
+ * control, so do not include passwords or other sensitive information in this
+ * file.
+ */
+
+$config = [
+    //Application configuration
+    "debug_mode" => false,
+    //Database configuration
+    "connection_options" => [
+        "default" => [
+            "driver" => "pdo_mysql",
+            "dbname" => "",
+            "host" => "",
+            "user" => "",
+            "password" => "",
+            "prefix" => "",
+        ]
+    ],
+    //Doctrine configuration
+    "doctrine_options" => [
+        "autogenerate_proxy_classes" => true,
+    ],
+    //Template configuration
+    "template_options" => [
+        "template" => "default",
+        "charset " => "utf-8",
+        "base_template_class" => "\\Twig\\Template",
+        "auto_reload" => true,
+        "strict_variables" => false,
+        "autoescape" => "html",
+        "optimizations" => -1,
+    ],
+    //Logger configuration
+    "logger_options" => [
+        "log_level" => \Configs\LoggerConfig::ERROR
+    ],
+];

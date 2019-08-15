@@ -10,14 +10,16 @@
 namespace Traits\ControllerTraits;
 
 
-use Configs\DefaultConfig;
-use Configs\DoctrineConfig;
-use Configs\LoggerConfig;
-use Configs\TemplateConfig;
+use Configula\ConfigValues;
 use Doctrine\ORM\EntityManager;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
+use Helpers\AbsolutePathHelper;
+use Managers\ModuleManager;
+use Managers\ServiceManager;
 use Monolog\Logger;
+use Services\DoctrineService;
+use Services\TemplateService;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -35,9 +37,19 @@ trait AbstractBaseTrait
     private $baseDir = "";
 
     /**
-     * @var DefaultConfig|null
+     * @var ConfigValues
      */
-    private $coreConfig = null;
+    private $config;
+
+    /**
+     * @var ModuleManager
+     */
+    private $moduleManager;
+
+    /**
+     * @var ServiceManager
+     */
+    private $serviceManager;
 
     /**
      * @var array
@@ -45,9 +57,9 @@ trait AbstractBaseTrait
     private $context = [];
 
     /**
-     * @var TemplateConfig
+     * @var TemplateService
      */
-    private $twig;
+    private $templateService;
 
     /**
      * @var TemplateWrapper
@@ -72,72 +84,59 @@ trait AbstractBaseTrait
     /**
      * @var Logger
      */
-    private $logger;
+    private $loggerService;
 
     /**
-     * @var int
+     * @var DoctrineService
      */
-    private $logLevel = LoggerConfig::ERROR;
+    private $doctrineService;
 
     /**
-     * @var string
+     * @var EntityManager
      */
-    private $connectionOption = "default";
+    private $entityManager;
 
     /**
-     * @var DoctrineConfig|null
+     * @var AbsolutePathHelper;
      */
-    private $doctrine = null;
+    private $absolutePathHelper;
 
     /**
-     * @var EntityManager|null
+     * @return ServiceManager
      */
-    private $entityManager = null;
-
-    /**
-     * @return DoctrineConfig|null
-     */
-    protected function getDoctrine(): ?DoctrineConfig
+    private function getServiceManager(): ServiceManager
     {
-        return $this->doctrine;
+        return $this->serviceManager;
+    }
+
+    /**
+     * @return ModuleManager
+     */
+    private function getModuleManager(): ModuleManager
+    {
+        return $this->moduleManager;
     }
 
     /**
      * @return string
      */
-    protected function getBaseDir(): string
+    public function getBaseDir(): string
     {
         return $this->baseDir;
     }
 
     /**
-     * @return DefaultConfig
+     * @return ConfigValues
      */
-    protected function getCoreConfig(): DefaultConfig
+    protected function getConfig(): ConfigValues
     {
-        return $this->coreConfig;
+        return $this->config;
     }
 
     /**
-     * @return string
+     * @return EntityManager
      */
-    protected function getConnectionOption(): string
-    {
-        return $this->connectionOption;
-    }
-
-    /**
-     * @param string $connectionOption
-     */
-    protected function setConnectionOption(string $connectionOption): void
-    {
-        $this->connectionOption = $connectionOption;
-    }
-
-    /**
-     * @return EntityManager|null
-     */
-    protected function getEntityManager(): ?EntityManager
+    protected function getEntityManager(): EntityManager
     {
         return $this->entityManager;
     }
@@ -147,10 +146,15 @@ trait AbstractBaseTrait
      */
     protected function getModuleShortName(): ?string
     {
-        $className = get_class($this); // i.e. Controllers\MvcController or Controllers\Backend\MvcController
-        $isModule = (strcasecmp(substr($className, 0, 7), "Modules") === 0);
-        $nameParts = $isModule ? explode("\\", $className) : null;  // i.e. Dashboard
-        return $isModule ? $nameParts[1] : null;
+        return $this->getModuleManager()->getModuleShortName();
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getControllerShortName(): ?string
+    {
+        return $this->getModuleManager()->getControllerShortName();
     }
 
     /**
@@ -160,15 +164,6 @@ trait AbstractBaseTrait
     {
         $moduleName = $this->getModuleShortName();
         return $moduleName ? sprintf("modules/%s/views", $moduleName) : null;
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getControllerShortName(): ?string
-    {
-        $className = get_class($this); // i.e. Controllers\MvcController or Controllers\Backend\MvcController
-        return preg_replace('/^([A-Za-z]+\\\)+/', '', $className); // i.e. MvcController
     }
 
     /**
@@ -192,13 +187,13 @@ trait AbstractBaseTrait
             $this->setView($templatePath);
         }
 
-        $this->template = $this->twig->getTemplateWrapper($this->getView());
+        $this->template = $this->templateService->getEnvironment()->load($this->getView());
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    protected function getView(): ?string
+    protected function getView(): string
     {
         return $this->view;
     }
@@ -236,18 +231,42 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return Logger
+     * @return array
      */
-    protected function getLogger(): Logger
+    protected function getContext(): array
     {
-        return $this->logger;
+        return $this->context;
     }
 
     /**
-     * @return int
+     * @return DoctrineService
      */
-    public function getLogLevel(): int
+    protected function getDoctrineService(): DoctrineService
     {
-        return $this->logLevel;
+        return $this->doctrineService;
+    }
+
+    /**
+     * @return Logger
+     */
+    protected function getLoggerService(): Logger
+    {
+        return $this->loggerService;
+    }
+
+    /**
+     * @return TemplateService
+     */
+    protected function getTemplateService(): TemplateService
+    {
+        return $this->templateService;
+    }
+
+    /**
+     * @return AbsolutePathHelper
+     */
+    protected function getAbsolutePathHelper(): AbsolutePathHelper
+    {
+        return $this->absolutePathHelper;
     }
 }

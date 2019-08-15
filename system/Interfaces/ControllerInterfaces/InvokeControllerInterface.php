@@ -16,8 +16,5 @@ namespace Interfaces\ControllerInterfaces;
  */
 interface InvokeControllerInterface
 {
-    /**
-     * @return mixed|null
-     */
     public function indexAction();
 }

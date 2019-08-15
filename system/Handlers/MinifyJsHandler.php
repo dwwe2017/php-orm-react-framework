@@ -10,7 +10,7 @@
 namespace Handlers;
 
 
-use Configs\DefaultConfig;
+use Configula\ConfigValues;
 use Exception;
 use Exceptions\MinifyJsException;
 use JShrink\Minifier;
@@ -61,12 +61,12 @@ class MinifyJsHandler extends Minifier
 
     /**
      * MinifyJsHandler constructor.
-     * @param DefaultConfig $config
+     * @param ConfigValues $config
      * @throws MinifyJsException
      */
-    public function __construct(DefaultConfig $config)
+    public function __construct(ConfigValues $config)
     {
-        $this->baseDir = $config->getBaseDir();
+        $this->baseDir = $config->get("base_dir");
 
         $this->defaultMinifyJsDir = sprintf("%s/data/cache/js", $this->baseDir);
 
@@ -128,11 +128,11 @@ class MinifyJsHandler extends Minifier
     }
 
     /**
-     * @param DefaultConfig $config
+     * @param ConfigValues $config
      * @return MinifyJsHandler|null
      * @throws MinifyJsException
      */
-    public static function init(DefaultConfig $config)
+    public static function init(ConfigValues $config)
     {
         if (is_null(self::$instance) || serialize(self::$instance) !== self::$instance_key) {
             self::$instance = new self($config);

@@ -10,15 +10,17 @@
 namespace Interfaces\ConfigInterfaces;
 
 
-use Configs\DefaultConfig;
+use Configula\ConfigValues;
 
 /**
- * Interface TemplateConfigInterface
+ * Interface ApplicationConfigInterface
  * @package Interfaces\ConfigInterfaces
  */
-interface TemplateConfigInterface
+interface ApplicationConfigInterface
 {
-    public function __construct(DefaultConfig $config, ?string $moduleViewsDir = "modules", string $defaultTemplatesDir = "templates", string $defaultViewsDir = "views");
+    public function __construct(string $baseDir);
 
-    public static function init(DefaultConfig $config, ?string $moduleViewsDir = "modules", string $defaultTemplatesDir = "templates", string $defaultViewsDir = "views");
+    public static function init(string $baseDir): ConfigValues;
+
+    public function getOptionsDefault(): array;
 }

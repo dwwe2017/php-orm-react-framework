@@ -10,11 +10,10 @@
 namespace Handlers;
 
 
-use Configs\DefaultConfig;
+use Configula\ConfigValues;
 use CssMin;
 use Exception;
 use Exceptions\MinifyCssException;
-use Phpfastcache\CacheManager;
 use Phpfastcache\Helper\Psr16Adapter;
 
 class MinifyCssHandler
@@ -62,12 +61,12 @@ class MinifyCssHandler
 
     /**
      * MinifyCssHandler constructor.
-     * @param DefaultConfig $config
+     * @param ConfigValues $config
      * @throws MinifyCssException
      */
-    public function __construct(DefaultConfig $config)
+    public function __construct(ConfigValues $config)
     {
-        $this->baseDir = $config->getBaseDir();
+        $this->baseDir = $config->get("base_dir");
 
         $this->defaultMinifyCssDir = sprintf("%s/data/cache/css", $this->baseDir);
 
@@ -107,11 +106,11 @@ class MinifyCssHandler
     }
 
     /**
-     * @param DefaultConfig $config
+     * @param ConfigValues $config
      * @return MinifyCssHandler|null
      * @throws MinifyCssException
      */
-    public static function init(DefaultConfig $config)
+    public static function init(ConfigValues $config)
     {
         if (is_null(self::$instance) || serialize(self::$instance) !== self::$instance_key) {
             self::$instance = new self($config);

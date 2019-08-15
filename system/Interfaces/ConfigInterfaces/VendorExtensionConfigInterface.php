@@ -7,14 +7,20 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Interfaces\ControllerInterfaces;
+namespace Interfaces\ConfigInterfaces;
 
+
+use Configula\ConfigValues;
 
 /**
- * Interface MvcControllerInterface
- * @package Interfaces\ControllerInterfaces
+ * Interface VendorExtensionConfigInterface
+ * @package Interfaces\ConfigInterfaces
  */
-interface MvcControllerInterface
+interface VendorExtensionConfigInterface
 {
-    public function indexAction(): void;
+    public function __construct(ConfigValues $config);
+
+    public static function init(ConfigValues $config): ConfigValues;
+
+    public function getOptionsDefault(): array;
 }

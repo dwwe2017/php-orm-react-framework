@@ -10,150 +10,103 @@
 namespace Configs;
 
 
+use Configula\ConfigFactory;
+use Configula\ConfigValues;
 use Exceptions\TemplateException;
-use Interfaces\ConfigInterfaces\TemplateConfigInterface;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
-use Twig\Loader\FilesystemLoader;
-use Twig\TemplateWrapper;
+use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 
 /**
  * Class TemplateConfig
  * @package Configs
  */
-class TemplateConfig implements TemplateConfigInterface
+class TemplateConfig implements VendorExtensionConfigInterface
 {
     /**
-     * @var TemplateConfig|null
+     * @var self|null
      */
-    public static $instance;
-
-    /**
-     * @var FilesystemLoader|null
-     */
-    private $loader;
-
-    /**
-     * @var Environment|null
-     */
-    private $twig;
-
-    /**
-     * @var array
-     */
-    private $options = [];
+    public static $instance = null;
 
     /**
      * @var string
      */
-    private $template = "default";
+    private static $instanceKey = "";
 
     /**
-     * @var TemplateWrapper
+     * @var ConfigValues
      */
-    private $templateWrapper;
+    private $config;
+
+    /**
+     * @var ConfigValues
+     */
+    private $configValues = null;
 
     /**
      * TemplateConfig constructor.
-     * @param DefaultConfig $config
-     * @param string|null $moduleViewsDir
-     * @param string $defaultTemplatesDir
-     * @param string $defaultViewsDir
+     * @param ConfigValues $config
      * @throws TemplateException
      */
-    public function __construct(DefaultConfig $config, ?string $moduleViewsDir = null, string $defaultTemplatesDir = "templates/Controllers", string $defaultViewsDir = "views")
+    public function __construct(ConfigValues $config)
     {
-        $baseDir = $config->getBaseDir();
+        $this->config = $config;
 
-        $debugMode = $config->isDebugMode();
+        $config = ["template_options" => $this->config->get("template_options", [])];
+        $config = ConfigFactory::fromArray($this->getOptionsDefault())->mergeValues($config);
 
-        $this->options = $config->getProperties("template_options");
+        $cache = $config->get("template_options.cache", false);
 
-        $this->template = $config->getTsiOptionsProperty("template");
-
-        $defaultTemplateCompilationPath = sprintf("%s/data/cache/compilation", $baseDir);
-
-        $defaultTemplateCompilationOptions = array(
-            "debug" => $debugMode,
-            "charset " => "utf-8",
-            "base_template_class" => "\\Twig\\Template",
-            "cache" => $debugMode ? false : $defaultTemplateCompilationPath,
-            "auto_reload" => $debugMode,
-            "strict_variables" => !$debugMode,
-            "autoescape" => "html",
-            "optimizations" => $debugMode ? -1 : 0,
-        );
-
-        $this->options += $defaultTemplateCompilationOptions;
-
-        $templateCompilationPath = $this->options["cache"];
-
-        if($debugMode !== true && !file_exists($templateCompilationPath))
-        {
-            if(!@mkdir($templateCompilationPath, 0777, true))
-            {
-                throw new TemplateException(sprintf("The required directory '%s' for template compilation can not be found and/or be created, please check the directory permissions or create it manually.", $templateCompilationPath), E_ERROR);
+        if ($cache !== false && !file_exists($cache)) {
+            if (!@mkdir($config->get("cache"), 0777, true)) {
+                throw new TemplateException(sprintf("The required directory '%s' for template compilation can not be found and/or be created, please check the directory permissions or create it manually.", $cache), E_ERROR);
             }
         }
 
-        if($debugMode !== true && !is_writable($templateCompilationPath))
-        {
-            if(!@chmod($templateCompilationPath, 0777))
-            {
-                throw new TemplateException(sprintf("The required directory '%s' for template compilation can not be written, please check the directory permissions.", $templateCompilationPath), E_ERROR);
+        if ($cache !== false && !is_writable($cache)) {
+            if (!@chmod($config->get("cache"), 0777)) {
+                throw new TemplateException(sprintf("The required directory '%s' for template compilation can not be written, please check the directory permissions.", $cache), E_ERROR);
             }
         }
 
-        $defaultViewsDir = !is_null($defaultViewsDir) ? $defaultViewsDir : "views";
-        $defaultTemplatesDir = sprintf("%s/%s", !is_null($defaultTemplatesDir)
-            ? $defaultTemplatesDir : "templates", $this->template);
-
-        $filesystemLoaderPaths = empty($moduleViewsDir) ? [$defaultViewsDir, $defaultTemplatesDir]
-            : [$moduleViewsDir, $defaultViewsDir, $defaultTemplatesDir];
-
-        $this->loader = new FilesystemLoader($filesystemLoaderPaths, $baseDir);
-
-        $this->twig = new Environment($this->loader, $this->options);
+        $this->configValues = $config;
     }
 
     /**
-     * @param DefaultConfig $config
-     * @param string|null $moduleViewsDir
-     * @param string $defaultTemplatesDir
-     * @param string $defaultViewsDir
-     * @return TemplateConfig|null
+     * @param ConfigValues $config
+     * @return ConfigValues
      * @throws TemplateException
      */
-    public static function init(DefaultConfig $config, ?string $moduleViewsDir = "modules", string $defaultTemplatesDir = "templates/Controllers", string $defaultViewsDir = "views")
+    public static function init(ConfigValues $config): ConfigValues
     {
-        if (self::$instance == null) {
-            self::$instance = new TemplateConfig($config, $moduleViewsDir, $defaultTemplatesDir, $defaultViewsDir);
+        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+            self::$instance = new self($config);
+            self::$instanceKey = serialize(self::$instance);
         }
 
-        return self::$instance;
+        return self::$instance->configValues;
     }
 
     /**
      * @return array
      */
-    public function getOptions(): array
+    public function getOptionsDefault(): array
     {
-        return $this->options;
-    }
+        $isDebug = $this->config->get("debug_mode");
+        $baseDir = $this->config->get("base_dir");
+        $cacheDir = sprintf("%s/data/cache/compilation", $baseDir);
 
-    /**
-     * @param string $base_template
-     * @return TemplateWrapper
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function getTemplateWrapper($base_template = "layout.default.tpl.twig"): TemplateWrapper
-    {
-        $this->templateWrapper = $this->twig->load($base_template);
-
-        return $this->templateWrapper;
+        return [
+            "template_options" => [
+                "debug" => $isDebug,
+                "base_dir" => $baseDir,
+                "template" => "default",
+                "charset " => "utf-8",
+                "base_template_class" => "\\Twig\\Template",
+                "cache" => $isDebug ? false : $cacheDir,
+                "auto_reload" => !$isDebug,
+                "strict_variables" => $isDebug,
+                "autoescape" => "html",
+                "optimizations" => $isDebug ? 0 : -1,
+            ]
+        ];
     }
 }

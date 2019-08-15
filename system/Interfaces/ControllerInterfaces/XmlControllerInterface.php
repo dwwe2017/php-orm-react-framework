@@ -7,18 +7,17 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Interfaces\ConfigInterfaces;
-
-
-use Configs\DefaultConfig;
+namespace Interfaces\ControllerInterfaces;
 
 /**
- * Interface DoctrineConfigInterface
- * @package Interfaces\ConfigInterfaces
+ * Interface XmlControllerInterface
+ * @package Interfaces\ControllerInterfaces
  */
-interface DoctrineConfigInterface
+interface XmlControllerInterface
 {
-    public function __construct(DefaultConfig $config, $connectionOption = "default");
+    const HEADER_CONTENT_TYPE_JSON = "Content-type: application/json; charset=utf-8";
 
-    public static function init(DefaultConfig $config, $connectionOption = "default");
+    const HEADER_ERROR_404 = "HTTP/1.0 404 Not Found";
+
+    public function indexAction(): void;
 }
