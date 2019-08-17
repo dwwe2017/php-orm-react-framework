@@ -9,16 +9,15 @@
 
 namespace Helpers;
 
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
+
 /**
  * Class ArrayHelper
  * @package Helpers
  */
 class ArrayHelper
 {
-    /**
-     * @var self|null
-     */
-    private static $instance;
+    use InstantiationStaticsUtilTrait;
 
     /**
      * @var array
@@ -40,8 +39,9 @@ class ArrayHelper
      */
     public static function init(array $array)
     {
-        if (is_null(self::$instance) || self::$instance->array !== $array) {
+        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
             self::$instance = new self($array);
+            self::$instanceKey = serialize(self::$instance);
         }
 
         return self::$instance;

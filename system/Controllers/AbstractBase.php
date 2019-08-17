@@ -38,28 +38,28 @@ abstract class AbstractBase
     /**
      * AbstractBase constructor.
      * @param string $baseDir
+     * @throws ConfigException
      * @throws DoctrineException
      * @throws LoggerException
      * @throws MinifyCssException
      * @throws MinifyJsException
      * @throws TemplateException
-     * @throws ConfigException
      */
     public function __construct(string $baseDir)
     {
         $this->baseDir = $baseDir;
 
         $this->initModule();
+        $this->initServices();
         $this->initHelpers();
         $this->initHandlers();
-        $this->initServices();
     }
 
     /**
+     * @throws ConfigException
      * @throws DoctrineException
      * @throws LoggerException
      * @throws TemplateException
-     * @throws ConfigException
      */
     private function initModule()
     {

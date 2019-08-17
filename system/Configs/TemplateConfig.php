@@ -14,6 +14,8 @@ use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exceptions\TemplateException;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
+use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class TemplateConfig
@@ -21,25 +23,8 @@ use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
  */
 class TemplateConfig implements VendorExtensionConfigInterface
 {
-    /**
-     * @var self|null
-     */
-    public static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
-
-    /**
-     * @var ConfigValues
-     */
-    private $config;
-
-    /**
-     * @var ConfigValues
-     */
-    private $configValues = null;
+    use InstantiationStaticsUtilTrait;
+    use VendorExtensionInitConfigTrait;
 
     /**
      * TemplateConfig constructor.
@@ -68,21 +53,6 @@ class TemplateConfig implements VendorExtensionConfigInterface
         }
 
         $this->configValues = $config;
-    }
-
-    /**
-     * @param ConfigValues $config
-     * @return ConfigValues
-     * @throws TemplateException
-     */
-    public static function init(ConfigValues $config): ConfigValues
-    {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
-            self::$instance = new self($config);
-            self::$instanceKey = serialize(self::$instance);
-        }
-
-        return self::$instance->configValues;
     }
 
     /**

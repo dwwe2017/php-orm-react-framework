@@ -14,6 +14,7 @@ use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exceptions\ConfigException;
 use Interfaces\ConfigInterfaces\ApplicationConfigInterface;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class DefaultConfig
@@ -21,15 +22,7 @@ use Interfaces\ConfigInterfaces\ApplicationConfigInterface;
  */
 class DefaultConfig implements ApplicationConfigInterface
 {
-    /**
-     * @var self|null
-     */
-    public static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
+    use InstantiationStaticsUtilTrait;
 
     /**
      * @var string
@@ -92,7 +85,9 @@ class DefaultConfig implements ApplicationConfigInterface
             //Template configuration
             "template_options" => [],
             //Logger configuration
-            "logger_options" => []
+            "logger_options" => [],
+            //PhpFastCache configuration
+            "cache_options" => []
         ];
     }
 }

@@ -11,6 +11,7 @@ namespace Helpers;
 
 
 use Exceptions\FileFactoryException;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class AbsolutePathHelper
@@ -18,15 +19,7 @@ use Exceptions\FileFactoryException;
  */
 class AbsolutePathHelper
 {
-    /**
-     * @var self|null
-     */
-    private static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
+    use InstantiationStaticsUtilTrait;
 
     /**
      * @var string
@@ -48,7 +41,7 @@ class AbsolutePathHelper
      */
     public static function init(string $baseDir)
     {
-        if (is_null(self::$instance) || self::$instanceKey !== serialize(self::$instance)) {
+        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
             self::$instance = new self($baseDir);
             self::$instanceKey = serialize(self::$instance);
         }

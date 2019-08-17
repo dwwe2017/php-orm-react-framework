@@ -17,6 +17,8 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\FilesystemCache;
 use Exceptions\DoctrineException;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
+use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Webmasters\Doctrine\ORM\EntityManager;
 
 /**
@@ -25,25 +27,8 @@ use Webmasters\Doctrine\ORM\EntityManager;
  */
 class DoctrineConfig implements VendorExtensionConfigInterface
 {
-    /**
-     * @var self|null
-     */
-    public static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
-
-    /**
-     * @var ConfigValues
-     */
-    private $config;
-
-    /**
-     * @var ConfigValues
-     */
-    private $configValues = null;
+    use InstantiationStaticsUtilTrait;
+    use VendorExtensionInitConfigTrait;
 
     /**
      * DoctrineConfig constructor.
@@ -115,21 +100,6 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         }
 
         $this->configValues = ConfigValues::fromConfigValues($connectionOptions)->merge($doctrineOptions);
-    }
-
-    /**
-     * @param ConfigValues $config
-     * @return ConfigValues
-     * @throws DoctrineException
-     */
-    public static function init(ConfigValues $config): ConfigValues
-    {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
-            self::$instance = new self($config);
-            self::$instanceKey = serialize(self::$instance);
-        }
-
-        return self::$instance->configValues;
     }
 
     /**

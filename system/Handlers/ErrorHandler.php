@@ -16,6 +16,7 @@ use Configula\ConfigValues;
 use Exceptions\ConfigException;
 use Monolog\Logger;
 use Services\LoggerService;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Whoops\Exception\Frame;
 use Whoops\Exception\Inspector;
 use Whoops\Handler\JsonResponseHandler;
@@ -31,15 +32,7 @@ use Exceptions\LoggerException;
  */
 class ErrorHandler
 {
-    /**
-     * @var ErrorHandler|null
-     */
-    private static $instance;
-
-    /**
-     * @var string
-     */
-    private static $instance_key = "";
+    use InstantiationStaticsUtilTrait;
 
     /**
      * @var bool
@@ -132,9 +125,9 @@ class ErrorHandler
      */
     public static function init(ConfigValues $config = null, Logger $logger = null)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instance_key) {
-            self::$instance = new ErrorHandler($config, $logger);
-            self::$instance_key = serialize(self::$instance_key);
+        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+            self::$instance = new self($config, $logger);
+            self::$instanceKey = serialize(self::$instance);
         }
 
         return self::$instance;

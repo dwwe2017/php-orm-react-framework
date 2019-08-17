@@ -15,6 +15,8 @@ use Configula\ConfigValues;
 use Exceptions\LoggerException;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Monolog\Logger;
+use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class LoggerConfig
@@ -22,6 +24,9 @@ use Monolog\Logger;
  */
 class LoggerConfig implements VendorExtensionConfigInterface
 {
+    use InstantiationStaticsUtilTrait;
+    use VendorExtensionInitConfigTrait;
+
     const DEBUG = Logger::DEBUG;
 
     const INFO = Logger::INFO;
@@ -37,26 +42,6 @@ class LoggerConfig implements VendorExtensionConfigInterface
     const ALERT = Logger::ALERT;
 
     const EMERGENCY = Logger::EMERGENCY;
-
-    /**
-     * @var self|null
-     */
-    public static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
-
-    /**
-     * @var ConfigValues
-     */
-    private $config;
-
-    /**
-     * @var ConfigValues
-     */
-    private $configValues = null;
 
     /**
      * LoggerConfig constructor.
@@ -87,21 +72,6 @@ class LoggerConfig implements VendorExtensionConfigInterface
         }
 
         $this->configValues = $loggerConfig;
-    }
-
-    /**
-     * @param ConfigValues $config
-     * @return ConfigValues
-     * @throws LoggerException
-     */
-    public static function init(ConfigValues $config): ConfigValues
-    {
-        if (is_null(self::$instance) || self::$instanceKey !== serialize(self::$instance)) {
-            self::$instance = new self($config);
-            self::$instanceKey = serialize(self::$instance);
-        }
-
-        return self::$instance->configValues;
     }
 
     /**

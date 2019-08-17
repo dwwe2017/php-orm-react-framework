@@ -11,6 +11,7 @@ namespace Handlers;
 
 
 use Composer\Autoload\ClassLoader;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class AutoloadHandler
@@ -18,15 +19,7 @@ use Composer\Autoload\ClassLoader;
  */
 class AutoloadHandler
 {
-    /**
-     * @var null
-     */
-    private static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instance_key = "";
+    use InstantiationStaticsUtilTrait;
 
     /**
      * @var ClassLoader
@@ -64,9 +57,9 @@ class AutoloadHandler
      */
     public static function init(string $baseDir, ClassLoader $classLoader)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instance_key) {
+        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
             self::$instance = new self($baseDir, $classLoader);
-            self::$instance_key = serialize(self::$instance);
+            self::$instanceKey = serialize(self::$instance);
         }
 
         return self::$instance;

@@ -15,18 +15,11 @@ use CssMin;
 use Exception;
 use Exceptions\MinifyCssException;
 use Phpfastcache\Helper\Psr16Adapter;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 class MinifyCssHandler
 {
-    /**
-     * @var MinifyCssHandler|null
-     */
-    private static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instance_key = "";
+    use InstantiationStaticsUtilTrait;
 
     /**
      * @var string
@@ -112,9 +105,9 @@ class MinifyCssHandler
      */
     public static function init(ConfigValues $config)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instance_key) {
+        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
             self::$instance = new self($config);
-            self::$instance_key = serialize(self::$instance);
+            self::$instanceKey = serialize(self::$instance);
         }
 
         self::$instance->setDefaults();
