@@ -127,9 +127,9 @@ class MinifyJsHandler extends Minifier
      */
     public static function init(ConfigValues $config)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($config) !== self::$instanceKey) {
             self::$instance = new self($config);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($config);
         }
 
         self::$instance->setDefaults();

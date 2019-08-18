@@ -73,7 +73,9 @@ class ErrorHandler
 
         if (Misc::isAjaxRequest()) {
             $jsonHandler = new JsonResponseHandler();
-            $jsonHandler->addTraceToOutput(true);
+            if($debugMode){
+                $jsonHandler->addTraceToOutput(true);
+            }
             $whoops->prependHandler($jsonHandler);
         } elseif ($debugMode) {
             $pretty_page_handler = new PrettyPageHandler();
@@ -83,6 +85,11 @@ class ErrorHandler
                 $exception = $inspector->getException();
                 $data['Exception class'] = get_class($exception);
                 $data['Exception code'] = $exception->getCode();
+
+                if($this->logger instanceof Logger){
+                    $this->logger->error($exception->getMessage());
+                }
+
                 return $data;
             });
 
@@ -125,9 +132,9 @@ class ErrorHandler
      */
     public static function init(ConfigValues $config = null, Logger $logger = null)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($config) !== self::$instanceKey) {
             self::$instance = new self($config, $logger);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($config);
         }
 
         return self::$instance;

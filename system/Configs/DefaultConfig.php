@@ -13,6 +13,7 @@ namespace Configs;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exceptions\ConfigException;
+use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\ApplicationConfigInterface;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
@@ -44,12 +45,7 @@ class DefaultConfig implements ApplicationConfigInterface
         $this->baseDir = $baseDir;
 
         $configDir = sprintf("%s/config", $this->baseDir);
-
-        if (!file_exists($configDir)) {
-            throw new ConfigException(sprintf("The config directory '%s' is missing", $configDir), E_ERROR);
-        } elseif (!is_readable($configDir)) {
-            throw new ConfigException(sprintf("The config directory '%s' can not be loaded, please check the directory permissions", $configDir), E_ERROR);
-        }
+        FileHelper::init($configDir, ConfigException::class)->isReadable();
 
         $this->configValues = ConfigFactory::loadSingleDirectory($configDir, $this->getOptionsDefault());
     }
@@ -87,7 +83,11 @@ class DefaultConfig implements ApplicationConfigInterface
             //Logger configuration
             "logger_options" => [],
             //PhpFastCache configuration
-            "cache_options" => []
+            "cache_options" => [
+                "driver" => [
+                    "driverName" => "files"
+                ]
+            ]
         ];
     }
 }

@@ -39,9 +39,9 @@ class ArrayHelper
      */
     public static function init(array $array)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($array) !== self::$instanceKey) {
             self::$instance = new self($array);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($array);
         }
 
         return self::$instance;

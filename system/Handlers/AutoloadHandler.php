@@ -57,9 +57,9 @@ class AutoloadHandler
      */
     public static function init(string $baseDir, ClassLoader $classLoader)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($baseDir) !== self::$instanceKey) {
             self::$instance = new self($baseDir, $classLoader);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($baseDir);
         }
 
         return self::$instance;

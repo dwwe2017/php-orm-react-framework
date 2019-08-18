@@ -13,6 +13,7 @@ namespace Configs;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exceptions\TemplateException;
+use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -34,25 +35,25 @@ class TemplateConfig implements VendorExtensionConfigInterface
     public function __construct(ConfigValues $config)
     {
         $this->config = $config;
+        $baseDir = $this->config->get("base_dir");
 
-        $config = ["template_options" => $this->config->get("template_options", [])];
-        $config = ConfigFactory::fromArray($this->getOptionsDefault())->mergeValues($config);
+        $tplConfig = ["template_options" => $this->config->get("template_options", [])];
+        $tplConfig = ConfigFactory::fromArray($this->getOptionsDefault())->mergeValues($tplConfig);
 
-        $cache = $config->get("template_options.cache", false);
+        $cacheDir = $tplConfig->get("template_options.cache", false);
 
-        if ($cache !== false && !file_exists($cache)) {
-            if (!@mkdir($config->get("cache"), 0777, true)) {
-                throw new TemplateException(sprintf("The required directory '%s' for template compilation can not be found and/or be created, please check the directory permissions or create it manually.", $cache), E_ERROR);
-            }
+        if ($cacheDir !== false) {
+            $cacheDir = sprintf("%s/%s", $baseDir, $cacheDir);
+            FileHelper::init($cacheDir, TemplateException::class)->isWritable(true);
+
+            $tplConfig = $tplConfig->mergeValues([
+                "template_options" => [
+                    "cache" => $cacheDir
+                ]
+            ]);
         }
 
-        if ($cache !== false && !is_writable($cache)) {
-            if (!@chmod($config->get("cache"), 0777)) {
-                throw new TemplateException(sprintf("The required directory '%s' for template compilation can not be written, please check the directory permissions.", $cache), E_ERROR);
-            }
-        }
-
-        $this->configValues = $config;
+        $this->configValues = $tplConfig;
     }
 
     /**
@@ -61,17 +62,14 @@ class TemplateConfig implements VendorExtensionConfigInterface
     public function getOptionsDefault(): array
     {
         $isDebug = $this->config->get("debug_mode");
-        $baseDir = $this->config->get("base_dir");
-        $cacheDir = sprintf("%s/data/cache/compilation", $baseDir);
 
         return [
             "template_options" => [
                 "debug" => $isDebug,
-                "base_dir" => $baseDir,
                 "template" => "default",
                 "charset " => "utf-8",
                 "base_template_class" => "\\Twig\\Template",
-                "cache" => $isDebug ? false : $cacheDir,
+                "cache" => $isDebug ? false : "data/cache/compilation",
                 "auto_reload" => !$isDebug,
                 "strict_variables" => $isDebug,
                 "autoescape" => "html",

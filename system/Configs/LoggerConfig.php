@@ -13,6 +13,7 @@ namespace Configs;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exceptions\LoggerException;
+use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Monolog\Logger;
 use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
@@ -51,25 +52,24 @@ class LoggerConfig implements VendorExtensionConfigInterface
     public function __construct(ConfigValues $config)
     {
         $this->config = $config;
+        $baseDir = $this->config->get("base_dir");
 
         $defaultOptions = $this->getOptionsDefault();
         $loggerOptionsDefault = ["logger_options" => $defaultOptions["logger_options"]];
         $loggerOptions = ["logger_options" => $this->config->get("logger_options")];
         $loggerConfig = ConfigFactory::fromArray($loggerOptionsDefault)->mergeValues($loggerOptions);
 
-        $logDir = $loggerConfig->get("logger_options.log_dir");
+        $logDir = sprintf("%s/%s", $baseDir, $loggerConfig->get("logger_options.log_dir"));
+        FileHelper::init($logDir, LoggerException::class)->isWritable(true);
 
-        if (!file_exists($logDir)) {
-            if (!@mkdir($logDir, 0777, true)) {
-                throw new LoggerException(sprintf("The required log directory '%s' can not be created, please check the directory permissions or create it manually.", $logDir), E_ERROR);
-            }
-        }
-
-        if (!is_writable($logDir)) {
-            if (!@chmod($logDir, 0777)) {
-                throw new LoggerException(sprintf("The required log directory '%s' can not be written, please check the directory permissions.", $logDir), E_ERROR);
-            }
-        }
+        /**
+         * Merge file values with absolute path
+         */
+        $loggerConfig = $loggerConfig->mergeValues([
+            "logger_options" => [
+                "log_dir" => $logDir,
+            ]
+        ]);
 
         $this->configValues = $loggerConfig;
     }
@@ -81,13 +81,11 @@ class LoggerConfig implements VendorExtensionConfigInterface
     {
         $isDebug = $this->config->get("debug_mode");
         $level = $isDebug ? self::DEBUG : self::ERROR;
-        $baseDir = $this->config->get("base_dir");
-        $defaultLogDir = sprintf("%s/log", $baseDir);
 
         return [
             "logger_options" => [
                 "debug_mode" => $isDebug,
-                "log_dir" => $defaultLogDir,
+                "log_dir" => "log",
                 "log_level" => $level
             ]
         ];

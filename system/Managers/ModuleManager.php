@@ -10,6 +10,7 @@
 namespace Managers;
 
 
+use Configs\CacheConfig;
 use Configs\DefaultConfig;
 use Configs\DoctrineConfig;
 use Configs\LoggerConfig;
@@ -89,6 +90,11 @@ class ModuleManager
     private $moduleConfig;
 
     /**
+     * @var CacheConfig
+     */
+    private $cacheConfig;
+
+    /**
      * ModuleManager constructor.
      * @param AbstractBase $controllerInstance
      * @throws ConfigException
@@ -116,12 +122,14 @@ class ModuleManager
         $this->templateConfig = TemplateConfig::init($this->defaultConfig);
         $this->doctrineConfig = DoctrineConfig::init($this->defaultConfig);
         $this->loggerConfig = LoggerConfig::init($this->defaultConfig);
+        $this->cacheConfig = CacheConfig::init($this->defaultConfig);
 
         $this->config = $this->moduleConfig
             ->merge($this->defaultConfig)
             ->merge($this->templateConfig)
             ->merge($this->doctrineConfig)
-            ->merge($this->loggerConfig);
+            ->merge($this->loggerConfig)
+            ->merge($this->cacheConfig);
     }
 
     /**

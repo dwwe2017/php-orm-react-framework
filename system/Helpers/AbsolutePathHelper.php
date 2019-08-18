@@ -41,9 +41,9 @@ class AbsolutePathHelper
      */
     public static function init(string $baseDir)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($baseDir) !== self::$instanceKey) {
             self::$instance = new self($baseDir);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($baseDir);
         }
 
         return self::$instance;

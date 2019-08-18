@@ -16,6 +16,8 @@ use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\FilesystemCache;
 use Exceptions\DoctrineException;
+use Helpers\DeclarationHelper;
+use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -77,27 +79,26 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         /**
          * Create and check individual paths
          */
-        $entityDir = $doctrineOptions->get("doctrine_options.entity_dir");
+        $entityDir = sprintf("%s/%s", $baseDir, $doctrineOptions->get("doctrine_options.entity_dir"));
+        FileHelper::init($entityDir, DoctrineException::class)->isReadable();
 
-        if (!file_exists($entityDir)) {
-            throw new DoctrineException(sprintf("The directory '%s' does not exist, please check the installation manually", $entityDir), E_ERROR);
-        } elseif (!is_readable($entityDir)) {
-            throw new DoctrineException(sprintf("The directory '%s' can not be loaded, please check the directory permissions", $entityDir), E_ERROR);
-        }
+        /**
+         * Merge file values with absolute path
+         */
+        $doctrineOptions = $doctrineOptions->mergeValues(!$doctrineOptions->has("doctrine_options.entity_namespace") ? [
+            "doctrine_options" => [
+                "entity_dir" => $entityDir,
+                "entity_namespace" => basename($entityDir)
+            ]
+        ] : [
+            "doctrine_options" => [
+                "entity_dir" => $entityDir,
+                "entity_namespace" => $doctrineOptions->get("doctrine_options.entity_namespace")
+            ]
+        ]);
 
         $defaultProxyDir = $doctrineOptions->get("doctrine_options.proxy_dir");
-
-        if (!file_exists($defaultProxyDir)) {
-            if (!@mkdir($defaultProxyDir, 0777, true)) {
-                throw new DoctrineException(sprintf("The required proxy directory '%s' can not be created, please check the directory permissions or create it manually.", $defaultProxyDir), E_ERROR);
-            }
-        }
-
-        if (!is_writable($defaultProxyDir)) {
-            if (!@chmod($defaultProxyDir, 0777)) {
-                throw new DoctrineException(sprintf("The required proxy directory '%s' can not be written, please check the directory permissions.", $defaultProxyDir), E_ERROR);
-            }
-        }
+        FileHelper::init($defaultProxyDir, DoctrineException::class)->isWritable(true);
 
         $this->configValues = ConfigValues::fromConfigValues($connectionOptions)->merge($doctrineOptions);
     }
@@ -109,27 +110,14 @@ class DoctrineConfig implements VendorExtensionConfigInterface
     {
         $isDebug = $this->config->get("debug_mode");
         $baseDir = $this->config->get("base_dir");
-        $entityDir = sprintf("%s/system/Entities", $baseDir);
         $cacheDriver = new ArrayCache();
 
         if (!$isDebug) {
-            if (function_exists("apc_store")) {
+            if (DeclarationHelper::init("apcu", null, "apcu_add")->isDeclared()) {
                 $cacheDriver = new ApcuCache();
             } else {
-                $filesystemCacheDirExists = true;
-                $filesystemCacheDirIsWritable = true;
-
                 $filesystemCacheDir = sprintf("%s/data/cache/doctrine", $baseDir);
-
-                if (!file_exists($filesystemCacheDir)) {
-                    $filesystemCacheDirExists = @mkdir($filesystemCacheDir, 0777, true);
-                }
-
-                if (!is_writable($filesystemCacheDir)) {
-                    $filesystemCacheDirIsWritable = @chmod($filesystemCacheDir, 0777);
-                }
-
-                if ($filesystemCacheDirExists && $filesystemCacheDirIsWritable) {
+                if (FileHelper::init($filesystemCacheDir)->isWritable(true)) {
                     $cacheDriver = new FilesystemCache($filesystemCacheDir);
                 }
             }
@@ -150,8 +138,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
             "doctrine_options" => [
                 "autogenerate_proxy_classes" => true,
                 "debug_mode" => $isDebug,
-                "entity_dir" => $entityDir,
-                "entity_namespace" => basename($entityDir),
+                "entity_dir" => "system/Entities",
                 "cache" => $cacheDriver
             ]
         ];

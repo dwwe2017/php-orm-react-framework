@@ -61,9 +61,9 @@ class DeclarationHelper
      */
     public static function init(?string $extension = null, ?string $class = null, ?string $function = null)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($extension.$class.$function) !== self::$instanceKey) {
             self::$instance = new self($extension, $class, $function);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($extension.$class.$function);
         }
 
         return self::$instance;

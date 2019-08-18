@@ -49,7 +49,7 @@ class TemplateService implements VendorExtensionServiceInterface
      */
     public final function __construct(ConfigValues $config, AbstractBase $controllerInstance = null)
     {
-        $baseDir = $config->get("template_options.base_dir");
+        $baseDir = $config->get("base_dir");
         $moduleTplDir = $this->getModuleViewsDir($controllerInstance);
         $mainTplDir = sprintf("templates/Controllers/%s", $config->get("template_options.template"));
 
