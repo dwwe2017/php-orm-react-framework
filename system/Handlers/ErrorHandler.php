@@ -13,7 +13,8 @@ namespace Handlers;
 use Configs\DefaultConfig;
 use Configs\LoggerConfig;
 use Configula\ConfigValues;
-use Exceptions\ConfigException;
+use Exception;
+use Exceptions\LoggerException;
 use Monolog\Logger;
 use Services\LoggerService;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -24,7 +25,6 @@ use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 use Whoops\Util\Misc;
-use Exceptions\LoggerException;
 
 /**
  * Class ErrorHandler
@@ -60,7 +60,7 @@ class ErrorHandler
                 $config = DefaultConfig::init($baseDir);
                 $baseDir = $config->get("base_dir");
                 $debugMode = $config->get("debug_mode");
-            } catch (ConfigException $e) {
+            } catch (Exception $e) {
                 $debugMode = true;
             }
         }
@@ -132,9 +132,9 @@ class ErrorHandler
      */
     public static function init(ConfigValues $config = null, Logger $logger = null)
     {
-        if (is_null(self::$instance) || serialize($config) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($config).serialize($logger) !== self::$instanceKey) {
             self::$instance = new self($config, $logger);
-            self::$instanceKey = serialize($config);
+            self::$instanceKey = serialize($config).serialize($logger);
         }
 
         return self::$instance;
@@ -146,7 +146,7 @@ class ErrorHandler
     private function initLogger(ConfigValues $config): void
     {
         try {
-            $this->logger = LoggerService::init(LoggerConfig::init($config));
+            $this->logger = LoggerService::init(LoggerConfig::init($config))->getLogger();
         } catch (LoggerException $e) {
             $this->logger = null;
         }

@@ -19,7 +19,8 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class DefaultConfig
- * @package Configs
+ * @package Configs Revised and added options of the configuration file
+ * @see ModuleManager::$cacheConfig
  */
 class DefaultConfig implements ApplicationConfigInterface
 {
@@ -38,7 +39,6 @@ class DefaultConfig implements ApplicationConfigInterface
     /**
      * DefaultConfig constructor.
      * @param string $baseDir
-     * @throws ConfigException
      */
     public function __construct(string $baseDir)
     {
@@ -53,13 +53,12 @@ class DefaultConfig implements ApplicationConfigInterface
     /**
      * @param string $baseDir
      * @return ConfigValues
-     * @throws ConfigException
      */
     public static function init(string $baseDir): ConfigValues
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($baseDir) !== self::$instanceKey) {
             self::$instance = new self($baseDir);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($baseDir);
         }
 
         return self::$instance->configValues;

@@ -43,9 +43,9 @@ trait VendorExtensionInitConfigTrait
      */
     public static function init(ConfigValues $config): ConfigValues
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($config) !== self::$instanceKey) {
             self::$instance = new self($config);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($config);
         }
 
         return self::$instance->configValues;

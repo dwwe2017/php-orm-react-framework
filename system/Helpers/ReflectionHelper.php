@@ -62,9 +62,9 @@ class ReflectionHelper
      */
     public static function init(object $object, $onlyProperties = true)
     {
-        if (is_null(self::$instance) || serialize($object) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($object).serialize($onlyProperties) !== self::$instanceKey) {
             self::$instance = new self($object, $onlyProperties);
-            self::$instanceKey = serialize($object);
+            self::$instanceKey = serialize($object).serialize($onlyProperties);
         }
 
         return self::$instance;

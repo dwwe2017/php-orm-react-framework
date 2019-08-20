@@ -13,6 +13,8 @@ namespace Services;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
+use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -22,15 +24,8 @@ use Twig\Loader\FilesystemLoader;
  */
 class TemplateService implements VendorExtensionServiceInterface
 {
-    /**
-     * @var self|null
-     */
-    public static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
+    use InstantiationStaticsUtilTrait;
+    use VendorExtensionInitServiceTraits;
 
     /**
      * @var FilesystemLoader
@@ -60,21 +55,6 @@ class TemplateService implements VendorExtensionServiceInterface
 
         $envOptions = $config->get("template_options", []);
         $this->environment = new Environment($this->loader, $envOptions);
-    }
-
-    /**
-     * @param ConfigValues $config
-     * @param AbstractBase|null $controllerInstance
-     * @return TemplateService|null
-     */
-    public static function init(ConfigValues $config, AbstractBase $controllerInstance = null)
-    {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
-            self::$instance = new self($config, $controllerInstance);
-            self::$instanceKey = serialize(self::$instance);
-        }
-
-        return self::$instance;
     }
 
     /**

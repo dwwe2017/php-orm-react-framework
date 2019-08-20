@@ -25,7 +25,8 @@ use Webmasters\Doctrine\ORM\EntityManager;
 
 /**
  * Class DoctrineConfig
- * @package Configs
+ * @package Configs Revised and added options of the configuration file
+ * @see ModuleManager::$cacheConfig
  */
 class DoctrineConfig implements VendorExtensionConfigInterface
 {

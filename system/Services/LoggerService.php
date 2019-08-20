@@ -18,18 +18,13 @@ use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 class LoggerService implements VendorExtensionServiceInterface
 {
-    /**
-     * @var self|null
-     */
-    public static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
+    use InstantiationStaticsUtilTrait;
+    use VendorExtensionInitServiceTraits;
 
     /**
      * @var Logger
@@ -60,18 +55,10 @@ class LoggerService implements VendorExtensionServiceInterface
     }
 
     /**
-     * @param ConfigValues $config
-     * @param AbstractBase|null $controllerInstance
      * @return Logger
-     * @throws LoggerException
      */
-    public static function init(ConfigValues $config, AbstractBase $controllerInstance = null)
+    public function getLogger(): Logger
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
-            self::$instance = new self($config, $controllerInstance);
-            self::$instanceKey = serialize(self::$instance);
-        }
-
-        return self::$instance->logger;
+        return $this->logger;
     }
 }

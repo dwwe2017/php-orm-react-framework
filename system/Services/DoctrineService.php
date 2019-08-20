@@ -16,20 +16,15 @@ use Doctrine\ORM\EntityManager;
 use Exception;
 use Exceptions\DoctrineException;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
+use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Webmasters\Doctrine\Bootstrap as WDB;
 use Webmasters\Doctrine\ORM\Util\OptionsCollection;
 
 class DoctrineService extends WDB implements VendorExtensionServiceInterface
 {
-    /**
-     * @var self|null
-     */
-    public static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
+    use InstantiationStaticsUtilTrait;
+    use VendorExtensionInitServiceTraits;
 
     /**
      * @noinspection PhpMissingParentConstructorInspection
@@ -50,22 +45,6 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
         } catch (Exception $e) {
             throw new DoctrineException($e->getMessage(), $e->getCode());
         }
-    }
-
-    /**
-     * @param ConfigValues $config
-     * @param AbstractBase|null $controllerInstance
-     * @return DoctrineService|null
-     * @throws DoctrineException
-     */
-    public static function init(ConfigValues $config, AbstractBase $controllerInstance = null)
-    {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
-            self::$instance = new self($config, $controllerInstance);
-            self::$instanceKey = serialize(self::$instance);
-        }
-
-        return self::$instance;
     }
 
     /**

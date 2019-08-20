@@ -1,6 +1,8 @@
 /.less
 /.idea
 /.todo
+/docs
 /vendor
 /config/default-config.php
 /config/license.php
+/phpDocumentor.phar

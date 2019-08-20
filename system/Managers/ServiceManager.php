@@ -12,7 +12,6 @@ namespace Managers;
 
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
-use Exceptions\ConfigException;
 use Exceptions\DoctrineException;
 use Exceptions\LoggerException;
 use Exceptions\CacheException;
@@ -88,17 +87,11 @@ class ServiceManager
         $module = $this->moduleManager->getModule();
 
         $this->doctrineService = DoctrineService::init($config, $module);
-        $this->loggerService = LoggerService::init($config, $module);
+        $this->loggerService = LoggerService::init($config, $module)->getLogger();
         $this->templateService = TemplateService::init($config, $module);
 
-        $this->cacheService = CacheService::init($config, $module);
+        $this->cacheService = CacheService::init($config, $module)->getCacheInstance();
         $this->setCacheServiceFallback($config);
-
-        $this->cacheService->clear();
-
-        print "<pre><br/><br/><br/>";
-        print_r($this->cacheService->getDriverName() . ":" . $this->isCacheServiceFallback());
-        print "</pre>";
     }
 
     /**
@@ -110,9 +103,9 @@ class ServiceManager
      */
     public static function init(ModuleManager $moduleManager)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($moduleManager) !== self::$instanceKey) {
             self::$instance = new self($moduleManager);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($moduleManager);
         }
 
         return self::$instance;
@@ -157,7 +150,9 @@ class ServiceManager
     {
         $this->cacheServiceFallback = !(strcasecmp(
             $this->cacheService->getDriverName(),
-            $config->get("cache_options.driver.driverName")) === 0
+            $config->get("cache_options.driver.driverName",
+                ConfigValues::NOT_SET)
+            ) === 0
         );
     }
 }

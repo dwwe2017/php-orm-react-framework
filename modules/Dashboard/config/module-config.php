@@ -10,6 +10,6 @@
 $config = [
     "debug_mode" => false,
     "logger_options" => [
-        "log_level" => \Configs\LoggerConfig::EMERGENCY
+        "log_level" => \Monolog\Logger::EMERGENCY
     ],
 ];

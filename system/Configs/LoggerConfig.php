@@ -21,33 +21,17 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class LoggerConfig
- * @package Configs
+ * @package Configs Revised and added options of the configuration file
+ * @see ModuleManager::$cacheConfig
  */
 class LoggerConfig implements VendorExtensionConfigInterface
 {
     use InstantiationStaticsUtilTrait;
     use VendorExtensionInitConfigTrait;
 
-    const DEBUG = Logger::DEBUG;
-
-    const INFO = Logger::INFO;
-
-    const NOTICE = Logger::NOTICE;
-
-    const WARNING = Logger::WARNING;
-
-    const ERROR = Logger::ERROR;
-
-    const CRITICAL = Logger::CRITICAL;
-
-    const ALERT = Logger::ALERT;
-
-    const EMERGENCY = Logger::EMERGENCY;
-
     /**
      * LoggerConfig constructor.
      * @param ConfigValues $config
-     * @throws LoggerException
      */
     public function __construct(ConfigValues $config)
     {
@@ -80,7 +64,7 @@ class LoggerConfig implements VendorExtensionConfigInterface
     public function getOptionsDefault(): array
     {
         $isDebug = $this->config->get("debug_mode");
-        $level = $isDebug ? self::DEBUG : self::ERROR;
+        $level = $isDebug ? Logger::DEBUG : Logger::ERROR;
 
         return [
             "logger_options" => [

@@ -20,7 +20,7 @@ trait InstantiationStaticsUtilTrait
     /**
      * @var self|null
      */
-    public static $instance = null;
+    private static $instance = null;
 
     /**
      * @var string

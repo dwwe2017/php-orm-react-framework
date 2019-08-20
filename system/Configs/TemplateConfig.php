@@ -20,7 +20,8 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class TemplateConfig
- * @package Configs
+ * @package Configs Revised and added options of the configuration file
+ * @see ModuleManager::$cacheConfig
  */
 class TemplateConfig implements VendorExtensionConfigInterface
 {
@@ -30,7 +31,6 @@ class TemplateConfig implements VendorExtensionConfigInterface
     /**
      * TemplateConfig constructor.
      * @param ConfigValues $config
-     * @throws TemplateException
      */
     public function __construct(ConfigValues $config)
     {

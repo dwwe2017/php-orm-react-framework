@@ -12,18 +12,22 @@ namespace Configs;
 
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
+use Exception;
 use Exceptions\CacheException;
 use Helpers\ArrayHelper;
 use Helpers\DeclarationHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
+use Managers\ModuleManager;
 use Phpfastcache\Config\ConfigurationOption;
+use Phpfastcache\Drivers\Ssdb\Config;
 use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class CacheConfig
- * @package Configs
+ * @package Configs Revised and added options of the configuration file
+ * @see ModuleManager::$cacheConfig
  */
 class CacheConfig implements VendorExtensionConfigInterface
 {
@@ -31,35 +35,35 @@ class CacheConfig implements VendorExtensionConfigInterface
     use VendorExtensionInitConfigTrait;
 
     /**
-     *
+     *  @var array Array of driver names only for developement
      */
     const DEV_CACHE_DRIVERS = [
         "devfalse", "devtrue", "devnull"
     ];
 
     /**
-     *
+     *  @var array Array of memory-based driver names
      */
     const MEMORY_CACHE_DRIVERS = [
         "apc", "apcu", "memcache", "memcached", "memstatic", "predis", "redis", "wincache", "xcache", "Zend Memory Cache"
     ];
 
     /**
-     *
+     * @var array Array of NoSql-based driver names
      */
     const NOSQL_CACHE_DRIVERS = [
         "cassandra", "couchbase", "couchdb", "leveldb", "mongodb", "riak", "ssdb"
     ];
 
     /**
-     *
+     * @var array Array of file-based driver names
      */
     const FILE_CACHE_DRIVERS = [
         "files", "zenddisk"
     ];
 
     /**
-     *
+     * @var array Contains the required Configuration Option class for specific drivers
      */
     const CACHE_MANAGER_CONFIG_CLASSES = [
         "memcache" => \Phpfastcache\Drivers\Memcache\Config::class,
@@ -71,8 +75,8 @@ class CacheConfig implements VendorExtensionConfigInterface
         "predis" => \Phpfastcache\Drivers\Predis\Config::class,
         "redis" => \Phpfastcache\Drivers\Redis\Config::class,
         "riak" => \Phpfastcache\Drivers\Riak\Config::class,
-        "ssdb" => \Phpfastcache\Drivers\Ssdb\Config::class,
-        "default" => \Phpfastcache\Config\ConfigurationOption::class
+        "ssdb" => Config::class,
+        "default" => ConfigurationOption::class
     ];
 
     /**
@@ -110,7 +114,8 @@ class CacheConfig implements VendorExtensionConfigInterface
     }
 
     /**
-     * @return array
+     * @return array Returns an array with the required default options
+     * @see CacheConfig::getFallbackDriverConfig()
      * @throws CacheException
      */
     public function getOptionsDefault(): array
@@ -148,7 +153,8 @@ class CacheConfig implements VendorExtensionConfigInterface
 
     /**
      * @param bool $fallbackFallback
-     * @return array
+     * @return array Returns an array with the required default fallback options. If the file driver is not used, a fallback is also set for the fallback
+     * @see CacheConfig::getOptionsDefault()
      * @throws CacheException
      */
     private function getFallbackDriverConfig($fallbackFallback = false)
@@ -203,7 +209,7 @@ class CacheConfig implements VendorExtensionConfigInterface
                     "fallbackConfig" => $fallbackConfig
                 ]
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new CacheException($e->getMessage(), $e->getCode(), $e);
         }
     }

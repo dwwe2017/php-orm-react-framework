@@ -18,10 +18,6 @@ use Configs\TemplateConfig;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
-use Exceptions\ConfigException;
-use Exceptions\TemplateException;
-use Exceptions\DoctrineException;
-use Exceptions\LoggerException;
 
 /**
  * Class ModuleManager
@@ -97,10 +93,6 @@ class ModuleManager
     /**
      * ModuleManager constructor.
      * @param AbstractBase $controllerInstance
-     * @throws ConfigException
-     * @throws DoctrineException
-     * @throws TemplateException
-     * @throws LoggerException
      */
     protected final function __construct(AbstractBase $controllerInstance)
     {
@@ -135,16 +127,12 @@ class ModuleManager
     /**
      * @param AbstractBase $controllerInstance
      * @return ModuleManager|null
-     * @throws ConfigException
-     * @throws DoctrineException
-     * @throws LoggerException
-     * @throws TemplateException
      */
     public static final function init(AbstractBase $controllerInstance)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($controllerInstance) !== self::$instanceKey) {
             self::$instance = new self($controllerInstance);
-            self::$instanceKey = serialize(self::$instance);
+            self::$instanceKey = serialize($controllerInstance);
         }
 
         return self::$instance;
