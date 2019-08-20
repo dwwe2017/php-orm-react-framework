@@ -13,7 +13,6 @@ namespace Services;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
 use Exception;
-use ErrorException;
 use Exceptions\CacheException;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Phpfastcache\CacheManager;
@@ -47,7 +46,42 @@ class CacheService implements VendorExtensionServiceInterface
      */
     public function __construct(ConfigValues $config, AbstractBase $controllerInstance = null)
     {
+        /**
+         * @var $defaultCacheDriverName string
+         * @var $defaultCacheDriverClass string
+         * @var $defaultCacheConfiguration ConfigurationOption
+         * |\Phpfastcache\Drivers\Memcache\Config|\Phpfastcache\Drivers\Cassandra\Config
+         * |\Phpfastcache\Drivers\Couchbase\Config|\Phpfastcache\Drivers\Couchdb\Config
+         * |\Phpfastcache\Drivers\Memcached\Config|\Phpfastcache\Drivers\Mongodb\Config
+         * |\Phpfastcache\Drivers\Predis\Config|\Phpfastcache\Drivers\Redis\Config
+         * |\Phpfastcache\Drivers\Riak\Config|\Phpfastcache\Drivers\Ssdb\Config
+         */
+        $defaultCacheDriverName = $config->get("cache_options.driver.driverName");
+        $defaultCacheDriverClass = $config->get("cache_options.driver.driverClass");
+        $defaultCacheDriverConfig = $config->get("cache_options.driver.driverConfig");
+
         try {
+
+            try {
+                $defaultCacheConfiguration = new $defaultCacheDriverClass($defaultCacheDriverConfig);
+            } catch (Exception $e) {
+
+                /**
+                 * Filter invalid options
+                 */
+                $invalidConfigOptions = $this->getInvalidConfigOptions($e);
+                if (!empty($invalidConfigOptions)) {
+
+                    foreach ($invalidConfigOptions as $value) {
+                        unset($defaultCacheDriverConfig[$value]);
+                    }
+
+                    $defaultCacheConfiguration = new $defaultCacheDriverClass($defaultCacheDriverConfig);
+
+                } else {
+                    throw new CacheException($e->getMessage(), $e->getCode(), $e);
+                }
+            }
 
             /**
              * Hack for triggered errors on Fallback
@@ -55,13 +89,20 @@ class CacheService implements VendorExtensionServiceInterface
             $errorReportingLevel = error_reporting();
             error_reporting(E_USER_ERROR);
 
-            $defaultCacheDriverName = $config->get("cache_options.driver.driverName");
-            $defaultCacheConfiguration = new ConfigurationOption($config->get("cache_options.driver.driverConfig"));
+            try {
 
-            $this->instanceCache = CacheManager::getInstance(
-                $defaultCacheDriverName,
-                $defaultCacheConfiguration
-            );
+                $this->instanceCache = CacheManager::getInstance(
+                    $defaultCacheDriverName,
+                    $defaultCacheConfiguration
+                );
+
+            } catch (Exception $e) {
+
+                $this->instanceCache = CacheManager::getInstance(
+                    $defaultCacheConfiguration->getFallback(),
+                    $defaultCacheConfiguration->getFallbackConfig()
+                );
+            }
 
             /**
              * Reset reporting level
@@ -87,5 +128,25 @@ class CacheService implements VendorExtensionServiceInterface
         }
 
         return self::$instance->instanceCache;
+    }
+
+    /**
+     * @param Exception $e
+     * @return array
+     */
+    private function getInvalidConfigOptions(Exception $e): array
+    {
+        $result = [];
+        $message = $e->getMessage();
+        if (strpos($e->getMessage(), ":") !== false) {
+            $messageParts = explode(":", $message);
+            if (count($messageParts) > 1) {
+                $result = array_map(
+                    "trim", explode(",", $messageParts[1])
+                );
+            }
+        }
+
+        return $result;
     }
 }

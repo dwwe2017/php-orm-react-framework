@@ -12,6 +12,7 @@ namespace Managers;
 
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
+use Exceptions\ConfigException;
 use Exceptions\DoctrineException;
 use Exceptions\LoggerException;
 use Exceptions\CacheException;
@@ -92,6 +93,12 @@ class ServiceManager
 
         $this->cacheService = CacheService::init($config, $module);
         $this->setCacheServiceFallback($config);
+
+        $this->cacheService->clear();
+
+        print "<pre><br/><br/><br/>";
+        print_r($this->cacheService->getDriverName() . ":" . $this->isCacheServiceFallback());
+        print "</pre>";
     }
 
     /**

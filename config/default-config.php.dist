@@ -43,4 +43,14 @@ $config = [
     "logger_options" => [
         "log_level" => \Configs\LoggerConfig::ERROR
     ],
+    //PhpFastCache configuration (Fallback drivers are set automatically!)
+    "cache_options" => [
+        "driver" => [
+            "driverName" => "files",
+            "driverConfig" => [
+                "defaultKeyHashFunction" => "sha1",
+                "defaultFileNameHashFunction" => "sha1"
+            ]
+        ]
+    ]
 ];
