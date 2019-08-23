@@ -14,7 +14,7 @@ use Configula\ConfigValues;
 use Controllers\AbstractBase;
 use Exception;
 use Exceptions\CacheException;
-use Handlers\CacheHelper;
+use Helpers\CacheHelper;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Phpfastcache\CacheManager;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;

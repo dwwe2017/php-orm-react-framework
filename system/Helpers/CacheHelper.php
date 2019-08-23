@@ -7,7 +7,7 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Handlers;
+namespace Helpers;
 
 
 use Configula\ConfigValues;
@@ -25,7 +25,7 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class CacheHelper
- * @package Handlers
+ * @package Helpers
  */
 class CacheHelper
 {
