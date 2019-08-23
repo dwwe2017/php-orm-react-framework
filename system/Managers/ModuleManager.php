@@ -94,7 +94,7 @@ class ModuleManager
      * ModuleManager constructor.
      * @param AbstractBase $controllerInstance
      */
-    protected final function __construct(AbstractBase $controllerInstance)
+    private final function __construct(AbstractBase $controllerInstance)
     {
         $this->baseDir = $controllerInstance->getBaseDir();
         $this->module = $controllerInstance;
@@ -190,7 +190,7 @@ class ModuleManager
     /**
      * @return string
      */
-    public function getModulePath(): string
+    public final function getModulePath(): string
     {
         return $this->modulePath;
     }
@@ -198,7 +198,7 @@ class ModuleManager
     /**
      * @return AbstractBase|null
      */
-    public function getModule(): ?AbstractBase
+    public final function getModule(): ?AbstractBase
     {
         return $this->module;
     }

@@ -12,8 +12,11 @@ namespace Traits\ServiceTraits;
 
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
-use Exception;
 
+/**
+ * Trait VendorExtensionInitServiceTraits
+ * @package Traits\ServiceTraits
+ */
 trait VendorExtensionInitServiceTraits
 {
     /**

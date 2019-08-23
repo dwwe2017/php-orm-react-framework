@@ -14,7 +14,6 @@ use Configs\DefaultConfig;
 use Configs\LoggerConfig;
 use Configula\ConfigValues;
 use Exception;
-use Exceptions\LoggerException;
 use Monolog\Logger;
 use Services\LoggerService;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -147,7 +146,7 @@ class ErrorHandler
     {
         try {
             $this->logger = LoggerService::init(LoggerConfig::init($config))->getLogger();
-        } catch (LoggerException $e) {
+        } catch (Exception $e) {
             $this->logger = null;
         }
     }

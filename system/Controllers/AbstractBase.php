@@ -10,12 +10,8 @@
 namespace Controllers;
 
 
-use Exceptions\DoctrineException;
-use Exceptions\ConfigException;
-use Exceptions\LoggerException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
-use Exceptions\TemplateException;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Helpers\AbsolutePathHelper;
@@ -38,12 +34,8 @@ abstract class AbstractBase
     /**
      * AbstractBase constructor.
      * @param string $baseDir
-     * @throws ConfigException
-     * @throws DoctrineException
-     * @throws LoggerException
      * @throws MinifyCssException
      * @throws MinifyJsException
-     * @throws TemplateException
      */
     public function __construct(string $baseDir)
     {
@@ -56,10 +48,7 @@ abstract class AbstractBase
     }
 
     /**
-     * @throws ConfigException
-     * @throws DoctrineException
-     * @throws LoggerException
-     * @throws TemplateException
+     *
      */
     private function initModule()
     {
@@ -68,8 +57,7 @@ abstract class AbstractBase
     }
 
     /**
-     * @throws DoctrineException
-     * @throws LoggerException
+     *
      */
     private function initServices()
     {

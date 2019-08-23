@@ -12,9 +12,6 @@ namespace Managers;
 
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
-use Exceptions\DoctrineException;
-use Exceptions\LoggerException;
-use Exceptions\CacheException;
 use Services\CacheService;
 use Services\DoctrineService;
 use Services\LoggerService;
@@ -74,11 +71,8 @@ class ServiceManager
     /**
      * ServiceManager constructor.
      * @param ModuleManager $moduleManager
-     * @throws CacheException
-     * @throws DoctrineException
-     * @throws LoggerException
      */
-    protected function __construct(ModuleManager $moduleManager)
+    private final function __construct(ModuleManager $moduleManager)
     {
         $this->moduleManager = $moduleManager;
         $this->controllerInstance = $this->moduleManager;
@@ -97,11 +91,8 @@ class ServiceManager
     /**
      * @param ModuleManager $moduleManager
      * @return ServiceManager|null
-     * @throws CacheException
-     * @throws DoctrineException
-     * @throws LoggerException
      */
-    public static function init(ModuleManager $moduleManager)
+    public static final function init(ModuleManager $moduleManager)
     {
         if (is_null(self::$instance) || serialize($moduleManager) !== self::$instanceKey) {
             self::$instance = new self($moduleManager);
@@ -114,7 +105,7 @@ class ServiceManager
     /**
      * @return TemplateService|null
      */
-    public function getTemplateService(): ?TemplateService
+    public final function getTemplateService(): ?TemplateService
     {
         return $this->templateService;
     }
@@ -122,7 +113,7 @@ class ServiceManager
     /**
      * @return null
      */
-    public function getDoctrineService()
+    public final function getDoctrineService()
     {
         return $this->doctrineService;
     }
@@ -130,7 +121,7 @@ class ServiceManager
     /**
      * @return null
      */
-    public function getLoggerService()
+    public final function getLoggerService()
     {
         return $this->loggerService;
     }
@@ -138,7 +129,7 @@ class ServiceManager
     /**
      * @return bool
      */
-    public function isCacheServiceFallback(): bool
+    public final function isCacheServiceFallback(): bool
     {
         return $this->cacheServiceFallback;
     }
@@ -146,7 +137,7 @@ class ServiceManager
     /**
      * @param ConfigValues $config
      */
-    public function setCacheServiceFallback(ConfigValues $config): void
+    public final function setCacheServiceFallback(ConfigValues $config): void
     {
         $this->cacheServiceFallback = !(strcasecmp(
             $this->cacheService->getDriverName(),
