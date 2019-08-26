@@ -10,12 +10,11 @@
 namespace Services;
 
 
-use Configula\ConfigValues;
-use Controllers\AbstractBase;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use Exceptions\DoctrineException;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
+use Managers\ModuleManager;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Webmasters\Doctrine\Bootstrap as WDB;
@@ -29,12 +28,12 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     /**
      * @noinspection PhpMissingParentConstructorInspection
      * DoctrineService constructor.
-     * @param ConfigValues $config
-     * @param AbstractBase|null $controllerInstance
+     * @param ModuleManager|null $moduleManager
      * @throws DoctrineException
      */
-    public function __construct(ConfigValues $config, AbstractBase $controllerInstance = null)
+    public function __construct(ModuleManager $moduleManager)
     {
+        $config = $moduleManager->getConfig();
         $connectionOptions = $config->get("connection_options");
         $applicationOptions = $config->get("doctrine_options");
 

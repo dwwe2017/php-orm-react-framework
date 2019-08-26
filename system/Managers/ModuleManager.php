@@ -53,7 +53,7 @@ class ModuleManager
     /**
      * @var string
      */
-    private $modulePath = "";
+    private $moduleBasePath = "";
 
     /**
      * @var ConfigValues
@@ -102,8 +102,8 @@ class ModuleManager
         $this->moduleConfig = new ConfigValues([]);
 
         if ($this->isModule()) {
-            $this->modulePath = sprintf("%s/modules/%s", $this->getBaseDir(), $this->getModuleShortName());
-            $moduleConfigPath = sprintf("%s/config", $this->modulePath);
+            $this->moduleBasePath = sprintf("%s/modules/%s", $this->getBaseDir(), $this->getModuleShortName());
+            $moduleConfigPath = sprintf("%s/config", $this->moduleBasePath);
 
             if (file_exists($moduleConfigPath) && is_readable($moduleConfigPath)) {
                 $this->moduleConfig = ConfigFactory::loadSingleDirectory($moduleConfigPath);
@@ -190,9 +190,9 @@ class ModuleManager
     /**
      * @return string
      */
-    public final function getModulePath(): string
+    public final function getModuleBasePath(): string
     {
-        return $this->modulePath;
+        return $this->moduleBasePath;
     }
 
     /**

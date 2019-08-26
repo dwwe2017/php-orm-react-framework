@@ -12,6 +12,7 @@ namespace Controllers;
 
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
+use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Helpers\AbsolutePathHelper;
@@ -73,6 +74,10 @@ abstract class AbstractBase
      */
     private function initHandlers(): void
     {
+        ErrorHandler::init($this->getConfig(),
+            $this->loggerService
+        );
+
         $this->cssHandler = MinifyCssHandler::init(
             $this->getConfig()
         );

@@ -10,12 +10,11 @@
 namespace Services;
 
 
-use Configula\ConfigValues;
-use Controllers\AbstractBase;
 use Exception;
 use Exceptions\CacheException;
 use Helpers\CacheHelper;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
+use Managers\ModuleManager;
 use Phpfastcache\CacheManager;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
@@ -47,14 +46,16 @@ class CacheService implements VendorExtensionServiceInterface
 
     /**
      * CacheService constructor.
-     * @param ConfigValues $config
-     * @param AbstractBase|null $controllerInstance
+     * @param ModuleManager $moduleManager
      * @throws CacheException
      */
-    public function __construct(ConfigValues $config, AbstractBase $controllerInstance = null)
+    public function __construct(ModuleManager $moduleManager)
     {
         try {
-            $this->cacheInstance = CacheHelper::init($config, self::CACHE_INSTANCE_ID);
+            $this->cacheInstance = CacheHelper::init(
+                $moduleManager->getConfig(),
+                self::CACHE_INSTANCE_ID
+            );
         } catch (Exception $e) {
             throw new CacheException($e->getMessage(), $e->getCode(), $e);
         }

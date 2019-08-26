@@ -73,6 +73,7 @@ class DefaultConfig implements ApplicationConfigInterface
             //General properties
             "debug_mode" => false,
             "base_dir" => $this->baseDir,
+            "language" => "en_US",
             //Database configuration
             "connection_options" => [],
             //Doctrine configuration

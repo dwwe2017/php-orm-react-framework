@@ -11,11 +11,13 @@ namespace Managers;
 
 
 use Configula\ConfigValues;
-use Controllers\AbstractBase;
+use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Services\CacheService;
 use Services\DoctrineService;
+use Services\LocaleService;
 use Services\LoggerService;
 use Services\TemplateService;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class ServiceManager
@@ -23,20 +25,7 @@ use Services\TemplateService;
  */
 class ServiceManager
 {
-    /**
-     * @var self|null
-     */
-    private static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
-
-    /**
-     * @var ModuleManager
-     */
-    private $moduleManager;
+    use InstantiationStaticsUtilTrait;
 
     /**
      * @var DoctrineService
@@ -54,7 +43,7 @@ class ServiceManager
     private $loggerService;
 
     /**
-     * @var
+     * @var ExtendedCacheItemPoolInterface
      */
     private $cacheService;
 
@@ -64,9 +53,9 @@ class ServiceManager
     private $cacheServiceFallback = false;
 
     /**
-     * @var AbstractBase
+     * @var
      */
-    private $controllerInstance;
+    private $localeService;
 
     /**
      * ServiceManager constructor.
@@ -74,17 +63,13 @@ class ServiceManager
      */
     private final function __construct(ModuleManager $moduleManager)
     {
-        $this->moduleManager = $moduleManager;
-        $this->controllerInstance = $this->moduleManager;
+        $config = $moduleManager->getConfig();
 
-        $config = $this->moduleManager->getConfig();
-        $module = $this->moduleManager->getModule();
-
-        $this->doctrineService = DoctrineService::init($config, $module);
-        $this->loggerService = LoggerService::init($config, $module)->getLogger();
-        $this->templateService = TemplateService::init($config, $module);
-
-        $this->cacheService = CacheService::init($config, $module)->getCacheInstance();
+        $this->doctrineService = DoctrineService::init($moduleManager);
+        $this->loggerService = LoggerService::init($moduleManager)->getLogger();
+        $this->localeService = LocaleService::init($moduleManager);
+        $this->templateService = TemplateService::init($moduleManager);
+        $this->cacheService = CacheService::init($moduleManager)->getCacheInstance();
         $this->setCacheServiceFallback($config);
     }
 

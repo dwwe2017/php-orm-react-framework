@@ -11,11 +11,11 @@ namespace Handlers;
 
 
 use Configs\DefaultConfig;
-use Configs\LoggerConfig;
 use Configula\ConfigValues;
 use Exception;
+use Monolog\Handler\FirePHPHandler;
+use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use Services\LoggerService;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Whoops\Exception\Frame;
 use Whoops\Exception\Inspector;
@@ -51,52 +51,52 @@ class ErrorHandler
     public function __construct(ConfigValues $config = null, Logger $logger = null)
     {
         $whoops = new Run();
-        $debugMode = false;
         $baseDir = realpath(sprintf("%s/../..", __DIR__));
 
         if (is_null($config)) {
-            try {
-                $config = DefaultConfig::init($baseDir);
-                $baseDir = $config->get("base_dir");
-                $debugMode = $config->get("debug_mode");
-            } catch (Exception $e) {
-                $debugMode = true;
-            }
+            $config = DefaultConfig::init($baseDir);
         }
+
+        $baseDir = $config->get("base_dir");
+        $debugMode = $config->get("debug_mode");
 
         if ($logger instanceof Logger) {
             $this->logger = $logger;
-        } elseif ($config instanceof ConfigValues) {
-            $this->initLogger($config);
+        } else {
+            try {
+                $logFile = sprintf("%s/log/%s.log", $baseDir, date("Y_m_d"));
+                $logLevel = $debugMode ? Logger::DEBUG : Logger::ERROR;
+                $this->logger = new Logger("BOOTSTRAP");
+                $this->logger->pushHandler(new StreamHandler($logFile, $logLevel));
+                $this->logger->pushHandler(new FirePHPHandler($logLevel));
+            } catch (Exception $e) {
+                $this->logger = null;
+            }
         }
 
         if (Misc::isAjaxRequest()) {
             $jsonHandler = new JsonResponseHandler();
-            if($debugMode){
+            if ($debugMode) {
                 $jsonHandler->addTraceToOutput(true);
             }
             $whoops->prependHandler($jsonHandler);
         } elseif ($debugMode) {
-            $pretty_page_handler = new PrettyPageHandler();
-            $pretty_page_handler->setApplicationRootPath($baseDir);
-            $pretty_page_handler->addDataTableCallback('Details', function (Inspector $inspector) {
+            $prettyPageHandler = new PrettyPageHandler();
+            $prettyPageHandler->setApplicationRootPath($baseDir);
+            $prettyPageHandler->addDataTableCallback('Details', function (Inspector $inspector) {
                 $data = array();
                 $exception = $inspector->getException();
                 $data['Exception class'] = get_class($exception);
                 $data['Exception code'] = $exception->getCode();
-
-                if($this->logger instanceof Logger){
-                    $this->logger->error($exception->getMessage());
-                }
-
+                $this->log($exception->getMessage(), $exception->getTrace(), Logger::ERROR);
                 return $data;
             });
 
-            $whoops->prependHandler($pretty_page_handler);
+            $whoops->prependHandler($prettyPageHandler);
             $whoops->prependHandler(function ($exception, Inspector $inspector, $whoops) {
                 $inspector->getFrames()->map(function (Frame $frame) {
                     if ($function = $frame->getFunction()) {
-                        $frame->addComment("This frame is within function '$function'", 'cpt-obvious');
+                        $frame->addComment(sprintf("This frame is within function '%s'", $function), 'cpt-obvious');
                     }
 
                     return $frame;
@@ -104,15 +104,15 @@ class ErrorHandler
             });
         } else {
             $errorTpl = sprintf("%/templates/Handlers/errors/whoops.php", $baseDir);
-            $plain_text_handler = new PlainTextHandler();
-            $plain_text_handler->addTraceToOutput(true);
-            $plain_text_handler->setTemplate($errorTpl);
+            $plainTextHandler = new PlainTextHandler();
+            $plainTextHandler->addTraceToOutput(true);
+            $plainTextHandler->setTemplate($errorTpl);
 
             if ($this->logger instanceof Logger) {
-                $plain_text_handler->setLogger($this->logger);
+                $plainTextHandler->setLogger($this->logger);
             }
 
-            $whoops->prependHandler($plain_text_handler);
+            $whoops->prependHandler($plainTextHandler);
         }
 
         if (self::$registered) {
@@ -131,23 +131,23 @@ class ErrorHandler
      */
     public static function init(ConfigValues $config = null, Logger $logger = null)
     {
-        if (is_null(self::$instance) || serialize($config).serialize($logger) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($config) . serialize($logger) !== self::$instanceKey) {
             self::$instance = new self($config, $logger);
-            self::$instanceKey = serialize($config).serialize($logger);
+            self::$instanceKey = serialize($config) . serialize($logger);
         }
 
         return self::$instance;
     }
 
     /**
-     * @param ConfigValues $config
+     * @param string $message
+     * @param array $context
+     * @param string $logLevel
      */
-    private function initLogger(ConfigValues $config): void
+    private function log(string $message, array $context = [], string $logLevel = Logger::DEBUG): void
     {
-        try {
-            $this->logger = LoggerService::init(LoggerConfig::init($config))->getLogger();
-        } catch (Exception $e) {
-            $this->logger = null;
+        if ($this->logger instanceof Logger) {
+            $this->logger->log($logLevel, $message, $context);
         }
     }
 }

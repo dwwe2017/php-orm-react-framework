@@ -10,9 +10,8 @@
 namespace Services;
 
 
-use Configula\ConfigValues;
-use Controllers\AbstractBase;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
+use Managers\ModuleManager;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Twig\Environment;
@@ -39,13 +38,15 @@ class TemplateService implements VendorExtensionServiceInterface
 
     /**
      * TemplateService constructor.
-     * @param ConfigValues $config
-     * @param AbstractBase|null $controllerInstance
+     * @param ModuleManager $moduleManager
      */
-    public final function __construct(ConfigValues $config, AbstractBase $controllerInstance = null)
+    public final function __construct(ModuleManager $moduleManager)
     {
+        $config = $moduleManager->getConfig();
         $baseDir = $config->get("base_dir");
-        $moduleTplDir = $this->getModuleViewsDir($controllerInstance);
+        $moduleTplDir = !$moduleManager->isModule() ? null
+            : sprintf("modules/%s/views", $moduleManager->getModuleShortName());
+
         $mainTplDir = sprintf("templates/Controllers/%s", $config->get("template_options.template"));
 
         $filesystemLoaderPaths = is_null($moduleTplDir) ? ["views", $mainTplDir]
@@ -55,17 +56,7 @@ class TemplateService implements VendorExtensionServiceInterface
 
         $envOptions = $config->get("template_options", []);
         $this->environment = new Environment($this->loader, $envOptions);
-    }
-
-    /**
-     * @param AbstractBase $controllerInstance
-     * @return string|null
-     */
-    private final function getModuleViewsDir(AbstractBase $controllerInstance)
-    {
-        $className = get_class($controllerInstance);
-        $isModule = (strcasecmp(substr($className, 0, 7), "Modules") === 0);
-        return $isModule ? sprintf("modules/%s/views", explode("\\", $className)[1]) : null;
+        $this->environment->addExtension(new \Twig_Extensions_Extension_I18n());
     }
 
     /**

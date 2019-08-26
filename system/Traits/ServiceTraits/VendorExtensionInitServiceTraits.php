@@ -12,6 +12,7 @@ namespace Traits\ServiceTraits;
 
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
+use Managers\ModuleManager;
 
 /**
  * Trait VendorExtensionInitServiceTraits
@@ -21,24 +22,22 @@ trait VendorExtensionInitServiceTraits
 {
     /**
      * VendorExtensionInitServiceTraits constructor.
-     * @param ConfigValues $config
-     * @param AbstractBase|null $controllerInstance
+     * @param ModuleManager|null $moduleManager
      */
-    public function __construct(ConfigValues $config, AbstractBase $controllerInstance = null)
+    public function __construct(ModuleManager $moduleManager)
     {
 
     }
 
     /**
-     * @param ConfigValues $config
-     * @param AbstractBase|null $controllerInstance
+     * @param ModuleManager|null $moduleManager
      * @return self
      */
-    public static function init(ConfigValues $config, AbstractBase $controllerInstance = null)
+    public static function init(ModuleManager $moduleManager)
     {
-        if (is_null(self::$instance) || serialize(self::$instance) !== self::$instanceKey) {
-            self::$instance = new self($config, $controllerInstance);
-            self::$instanceKey = serialize(self::$instance);
+        if (is_null(self::$instance) || serialize($moduleManager) !== self::$instanceKey) {
+            self::$instance = new self($moduleManager);
+            self::$instanceKey = serialize($moduleManager);
         }
 
         return self::$instance;

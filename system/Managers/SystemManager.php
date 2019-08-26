@@ -7,19 +7,14 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Interfaces\ServiceInterfaces;
+namespace Managers;
 
 
-use Configula\ConfigValues;
-use Managers\ModuleManager;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
-/**
- * Interface VendorExtensionServiceInterface
- * @package Interfaces\ServiceInterfaces
- */
-interface VendorExtensionServiceInterface
+class SystemManager
 {
-    public function __construct(ModuleManager $moduleManager);
+    use InstantiationStaticsUtilTrait;
 
-    public static function init(ModuleManager $moduleManager);
+
 }

@@ -12,21 +12,15 @@ declare(strict_types=1);
 namespace Helpers;
 
 
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
+
 /**
  * Class ReflectionHelper
  * @package Helpers
  */
 class ReflectionHelper
 {
-    /**
-     * @var self|null
-     */
-    private static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
+    use InstantiationStaticsUtilTrait;
 
     /**
      * @var object
