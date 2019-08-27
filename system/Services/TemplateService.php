@@ -16,6 +16,7 @@ use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Twig\TwigFunction;
 
 /**
  * Class TemplateService
@@ -64,6 +65,14 @@ class TemplateService implements VendorExtensionServiceInterface
      */
     public final function getEnvironment(): Environment
     {
+        $this->environment->addFunction(new TwigFunction("__", function (string $original){
+            return __($original);
+        }));
+
+        $this->environment->addFunction(new TwigFunction("n__", function (string $original, string $plural, string $value){
+            return n__($original, $plural, $value);
+        }));
+
         return $this->environment;
     }
 

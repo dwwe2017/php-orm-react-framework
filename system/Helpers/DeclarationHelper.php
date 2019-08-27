@@ -10,6 +10,7 @@
 namespace Helpers;
 
 use Exception;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class DeclarationHelper
@@ -17,15 +18,7 @@ use Exception;
  */
 class DeclarationHelper
 {
-    /**
-     * @var self|null
-     */
-    private static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
+    use InstantiationStaticsUtilTrait;
 
     /**
      * @var string|null

@@ -12,6 +12,8 @@ namespace Services;
 
 use Exceptions\LocaleException;
 use Gettext\GettextTranslator;
+use Gettext\Translations;
+use Gettext\Translator;
 use Helpers\DeclarationHelper;
 use Helpers\FileHelper;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
@@ -36,7 +38,22 @@ class LocaleService implements VendorExtensionServiceInterface
     /**
      * @var GettextTranslator
      */
-    private $translator;
+    private $modTranslator;
+
+    /**
+     * @var Translator
+     */
+    private $sysTranslator;
+
+    /**
+     * @var string
+     */
+    private $sysLocaleDir = "";
+
+    /**
+     * @var string
+     */
+    private $modLocaleDir = "";
 
     /**
      * LocaleService constructor.
@@ -51,23 +68,98 @@ class LocaleService implements VendorExtensionServiceInterface
         $baseDir = $config->get("base_dir");
         $language = $config->get("language");
 
-        $localeDir = sprintf("%s/locale", $moduleManager->getModuleBasePath());
-        if(!FileHelper::init($localeDir)->isReadable()){
-            $localeDir = sprintf("%s/locale", $baseDir);
-            FileHelper::init($localeDir, LocaleException::class)->isReadable();
+        $this->sysLocaleDir = sprintf("%s/locale", $baseDir);
+        $this->modLocaleDir = sprintf("%s/locale", $moduleManager->getModuleBasePath());
+        if(!FileHelper::init($this->modLocaleDir)->isReadable()){
+            $this->modLocaleDir = $this->sysLocaleDir;
         }
 
-        $this->translator = new GettextTranslator();
-        $this->translator->setLanguage($language);
-        $this->translator->loadDomain(self::DOMAIN, $localeDir);
-        $this->translator->register();
+        /**
+         * @see LocaleService::getModTranslator()
+         * Module translation
+         */
+        $this->modTranslator = new GettextTranslator();
+        $this->modTranslator->setLanguage($language);
+        $this->modTranslator->loadDomain(self::DOMAIN, $this->modLocaleDir);
+        $this->modTranslator->register();
+
+        /**
+         * @see LocaleService::getSysTranslator()
+         * System translation
+         */
+        $this->sysTranslator = new Translator();
+        $this->sysTranslator->loadTranslations($this->getTranslations($language));
+        $this->sysTranslator->register();
     }
 
     /**
+     * Contains the global functions for the Twig extension il8n for translation in template files.
+     * For translation in twig files with {% trans %} text {% endtrans %}.
+     * Important: Here only language files of the current module are accessed!
      * @return GettextTranslator
      */
-    public function getTranslator(): GettextTranslator
+    public function getModTranslator(): GettextTranslator
     {
-        return $this->translator;
+        return $this->modTranslator;
+    }
+
+    /**
+     * Contains the global function __() for translations.
+     * Important: Here files of the current module and the system are accessed!
+     * @return Translator
+     */
+    public function getSysTranslator(): Translator
+    {
+        return $this->sysTranslator;
+    }
+
+    /**
+     * @param string $localeCode
+     */
+    public function setLanguage(string $localeCode): void
+    {
+        $this->modTranslator->setLanguage($localeCode);
+        $this->sysTranslator->loadTranslations($this->getTranslations($localeCode));
+    }
+
+    /**
+     * @param string $localeCode
+     * @return Translations
+     */
+    public function getSysTranslations(string $localeCode)
+    {
+        $poFile = sprintf("%s/%s/LC_%s/%s.po", $this->sysLocaleDir,
+            $localeCode, strtoupper(self::DOMAIN), self::DOMAIN);
+
+        if(!FileHelper::init($poFile)->isReadable()){
+            return new Translations([]);
+        }
+
+        return Translations::fromPoFile($poFile);
+    }
+
+    /**
+     * @param string $localeCode
+     * @return Translations
+     */
+    public function getModTranslations(string $localeCode)
+    {
+        $poFile = sprintf("%s/%s/LC_%s/%s.po", $this->modLocaleDir,
+            $localeCode, strtoupper(self::DOMAIN), self::DOMAIN);
+
+        if(!FileHelper::init($poFile)->isReadable()){
+            return new Translations([]);
+        }
+
+        return Translations::fromPoFile($poFile);
+    }
+
+    /**
+     * @param string $localeCode
+     * @return Translations
+     */
+    private function getTranslations(string $localeCode)
+    {
+        return $this->getSysTranslations($localeCode)->mergeWith($this->getModTranslations($localeCode));
     }
 }

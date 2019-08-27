@@ -131,27 +131,6 @@ abstract class AbstractBase
     }
 
     /**
-     * @param $action
-     * @param $controller
-     */
-    protected function recall(string $controller, string $action): void
-    {
-        $controllerName = __NAMESPACE__ . '\\' . ucfirst($controller) . 'Controller';
-
-        if (!class_exists($controllerName)) {
-            $this->render404();
-        } elseif (!method_exists($controller, "run")) {
-            $this->render404();
-        } else {
-            $controller = new $controllerName($this->baseDir);
-
-            $controller->run($action);
-        }
-
-        exit;
-    }
-
-    /**
      * @param string|null $module
      * @param string|null $controller
      * @param string|null $action
