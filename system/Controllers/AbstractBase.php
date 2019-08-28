@@ -72,17 +72,16 @@ abstract class AbstractBase
          * PhpFastCache services and fallback check
          * @author https://www.phpfastcache.com/
          * @see AbstractBaseTrait::getCacheService()
-         * @internal To check if a fallback driver is active, call getCacheService::hasFallback()
          * @see AbstractBaseTrait::getSystemCacheService()
          * @see AbstractBaseTrait::getModuleCacheService()
+         * @see AbstractBaseTrait::systemCacheServiceHasFallback()
+         * @see AbstractBaseTrait::moduleCacheServiceHasFallback()
          */
         $this->cacheService = $this->getServiceManager()->getCacheService(); // !Only available for system
         $this->systemCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_SYSTEM); // !Only available for system
-        $this->systemCacheServiceHasFallback = $this->cacheService->hasFallback();
+        $this->systemCacheServiceHasFallback = $this->cacheService->hasFallback(); // !Only available for system
         $this->moduleCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_MODULE); // Available in modules
-        $this->moduleCacheServiceHasFallback = $this->cacheService->hasFallback();
-
-        throw new CacheException($this->moduleCacheServiceHasFallback ? "ja" : "nein");
+        $this->moduleCacheServiceHasFallback = $this->cacheService->hasFallback(); // !Only available for system
 
         /**
          * Gettext locale services

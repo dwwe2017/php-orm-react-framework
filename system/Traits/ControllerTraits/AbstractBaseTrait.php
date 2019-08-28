@@ -385,4 +385,20 @@ trait AbstractBaseTrait
     {
         return $this->systemCacheService;
     }
+
+    /**
+     * @return bool
+     */
+    private function systemCacheServiceHasFallback(): bool
+    {
+        return $this->systemCacheServiceHasFallback;
+    }
+
+    /**
+     * @return bool
+     */
+    private function moduleCacheServiceHasFallback(): bool
+    {
+        return $this->moduleCacheServiceHasFallback;
+    }
 }
