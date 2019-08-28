@@ -10,6 +10,8 @@
 namespace Controllers;
 
 
+use Configula\ConfigValues;
+use Exceptions\CacheException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
 use Handlers\ErrorHandler;
@@ -18,6 +20,7 @@ use Handlers\MinifyJsHandler;
 use Helpers\AbsolutePathHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
+use Services\CacheService;
 use Throwable;
 use Traits\ControllerTraits\AbstractBaseTrait;
 use Twig\Error\LoaderError;
@@ -35,6 +38,7 @@ abstract class AbstractBase
     /**
      * AbstractBase constructor.
      * @param string $baseDir
+     * @throws CacheException
      * @throws MinifyCssException
      * @throws MinifyJsException
      */
@@ -58,16 +62,59 @@ abstract class AbstractBase
     }
 
     /**
-     *
+     * @throws CacheException
      */
     private function initServices()
     {
-        $this->serviceManager = ServiceManager::init($this->getModuleManager());
-        $this->cacheService = $this->getServiceManager()->getCacheService();
-        $this->localeService = $this->getServiceManager()->getLocaleService();
+        $this->serviceManager = ServiceManager::init($this->getModuleManager()); // !Only available for system
+
+        /**
+         * PhpFastCache services and fallback check
+         * @author https://www.phpfastcache.com/
+         * @see AbstractBaseTrait::getCacheService()
+         * @internal To check if a fallback driver is active, call getCacheService::hasFallback()
+         * @see AbstractBaseTrait::getSystemCacheService()
+         * @see AbstractBaseTrait::getModuleCacheService()
+         */
+        $this->cacheService = $this->getServiceManager()->getCacheService(); // !Only available for system
+        $this->systemCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_SYSTEM); // !Only available for system
+        $this->moduleCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_MODULE); // Available in modules
+
+        /**
+         * Gettext locale services
+         * @author https://github.com/oscarotero/Gettext
+         * @see AbstractBaseTrait::getLocaleService()
+         * @see AbstractBaseTrait::getSystemLocaleService()
+         * @see AbstractBaseTrait::getModuleLocaleService()
+         */
+        $this->localeService = $this->getServiceManager()->getLocaleService(); // !Only available for system
+        $this->systemLocaleService = $this->getLocaleService()->getSystemTranslator(); // !Only available for system
+        $this->moduleLocaleService = $this->getLocaleService()->getModuleTranslator(); // Available in modules
+
+        /**
+         * Logger service
+         * @author https://github.com/Seldaek/monolog
+         * @see AbstractBaseTrait::getLoggerService()
+         */
         $this->loggerService = $this->getServiceManager()->getLoggerService();
-        $this->doctrineService = $this->getServiceManager()->getDoctrineService();
-        $this->templateService = $this->getServiceManager()->getTemplateService();
+
+        /**
+         * Doctrine ORM services
+         * @author https://www.doctrine-project.org/index.html
+         * @see AbstractBaseTrait::getDoctrineService()
+         * @see AbstractBaseTrait::getSystemDbService()
+         * @see AbstractBaseTrait::getModuleDbService()
+         */
+        $this->doctrineService = $this->getServiceManager()->getDoctrineService(); // !Only available for system
+        $this->systemDbService = $this->getDoctrineService()->getSystemDoctrineService(); // !Only available for system
+        $this->moduleDbService = $this->getDoctrineService()->getModuleDoctrineService(); // Available in modules
+
+        /**
+         * Twig template service
+         * @author https://twig.symfony.com/
+         * @see AbstractBaseTrait::getTemplateService()
+         */
+        $this->templateService = $this->getServiceManager()->getTemplateService(); // !Only available for system
     }
 
     /**
@@ -77,7 +124,7 @@ abstract class AbstractBase
     private function initHandlers(): void
     {
         //Reinitialize error handler with logger instance
-        ErrorHandler::init($this->getConfig(), $this->loggerService);
+        ErrorHandler::init($this->getConfig(), $this->getLoggerService());
 
         //Asset handlers
         $this->cssHandler = MinifyCssHandler::init($this->getConfig());
@@ -162,12 +209,12 @@ abstract class AbstractBase
      */
     protected function render(): void
     {
-        $this->cssHandler->compileAndGet();
-        $this->jsHandler->compileAndGet();
+        $this->getCssHandler()->compileAndGet();
+        $this->getJsHandler()->compileAndGet();
 
         $this->addContext("message", $this->getMessage());
-        $this->addContext("minified_css", $this->cssHandler->getDefaultMinifyCssFile(true));
-        $this->addContext("minified_js", $this->jsHandler->getDefaultMinifyJsFile(true));
+        $this->addContext("minified_css", $this->getCssHandler()->getDefaultMinifyCssFile(true));
+        $this->addContext("minified_js", $this->getJsHandler()->getDefaultMinifyJsFile(true));
 
         echo $this->template->render($this->context);
     }

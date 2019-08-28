@@ -10,9 +10,7 @@
 namespace Services;
 
 
-use Doctrine\ORM\Cache\CacheException;
 use Doctrine\ORM\EntityManager;
-use Exceptions\DoctrineException;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;

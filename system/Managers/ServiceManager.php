@@ -48,11 +48,6 @@ class ServiceManager
     private $cacheService;
 
     /**
-     * @var bool
-     */
-    private $cacheServiceFallback = false;
-
-    /**
      * @var
      */
     private $localeService;
@@ -69,8 +64,7 @@ class ServiceManager
         $this->loggerService = LoggerService::init($moduleManager)->getLogger();
         $this->localeService = LocaleService::init($moduleManager);
         $this->templateService = TemplateService::init($moduleManager);
-        $this->cacheService = CacheService::init($moduleManager)->getCacheInstance();
-        $this->setCacheServiceFallback($config);
+        $this->cacheService = CacheService::init($moduleManager);
     }
 
     /**
@@ -112,30 +106,9 @@ class ServiceManager
     }
 
     /**
-     * @return bool
+     * @return CacheService
      */
-    public final function isCacheServiceFallback(): bool
-    {
-        return $this->cacheServiceFallback;
-    }
-
-    /**
-     * @param ConfigValues $config
-     */
-    public final function setCacheServiceFallback(ConfigValues $config): void
-    {
-        $this->cacheServiceFallback = !(strcasecmp(
-            $this->cacheService->getDriverName(),
-            $config->get("cache_options.driver.driverName",
-                ConfigValues::NOT_SET)
-            ) === 0
-        );
-    }
-
-    /**
-     * @return ExtendedCacheItemPoolInterface
-     */
-    public function getCacheService(): ExtendedCacheItemPoolInterface
+    public function getCacheService(): CacheService
     {
         return $this->cacheService;
     }

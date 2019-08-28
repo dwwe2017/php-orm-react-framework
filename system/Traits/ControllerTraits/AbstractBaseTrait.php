@@ -12,12 +12,15 @@ namespace Traits\ControllerTraits;
 
 use Configula\ConfigValues;
 use Doctrine\ORM\EntityManager;
+use Gettext\GettextTranslator;
+use Gettext\Translator;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Helpers\AbsolutePathHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
 use Monolog\Logger;
+use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Services\CacheService;
 use Services\DoctrineService;
 use Services\LocaleService;
@@ -89,9 +92,39 @@ trait AbstractBaseTrait
     private $cacheService;
 
     /**
+     * @var ExtendedCacheItemPoolInterface
+     */
+    private $systemCacheService;
+
+    /**
+     * @var bool
+     */
+    private $systemCacheServiceHasFallback = false;
+
+    /**
+     * @var ExtendedCacheItemPoolInterface
+     */
+    private $moduleCacheService;
+
+    /**
+     * @var bool
+     */
+    private $moduleCacheServiceHasFallback = false;
+
+    /**
      * @var LocaleService
      */
     private $localeService;
+
+    /**
+     * @var
+     */
+    private $systemLocaleService;
+
+    /**
+     * @var
+     */
+    private $moduleLocaleService;
 
     /**
      * @var Logger
@@ -104,6 +137,16 @@ trait AbstractBaseTrait
     private $doctrineService;
 
     /**
+     * @var DoctrineService
+     */
+    private $systemDbService;
+
+    /**
+     * @var DoctrineService
+     */
+    private $moduleDbService;
+
+    /**
      * @var EntityManager
      */
     private $entityManager;
@@ -114,22 +157,6 @@ trait AbstractBaseTrait
     private $absolutePathHelper;
 
     /**
-     * @return ServiceManager
-     */
-    private function getServiceManager(): ServiceManager
-    {
-        return $this->serviceManager;
-    }
-
-    /**
-     * @return ModuleManager
-     */
-    private function getModuleManager(): ModuleManager
-    {
-        return $this->moduleManager;
-    }
-
-    /**
      * @return string
      */
     public function getBaseDir(): string
@@ -138,77 +165,8 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return ConfigValues
+     * PROTECTED AREA
      */
-    protected function getConfig(): ConfigValues
-    {
-        return $this->config;
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getEntityManager(): EntityManager
-    {
-        return $this->entityManager;
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getModuleShortName(): ?string
-    {
-        return $this->getModuleManager()->getModuleShortName();
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getControllerShortName(): ?string
-    {
-        return $this->getModuleManager()->getControllerShortName();
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getModuleViewsDir(): ?string
-    {
-        $moduleName = $this->getModuleShortName();
-        return $moduleName ? sprintf("modules/%s/views", $moduleName) : null;
-    }
-
-    /**
-     * @param string $templatePath
-     */
-    protected function setView(string $templatePath): void
-    {
-        $controller = $this->getControllerShortName();
-        $this->view .= $controller . '/' . $templatePath . '.tpl.twig';
-    }
-
-    /**
-     * @param string|null $templatePath
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function setTemplate(?string $templatePath = null): void
-    {
-        if (!is_null($templatePath)) {
-            $this->setView($templatePath);
-        }
-
-        $this->template = $this->templateService->getEnvironment()->load($this->getView());
-    }
-
-    /**
-     * @return string
-     */
-    protected function getView(): string
-    {
-        return $this->view;
-    }
 
     /**
      * @param $key
@@ -251,14 +209,6 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return DoctrineService
-     */
-    protected function getDoctrineService(): DoctrineService
-    {
-        return $this->doctrineService;
-    }
-
-    /**
      * @return Logger
      */
     protected function getLoggerService(): Logger
@@ -267,18 +217,172 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return TemplateService
-     */
-    protected function getTemplateService(): TemplateService
-    {
-        return $this->templateService;
-    }
-
-    /**
      * @return AbsolutePathHelper
      */
     protected function getAbsolutePathHelper(): AbsolutePathHelper
     {
         return $this->absolutePathHelper;
+    }
+
+    /**
+     * @return DoctrineService
+     */
+    protected function getModuleDbService(): DoctrineService
+    {
+        return $this->moduleDbService;
+    }
+
+    /**
+     * For translations in Twig-Template-files use the function {% trans%},
+     * which only contains the language files of the respective module.
+     * @see LocaleService::getModuleTranslator()
+     * @return GettextTranslator
+     */
+    protected function getModuleLocaleService()
+    {
+        return $this->moduleLocaleService;
+    }
+
+    /**
+     * @return ExtendedCacheItemPoolInterface
+     */
+    protected function getModuleCacheService()
+    {
+        return $this->moduleCacheService;
+    }
+
+    /**
+     * PRIVATE AREA
+     */
+
+    /**
+     * @return ServiceManager
+     */
+    private function getServiceManager(): ServiceManager
+    {
+        return $this->serviceManager;
+    }
+
+    /**
+     * @return ModuleManager
+     */
+    private function getModuleManager(): ModuleManager
+    {
+        return $this->moduleManager;
+    }
+
+    /**
+     * @return ConfigValues
+     */
+    private function getConfig(): ConfigValues
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param string $templatePath
+     */
+    private function setView(string $templatePath): void
+    {
+        $controller = $this->getModuleManager()->getControllerShortName();
+        $this->view .= $controller . '/' . $templatePath . '.tpl.twig';
+    }
+
+    /**
+     * @param string|null $templatePath
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function setTemplate(?string $templatePath = null): void
+    {
+        if (!is_null($templatePath)) {
+            $this->setView($templatePath);
+        }
+
+        $this->template = $this->templateService->getEnvironment()->load($this->getView());
+    }
+
+    /**
+     * @return string
+     */
+    private function getView(): string
+    {
+        return $this->view;
+    }
+
+    /**
+     * @return DoctrineService
+     */
+    private function getDoctrineService(): DoctrineService
+    {
+        return $this->doctrineService;
+    }
+
+    /**
+     * @return DoctrineService
+     */
+    private function getSystemDbService(): DoctrineService
+    {
+        return $this->systemDbService;
+    }
+
+    /**
+     * @return MinifyCssHandler
+     */
+    private function getCssHandler(): MinifyCssHandler
+    {
+        return $this->cssHandler;
+    }
+
+    /**
+     * @return MinifyJsHandler
+     */
+    private function getJsHandler(): MinifyJsHandler
+    {
+        return $this->jsHandler;
+    }
+
+    /**
+     * @return LocaleService
+     */
+    private function getLocaleService(): LocaleService
+    {
+        return $this->localeService;
+    }
+
+    /**
+     * For translations in the controller, use the global functions __() and n__(),
+     * each of which uses the language files of the system and the module.
+     * @see LocaleService::getSystemTranslator()
+     * @return Translator
+     */
+    private function getSystemLocaleService()
+    {
+        return $this->systemLocaleService;
+    }
+
+    /**
+     * @return TemplateService
+     */
+    private function getTemplateService(): TemplateService
+    {
+        return $this->templateService;
+    }
+
+    /**
+     * @return CacheService
+     */
+    private function getCacheService(): CacheService
+    {
+        return $this->cacheService;
+    }
+
+    /**
+     * @return ExtendedCacheItemPoolInterface
+     */
+    private function getSystemCacheService()
+    {
+        return $this->systemCacheService;
     }
 }

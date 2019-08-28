@@ -32,40 +32,60 @@ class CacheService implements VendorExtensionServiceInterface
     /**
      * @var string
      */
-    const CACHE_INSTANCE_ID = "result";
+    const CACHE_SYSTEM = "TeAmSpEaK_InTeRfAcE_2_SyStEm";
 
     /**
-     * @var CacheManager
+     * @var string
      */
-    private $cacheManager;
+    const CACHE_MODULE = "TeAmSpEaK_InTeRfAcE_2_MoDuLe";
 
     /**
-     * @var ExtendedCacheItemPoolInterface
+     * @var ModuleManager
      */
-    private $cacheInstance;
+    private $moduleManager;
+
+    /**
+     * @var bool
+     */
+    private $hasFallback = false;
 
     /**
      * CacheService constructor.
      * @param ModuleManager $moduleManager
-     * @throws CacheException
      */
     public function __construct(ModuleManager $moduleManager)
     {
-        try {
-            $this->cacheInstance = CacheHelper::init(
-                $moduleManager->getConfig(),
-                self::CACHE_INSTANCE_ID
+        $this->moduleManager = $moduleManager;
+    }
+
+    /**
+     * @param string $instance_id
+     * @return ExtendedCacheItemPoolInterface
+     * @throws CacheException
+     */
+    public function getCacheInstance(string $instance_id): ExtendedCacheItemPoolInterface
+    {
+        try
+        {
+            $cache = CacheHelper::init(
+                $this->moduleManager->getConfig(),
+                $instance_id == self::CACHE_SYSTEM
+                    ? $instance_id : self::CACHE_MODULE
             );
+
+            $this->hasFallback = $cache->hasFallback();
+            return $cache->getCacheInstance();
+
         } catch (Exception $e) {
-            throw new CacheException($e->getMessage(), $e->getCode(), $e);
+            throw new CacheException($e->getMessage(), $e->getCode());
         }
     }
 
     /**
-     * @return ExtendedCacheItemPoolInterface
+     * @return bool
      */
-    public function getCacheInstance(): ExtendedCacheItemPoolInterface
+    public function hasFallback()
     {
-        return $this->cacheInstance;
+        return $this->hasFallback;
     }
 }

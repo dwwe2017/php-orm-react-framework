@@ -37,6 +37,11 @@ class CacheHelper
     private $cacheInstance;
 
     /**
+     * @var bool
+     */
+    private $hasFallback = false;
+
+    /**
      * CacheHelper constructor.
      * @param ConfigValues $config
      * @param string|null $instanceId
@@ -111,6 +116,13 @@ class CacheHelper
             );
         }
 
+        $this->hasFallback = !(strcasecmp(
+                $this->cacheInstance->getDriverName(),
+                $config->get("cache_options.driver.driverName",
+                    ConfigValues::NOT_SET)
+            ) === 0
+        );
+
         /**
          * Reset reporting level
          */
@@ -120,7 +132,7 @@ class CacheHelper
     /**
      * @param ConfigValues $config
      * @param string|null $instanceId
-     * @return ExtendedCacheItemPoolInterface
+     * @return CacheHelper|null
      * @throws CacheException
      * @throws PhpfastcacheDriverCheckException
      * @throws PhpfastcacheDriverException
@@ -135,7 +147,7 @@ class CacheHelper
             self::$instanceKey = serialize($config).serialize($instanceId);
         }
 
-        return self::$instance->cacheInstance;
+        return self::$instance;
     }
 
     /**
@@ -156,5 +168,21 @@ class CacheHelper
         }
 
         return $result;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFallback(): bool
+    {
+        return $this->hasFallback;
+    }
+
+    /**
+     * @return ExtendedCacheItemPoolInterface
+     */
+    public function getCacheInstance(): ExtendedCacheItemPoolInterface
+    {
+        return $this->cacheInstance;
     }
 }

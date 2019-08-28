@@ -75,7 +75,7 @@ class LocaleService implements VendorExtensionServiceInterface
         }
 
         /**
-         * @see LocaleService::getModTranslator()
+         * @see LocaleService::getModuleTranslator()
          * Module translation
          */
         $this->modTranslator = new GettextTranslator();
@@ -84,7 +84,7 @@ class LocaleService implements VendorExtensionServiceInterface
         $this->modTranslator->register();
 
         /**
-         * @see LocaleService::getSysTranslator()
+         * @see LocaleService::getSystemTranslator()
          * System translation
          */
         $this->sysTranslator = new Translator();
@@ -98,7 +98,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * Important: Here only language files of the current module are accessed!
      * @return GettextTranslator
      */
-    public function getModTranslator(): GettextTranslator
+    public function getModuleTranslator(): GettextTranslator
     {
         return $this->modTranslator;
     }
@@ -108,7 +108,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * Important: Here files of the current module and the system are accessed!
      * @return Translator
      */
-    public function getSysTranslator(): Translator
+    public function getSystemTranslator(): Translator
     {
         return $this->sysTranslator;
     }
@@ -126,7 +126,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * @param string $localeCode
      * @return Translations
      */
-    public function getSysTranslations(string $localeCode)
+    private function getSystemTranslations(string $localeCode)
     {
         $poFile = sprintf("%s/%s/LC_%s/%s.po", $this->sysLocaleDir,
             $localeCode, strtoupper(self::DOMAIN), self::DOMAIN);
@@ -142,7 +142,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * @param string $localeCode
      * @return Translations
      */
-    public function getModTranslations(string $localeCode)
+    private function getModuleTranslations(string $localeCode)
     {
         $poFile = sprintf("%s/%s/LC_%s/%s.po", $this->modLocaleDir,
             $localeCode, strtoupper(self::DOMAIN), self::DOMAIN);
@@ -160,6 +160,6 @@ class LocaleService implements VendorExtensionServiceInterface
      */
     private function getTranslations(string $localeCode)
     {
-        return $this->getSysTranslations($localeCode)->mergeWith($this->getModTranslations($localeCode));
+        return $this->getSystemTranslations($localeCode)->mergeWith($this->getModuleTranslations($localeCode));
     }
 }
