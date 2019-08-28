@@ -11,8 +11,8 @@ namespace Traits\UtilTraits;
 
 
 /**
- * Class InstantiationStaticsConfigTrait
- * @package Traits\ConfigTraits
+ * Trait InstantiationStaticsUtilTrait
+ * @package Traits\UtilTraits
  */
 trait InstantiationStaticsUtilTrait
 {
