@@ -10,8 +10,6 @@
 namespace Traits\ServiceTraits;
 
 
-use Configula\ConfigValues;
-use Controllers\AbstractBase;
 use Managers\ModuleManager;
 
 /**

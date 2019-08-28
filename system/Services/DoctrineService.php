@@ -13,6 +13,7 @@ namespace Services;
 use Doctrine\ORM\EntityManager;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
+use Managers\ServiceManager;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Webmasters\Doctrine\Bootstrap as WDB;
@@ -48,16 +49,17 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * DoctrineService constructor.
      * @param ModuleManager $moduleManager
      */
-    public function __construct(ModuleManager $moduleManager)
+    public final function __construct(ModuleManager $moduleManager)
     {
         $this->moduleManager = $moduleManager;
     }
 
     /**
+     * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
      * @return DoctrineService|null
      */
-    public static function init(ModuleManager $moduleManager)
+    public static final function init(ModuleManager $moduleManager)
     {
         if (is_null(self::$instance) || serialize($moduleManager) !== self::$instanceKey) {
             self::$instance = new self($moduleManager);
@@ -73,7 +75,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * ORM for Entites of the module
      * @see DoctrineService::init()
      */
-    public function setModuleDoctrineService(): void
+    public final function setModuleDoctrineService(): void
     {
         $config = $this->moduleManager->getConfig();
         $connectionOption = $config->get("connection_option", "default");
@@ -88,10 +90,10 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
 
     /**
      * ORM for Entites of the module
-     * @return DoctrineService
      * @see DoctrineService::setModuleDoctrineService()
+     * @return DoctrineService
      */
-    public function getModuleDoctrineService(): DoctrineService
+    public final function getModuleDoctrineService(): DoctrineService
     {
         return $this->moduleDoctrineService;
     }
@@ -100,7 +102,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * ORM for Entites of the system
      * @see DoctrineService::init()
      */
-    public function setSystemDoctrineService(): void
+    public final function setSystemDoctrineService(): void
     {
         $config = $this->moduleManager->getConfig();
         $connectionOption = $config->get("connection_option", "default");
@@ -117,7 +119,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * @param null $connectionOption
      * @return EntityManager
      */
-    public function getEntityManager($connectionOption = null)
+    public final function getEntityManager($connectionOption = null)
     {
         if (!is_null($connectionOption) && $this->currentConnectionOption !== $connectionOption) {
             $config = $this->moduleManager->getConfig();
@@ -131,10 +133,10 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
 
     /**
      * ORM for Entites of the system
-     * @return DoctrineService
      * @see DoctrineService::setSystemDoctrineService()
+     * @return DoctrineService
      */
-    public function getSystemDoctrineService(): DoctrineService
+    public final function getSystemDoctrineService(): DoctrineService
     {
         return $this->systemDoctrineService;
     }
@@ -142,7 +144,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     /**
      * @param $options
      */
-    protected function setApplicationOptions($options)
+    protected final function setApplicationOptions($options)
     {
         $this->applicationOptions = new OptionsCollection($options);
     }

@@ -30,7 +30,7 @@ class InvokeController extends AbstractBase implements InvokeControllerInterface
      * @param string $action
      * @return bool|void
      */
-    public function run(string $action)
+    public final function run(string $action)
     {
         $methodName = $action . 'Action';
         if (method_exists($this, $methodName)) {

@@ -15,7 +15,6 @@ use Exceptions\CacheException;
 use Helpers\CacheHelper;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
-use Phpfastcache\CacheManager;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -51,9 +50,10 @@ class CacheService implements VendorExtensionServiceInterface
 
     /**
      * CacheService constructor.
+     * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
      */
-    public function __construct(ModuleManager $moduleManager)
+    public final function __construct(ModuleManager $moduleManager)
     {
         $this->moduleManager = $moduleManager;
     }
@@ -63,10 +63,14 @@ class CacheService implements VendorExtensionServiceInterface
      * @return ExtendedCacheItemPoolInterface
      * @throws CacheException
      */
-    public function getCacheInstance(string $instance_id): ExtendedCacheItemPoolInterface
+    public final function getCacheInstance(string $instance_id): ExtendedCacheItemPoolInterface
     {
         try
         {
+            /**
+             * Init cache instance
+             * @see CacheHelper::init()
+             */
             $cache = CacheHelper::init(
                 $this->moduleManager->getConfig(),
                 $instance_id == self::CACHE_SYSTEM
@@ -83,8 +87,9 @@ class CacheService implements VendorExtensionServiceInterface
 
     /**
      * @return bool
+     * @see CacheHelper::hasFallback()
      */
-    public function hasFallback()
+    public final function hasFallback()
     {
         return $this->hasFallback;
     }

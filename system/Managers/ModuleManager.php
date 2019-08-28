@@ -41,11 +41,6 @@ class ModuleManager
     private $baseDir = "";
 
     /**
-     * @var AbstractBase
-     */
-    private $module;
-
-    /**
      * @var string
      */
     private $moduleName = "";
@@ -97,8 +92,7 @@ class ModuleManager
     private final function __construct(AbstractBase $controllerInstance)
     {
         $this->baseDir = $controllerInstance->getBaseDir();
-        $this->module = $controllerInstance;
-        $this->moduleName = get_class($this->module);
+        $this->moduleName = get_class($controllerInstance);
         $this->moduleConfig = new ConfigValues([]);
 
         if ($this->isModule()) {
@@ -160,7 +154,7 @@ class ModuleManager
      */
     public final function isModule(): bool
     {
-        return $this->module && (strcasecmp(substr(get_class($this->module), 0, 8), "Modules\\") === 0);
+        return strcasecmp(substr($this->getModuleName(), 0, 8), "Modules\\") === 0;
     }
 
     /**
@@ -194,13 +188,5 @@ class ModuleManager
     public final function getModuleBaseDir(): string
     {
         return $this->moduleBaseDir;
-    }
-
-    /**
-     * @return AbstractBase
-     */
-    public final function getModule(): AbstractBase
-    {
-        return $this->module;
     }
 }

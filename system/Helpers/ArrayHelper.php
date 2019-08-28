@@ -37,7 +37,7 @@ class ArrayHelper
      * @param array $array
      * @return ArrayHelper|null
      */
-    public static function init(array $array)
+    public static final function init(array $array)
     {
         if (is_null(self::$instance) || serialize($array) !== self::$instanceKey) {
             self::$instance = new self($array);
@@ -52,7 +52,7 @@ class ArrayHelper
      * @param null $key
      * @return $this
      */
-    public function append($array, $key = null)
+    public final function append($array, $key = null)
     {
         is_null($key)
             ? $this->array += $array
@@ -70,7 +70,7 @@ class ArrayHelper
     /**
      * @param $name
      */
-    public function __get($name)
+    public final function __get($name)
     {
         $this->get($name);
     }
@@ -80,7 +80,7 @@ class ArrayHelper
      * @param null $default
      * @return mixed|null
      */
-    public function get($name, $default = null)
+    public final function get($name, $default = null)
     {
         if (key_exists($name, $this->array)) {
             return $this->array[$name];
@@ -92,7 +92,7 @@ class ArrayHelper
     /**
      * @return array
      */
-    public function getArray(): array
+    public final function getArray(): array
     {
         return $this->array;
     }

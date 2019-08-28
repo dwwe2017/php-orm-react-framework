@@ -10,7 +10,6 @@
 namespace Controllers;
 
 
-use Configula\ConfigValues;
 use Exceptions\CacheException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;

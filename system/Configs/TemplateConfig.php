@@ -11,7 +11,6 @@ namespace Configs;
 
 
 use Configula\ConfigFactory;
-use Configula\ConfigValues;
 use Exceptions\TemplateException;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
@@ -21,7 +20,7 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 /**
  * Class TemplateConfig
  * @package Configs Revised and added options of the configuration file
- * @see ModuleManager::$cacheConfig
+ * @see ModuleManager::$templateConfig
  */
 class TemplateConfig implements VendorExtensionConfigInterface
 {
@@ -30,16 +29,23 @@ class TemplateConfig implements VendorExtensionConfigInterface
 
     /**
      * TemplateConfig constructor.
+     * @see ModuleManager::__construct()
      * @param DefaultConfig $defaultConfig
      */
-    public function __construct(DefaultConfig $defaultConfig)
+    public final function __construct(DefaultConfig $defaultConfig)
     {
         $this->config = $defaultConfig->getConfigValues();
         $baseDir = $this->config->get("base_dir");
 
+        /**
+         * Build template options
+         */
         $tplConfig = ["template_options" => $this->config->get("template_options", [])];
         $tplConfig = ConfigFactory::fromArray($this->getOptionsDefault())->mergeValues($tplConfig);
 
+        /**
+         * Create and check paths if necessary
+         */
         $cacheDir = $tplConfig->get("template_options.cache", false);
 
         if ($cacheDir !== false) {
@@ -53,13 +59,16 @@ class TemplateConfig implements VendorExtensionConfigInterface
             ]);
         }
 
+        /**
+         * Finished
+         */
         $this->configValues = $tplConfig;
     }
 
     /**
      * @return array
      */
-    public function getOptionsDefault(): array
+    public final function getOptionsDefault(): array
     {
         $isDebug = $this->config->get("debug_mode");
 

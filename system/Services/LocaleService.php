@@ -57,9 +57,10 @@ class LocaleService implements VendorExtensionServiceInterface
 
     /**
      * LocaleService constructor.
+     * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
      */
-    public function __construct(ModuleManager $moduleManager)
+    public final function __construct(ModuleManager $moduleManager)
     {
         DeclarationHelper::init(null, null, "gettext",
             LocaleException::class)->functionExists();
@@ -98,7 +99,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * Important: Here only language files of the current module are accessed!
      * @return GettextTranslator
      */
-    public function getModuleTranslator(): GettextTranslator
+    public final function getModuleTranslator(): GettextTranslator
     {
         return $this->modTranslator;
     }
@@ -108,7 +109,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * Important: Here files of the current module and the system are accessed!
      * @return Translator
      */
-    public function getSystemTranslator(): Translator
+    public final function getSystemTranslator(): Translator
     {
         return $this->sysTranslator;
     }
@@ -116,7 +117,7 @@ class LocaleService implements VendorExtensionServiceInterface
     /**
      * @param string $localeCode
      */
-    public function setLanguage(string $localeCode): void
+    public final function setLanguage(string $localeCode): void
     {
         $this->modTranslator->setLanguage($localeCode);
         $this->sysTranslator->loadTranslations($this->getTranslations($localeCode));

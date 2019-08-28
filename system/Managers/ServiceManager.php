@@ -10,7 +10,6 @@
 namespace Managers;
 
 
-use Configula\ConfigValues;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Services\CacheService;
 use Services\DoctrineService;
@@ -58,8 +57,6 @@ class ServiceManager
      */
     private final function __construct(ModuleManager $moduleManager)
     {
-        $config = $moduleManager->getConfig();
-
         $this->doctrineService = DoctrineService::init($moduleManager);
         $this->loggerService = LoggerService::init($moduleManager)->getLogger();
         $this->localeService = LocaleService::init($moduleManager);
@@ -108,7 +105,7 @@ class ServiceManager
     /**
      * @return CacheService
      */
-    public function getCacheService(): CacheService
+    public final function getCacheService(): CacheService
     {
         return $this->cacheService;
     }
@@ -116,7 +113,7 @@ class ServiceManager
     /**
      * @return mixed
      */
-    public function getLocaleService()
+    public final function getLocaleService()
     {
         return $this->localeService;
     }

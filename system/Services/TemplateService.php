@@ -17,6 +17,7 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
+use Twig_Extensions_Extension_I18n;
 
 /**
  * Class TemplateService
@@ -39,6 +40,7 @@ class TemplateService implements VendorExtensionServiceInterface
 
     /**
      * TemplateService constructor.
+     * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
      */
     public final function __construct(ModuleManager $moduleManager)
@@ -57,7 +59,7 @@ class TemplateService implements VendorExtensionServiceInterface
 
         $envOptions = $config->get("template_options", []);
         $this->environment = new Environment($this->loader, $envOptions);
-        $this->environment->addExtension(new \Twig_Extensions_Extension_I18n());
+        $this->environment->addExtension(new Twig_Extensions_Extension_I18n());
     }
 
     /**
@@ -74,13 +76,5 @@ class TemplateService implements VendorExtensionServiceInterface
         }));
 
         return $this->environment;
-    }
-
-    /**
-     * @return FilesystemLoader
-     */
-    public final function getLoader(): FilesystemLoader
-    {
-        return $this->loader;
     }
 }

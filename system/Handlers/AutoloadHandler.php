@@ -31,7 +31,7 @@ class AutoloadHandler
      * @param ClassLoader $classLoader
      * @param string $baseDir
      */
-    public function __construct(string $baseDir, ClassLoader $classLoader)
+    public final function __construct(string $baseDir, ClassLoader $classLoader)
     {
         $this->classLoader = $classLoader;
 
@@ -55,7 +55,7 @@ class AutoloadHandler
      * @param ClassLoader $classLoader
      * @return AutoloadHandler|null
      */
-    public static function init(string $baseDir, ClassLoader $classLoader)
+    public static final function init(string $baseDir, ClassLoader $classLoader)
     {
         if (is_null(self::$instance) || serialize($baseDir).serialize($classLoader) !== self::$instanceKey) {
             self::$instance = new self($baseDir, $classLoader);

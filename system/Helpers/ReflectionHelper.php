@@ -54,7 +54,7 @@ class ReflectionHelper
      * @param bool $onlyProperties
      * @return ReflectionHelper|null
      */
-    public static function init(object $object, $onlyProperties = true)
+    public static final function init(object $object, $onlyProperties = true)
     {
         if (is_null(self::$instance) || serialize($object).serialize($onlyProperties) !== self::$instanceKey) {
             self::$instance = new self($object, $onlyProperties);
@@ -67,7 +67,7 @@ class ReflectionHelper
     /**
      * @param bool $onlyProperties
      */
-    public function setAttributes($onlyProperties = true): void
+    public final function setAttributes($onlyProperties = true): void
     {
         $className = get_class($this->object);
         foreach ((array)$this->object as $name => $value) {
@@ -88,7 +88,7 @@ class ReflectionHelper
     /**
      * @return array
      */
-    public function getAttributes(): array
+    public final function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -96,7 +96,7 @@ class ReflectionHelper
     /**
      *
      */
-    public function setMethods(): void
+    public final function setMethods(): void
     {
         $this->methods = get_class_methods($this->object);
     }
@@ -104,7 +104,7 @@ class ReflectionHelper
     /**
      * @return array
      */
-    public function getMethods(): array
+    public final function getMethods(): array
     {
         return $this->methods;
     }

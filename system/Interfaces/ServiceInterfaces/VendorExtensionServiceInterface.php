@@ -10,7 +10,6 @@
 namespace Interfaces\ServiceInterfaces;
 
 
-use Configula\ConfigValues;
 use Managers\ModuleManager;
 
 /**

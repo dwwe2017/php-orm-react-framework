@@ -14,7 +14,6 @@ use Configula\ConfigValues;
 use CssMin;
 use Exception;
 use Exceptions\MinifyCssException;
-use Phpfastcache\Helper\Psr16Adapter;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 class MinifyCssHandler
@@ -47,17 +46,11 @@ class MinifyCssHandler
     private $cssContent = [];
 
     /**
-     * @var Psr16Adapter
-     * @todo implement caching
-     */
-    private $cache;
-
-    /**
      * MinifyCssHandler constructor.
      * @param ConfigValues $config
      * @throws MinifyCssException
      */
-    public function __construct(ConfigValues $config)
+    public final function __construct(ConfigValues $config)
     {
         $this->baseDir = $config->get("base_dir");
 
@@ -103,7 +96,7 @@ class MinifyCssHandler
      * @return MinifyCssHandler|null
      * @throws MinifyCssException
      */
-    public static function init(ConfigValues $config)
+    public static final function init(ConfigValues $config)
     {
         if (is_null(self::$instance) || serialize($config) !== self::$instanceKey) {
             self::$instance = new self($config);
@@ -119,7 +112,7 @@ class MinifyCssHandler
      * @return bool|int
      * @throws MinifyCssException
      */
-    public function compileAndGet($clearOldFiles = true)
+    public final function compileAndGet($clearOldFiles = true)
     {
         $this->defaultMinifyCssFile = sprintf("%s/%s.css", $this->defaultMinifyCssDir, md5(self::$md5checksum));
 
@@ -155,7 +148,7 @@ class MinifyCssHandler
      * @param bool $relative
      * @return string|null
      */
-    public function getDefaultMinifyCssFile($relative = false): ?string
+    public final function getDefaultMinifyCssFile($relative = false): ?string
     {
         return $relative ? substr(str_replace($this->baseDir, "", $this->defaultMinifyCssFile), 1) : $this->defaultMinifyCssFile;
     }
@@ -165,7 +158,7 @@ class MinifyCssHandler
      * @param bool $codeAsString
      * @throws MinifyCssException
      */
-    public function addCss(string $fileOrString, $codeAsString = false)
+    public final function addCss(string $fileOrString, $codeAsString = false)
     {
         if ($codeAsString) {
             self::$md5checksum .= trim(md5($fileOrString));

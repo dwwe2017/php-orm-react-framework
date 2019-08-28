@@ -145,7 +145,7 @@ class CacheHelper
      * @throws PhpfastcacheInvalidArgumentException
      * @throws PhpfastcacheInvalidConfigurationException
      */
-    public static function init(ConfigValues $config, ?string $instanceId = null)
+    public static final function init(ConfigValues $config, ?string $instanceId = null)
     {
         if (is_null(self::$instance) || serialize($config).serialize($instanceId) !== self::$instanceKey) {
             self::$instance = new self($config, $instanceId);
@@ -178,7 +178,7 @@ class CacheHelper
     /**
      * @return bool
      */
-    public function hasFallback(): bool
+    public final function hasFallback(): bool
     {
         return $this->hasFallback;
     }
@@ -186,7 +186,7 @@ class CacheHelper
     /**
      * @return ExtendedCacheItemPoolInterface
      */
-    public function getCacheInstance(): ExtendedCacheItemPoolInterface
+    public final function getCacheInstance(): ExtendedCacheItemPoolInterface
     {
         return $this->cacheInstance;
     }

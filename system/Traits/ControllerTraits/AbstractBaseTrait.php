@@ -159,7 +159,7 @@ trait AbstractBaseTrait
     /**
      * @return string
      */
-    public function getBaseDir(): string
+    public final function getBaseDir(): string
     {
         return $this->baseDir;
     }
@@ -172,7 +172,7 @@ trait AbstractBaseTrait
      * @param $key
      * @param $value
      */
-    protected function addContext($key, $value): void
+    protected final function addContext($key, $value): void
     {
         $this->context[$key] = $value;
     }
@@ -180,7 +180,7 @@ trait AbstractBaseTrait
     /**
      * @param $message
      */
-    protected function setMessage(string $message): void
+    protected final function setMessage(string $message): void
     {
         $_SESSION['message'] = $message; // Set flash message
     }
@@ -188,7 +188,7 @@ trait AbstractBaseTrait
     /**
      * @return string|null
      */
-    protected function getMessage(): ?string
+    protected final function getMessage(): ?string
     {
         $message = null;
 
@@ -203,7 +203,7 @@ trait AbstractBaseTrait
     /**
      * @return array
      */
-    protected function getContext(): array
+    protected final function getContext(): array
     {
         return $this->context;
     }
@@ -211,7 +211,7 @@ trait AbstractBaseTrait
     /**
      * @return Logger
      */
-    protected function getLoggerService(): Logger
+    protected final function getLoggerService(): Logger
     {
         return $this->loggerService;
     }
@@ -219,7 +219,7 @@ trait AbstractBaseTrait
     /**
      * @return AbsolutePathHelper
      */
-    protected function getAbsolutePathHelper(): AbsolutePathHelper
+    protected final function getAbsolutePathHelper(): AbsolutePathHelper
     {
         return $this->absolutePathHelper;
     }
@@ -227,7 +227,7 @@ trait AbstractBaseTrait
     /**
      * @return DoctrineService
      */
-    protected function getModuleDbService(): DoctrineService
+    protected final function getModuleDbService(): DoctrineService
     {
         return $this->moduleDbService;
     }
@@ -238,7 +238,7 @@ trait AbstractBaseTrait
      * @see LocaleService::getModuleTranslator()
      * @return GettextTranslator
      */
-    protected function getModuleLocaleService()
+    protected final function getModuleLocaleService()
     {
         return $this->moduleLocaleService;
     }
@@ -246,7 +246,7 @@ trait AbstractBaseTrait
     /**
      * @return ExtendedCacheItemPoolInterface
      */
-    protected function getModuleCacheService()
+    protected final function getModuleCacheService()
     {
         return $this->moduleCacheService;
     }

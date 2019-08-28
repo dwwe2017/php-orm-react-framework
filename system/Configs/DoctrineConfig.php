@@ -27,7 +27,7 @@ use Webmasters\Doctrine\ORM\EntityManager;
 /**
  * Class DoctrineConfig
  * @package Configs Revised and added options of the configuration file
- * @see ModuleManager::$cacheConfig
+ * @see ModuleManager::$doctrineConfig
  */
 class DoctrineConfig implements VendorExtensionConfigInterface
 {
@@ -36,10 +36,11 @@ class DoctrineConfig implements VendorExtensionConfigInterface
 
     /**
      * DoctrineConfig constructor.
+     * @see ModuleManager::__construct()
      * @param DefaultConfig $defaultConfig
      * @throws DoctrineException
      */
-    public function __construct(DefaultConfig $defaultConfig)
+    public final function __construct(DefaultConfig $defaultConfig)
     {
         $this->config = $defaultConfig->getConfigValues();
 
@@ -81,6 +82,10 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         $doctrineSystemOptions["system"]["proxy_dir"] = sprintf("%s/data/proxy/%s", $baseDir, $connectionOption);
         $doctrineSystemOptions["system"]["vendor_dir"] = sprintf("%s/vendor", $baseDir);
         $doctrineSystemOptions = ConfigFactory::fromArray($doctrineSystemOptionsDefault)->mergeValues($doctrineSystemOptions);
+
+        /**
+         * Create and check paths
+         */
 
         /**
          * Build application option for module
@@ -130,7 +135,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
     /**
      * @return array
      */
-    public function getOptionsDefault(): array
+    public final function getOptionsDefault(): array
     {
         $isDebug = $this->config->get("debug_mode");
         $baseDir = $this->config->get("base_dir");

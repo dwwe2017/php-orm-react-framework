@@ -10,8 +10,8 @@
 namespace Services;
 
 
-use Exceptions\LoggerException;
 use Exception;
+use Exceptions\LoggerException;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
 use Monolog\Handler\FirePHPHandler;
@@ -36,10 +36,11 @@ class LoggerService implements VendorExtensionServiceInterface
 
     /**
      * LoggerService constructor.
+     * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
      * @throws LoggerException
      */
-    public function __construct(ModuleManager $moduleManager)
+    public final function __construct(ModuleManager $moduleManager)
     {
         $config = $moduleManager->getConfig();
         $logDir = $config->get("logger_options.log_dir");
@@ -60,7 +61,7 @@ class LoggerService implements VendorExtensionServiceInterface
     /**
      * @return Logger
      */
-    public function getLogger(): Logger
+    public final function getLogger(): Logger
     {
         return $this->logger;
     }

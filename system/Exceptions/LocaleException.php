@@ -10,9 +10,10 @@
 namespace Exceptions;
 
 use Exception;
+use Interfaces\ExceptionInterfaces\CustomExceptionInterface;
 use Throwable;
 
-class LocaleException extends Exception
+class LocaleException extends Exception implements CustomExceptionInterface
 {
     /**
      * DoctrineException constructor.
@@ -20,7 +21,7 @@ class LocaleException extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    public final function __construct($message = "", $code = 0, Throwable $previous = null)
     {
         $message = is_array($message) ? json_encode($message) : $message;
 

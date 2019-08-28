@@ -85,31 +85,41 @@ class CacheConfig implements VendorExtensionConfigInterface
 
     /**
      * CacheConfig constructor.
+     * @see ModuleManager::__construct()
      * @param DefaultConfig $defaultConfig
      * @throws CacheException
      */
-    public function __construct(DefaultConfig $defaultConfig)
+    public final function __construct(DefaultConfig $defaultConfig)
     {
         $this->config = $defaultConfig->getConfigValues();
-        $baseDir = $this->config->get("base_dir");
-
         $this->moduleShortName = $defaultConfig->getModuleShortName();
+
+        $baseDir = $this->config->get("base_dir");
+        $cacheSystemDir = sprintf("%s/data/cache/system", $baseDir);
 
         $defaultOptions = $this->getOptionsDefault();
 
+        /**
+         * Build system cache options
+         */
         $cacheSystemOptionsDefault = ["system" => $defaultOptions["cache_options"]];
         $cacheSystemOptions = $cacheSystemOptionsDefault;
         $cacheSystemOptions["system"]["driver"]["driverClass"] = ConfigurationOption::class;
-        $cacheSystemDir = sprintf("%s/data/cache/system", $baseDir);
-        FileHelper::init($cacheSystemDir, CacheException::class)->isWritable(true);
-
         $cacheSystemOptions["system"]["driver"]["driverConfig"]["path"] = $cacheSystemDir;
         $cacheSystemOptions = ConfigFactory::fromArray($cacheSystemOptions);
 
+        /**
+         * Check file permissions for system cache dir
+         */
+        FileHelper::init($cacheSystemOptions->get("system.driver.driverConfig.path"), CacheException::class)
+            ->isWritable(true);
+
+        /**
+         * Build module cache options
+         */
         $cacheModuleOptionsDefault = ["module" => $defaultOptions["cache_options"]];
         $cacheModuleOptions = ["module" => $this->config->get("cache_options")];
         $cacheModuleOptions = ConfigFactory::fromArray($cacheModuleOptionsDefault)->mergeValues($cacheModuleOptions);
-
         $cacheModuleDriver = $cacheModuleOptions->get("module.driver.driverName");
         $cacheModuleClass =  $cacheModuleOptions->get("module.driver.driverClass", ConfigurationOption::class);
 
@@ -117,7 +127,12 @@ class CacheConfig implements VendorExtensionConfigInterface
             $cacheModuleClass = self::CACHE_MANAGER_CONFIG_CLASSES[strtolower($cacheModuleDriver)];
         }
 
-        $cacheModuleDir = sprintf("%s/%s", $baseDir, $cacheModuleOptions->get("module.driver.driverConfig.path", false));
+        /**
+         * Check file permissions for module cache dir if necessary
+         */
+        $cacheModuleDir = sprintf("%s/%s", $baseDir,
+            $cacheModuleOptions->get("module.driver.driverConfig.path", false)
+        );
 
         if ($cacheModuleDir !== false) {
             FileHelper::init($cacheModuleDir, CacheException::class)->isWritable(true);
@@ -126,11 +141,17 @@ class CacheConfig implements VendorExtensionConfigInterface
             ]);
         }
 
+        /**
+         * Merge cache options
+         */
         $cacheOptions = ["cache_options" => [
             "system" => $cacheSystemOptions->get("system"),
             "module" => $cacheModuleOptions->get("module")
         ]];
 
+        /**
+         * Finished
+         */
         $this->configValues = ConfigFactory::fromArray($cacheOptions);
     }
 
@@ -139,7 +160,7 @@ class CacheConfig implements VendorExtensionConfigInterface
      * @see CacheConfig::getFallbackDriverConfig()
      * @throws CacheException
      */
-    public function getOptionsDefault(): array
+    public final function getOptionsDefault(): array
     {
         $isDebug = $this->config->get("debug_mode");
         $dirName = is_null($this->moduleShortName) ? "system"
@@ -205,7 +226,7 @@ class CacheConfig implements VendorExtensionConfigInterface
                 }
 
                 /**
-                 * Set Fallback for Fallback to simple Memory
+                 * Set Fallback for Fallback to simple Memory (memstatic)
                  */
                 $fallbackFallbackConfig = $this->getFallbackDriverConfig(false);
                 $fallbackConfig->setFallback($fallbackFallbackConfig["driverConfig"]["fallback"]);

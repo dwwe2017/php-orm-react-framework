@@ -29,7 +29,7 @@ class XmlController extends AbstractBase implements XmlControllerInterface
     /**
      * @param string $action
      */
-    public function run(string $action)
+    public final function run(string $action)
     {
         $methodName = $action . 'Action';
 
@@ -45,7 +45,7 @@ class XmlController extends AbstractBase implements XmlControllerInterface
     /**
      *
      */
-    public function render404(): void
+    public final function render404(): void
     {
         header(self::HEADER_ERROR_404);
         header(self::HEADER_CONTENT_TYPE_JSON);
@@ -56,7 +56,7 @@ class XmlController extends AbstractBase implements XmlControllerInterface
     /**
      *
      */
-    public function render(): void
+    public final function render(): void
     {
         header(self::HEADER_CONTENT_TYPE_JSON);
         echo json_encode($this->getContext());

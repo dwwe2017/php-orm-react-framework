@@ -30,7 +30,7 @@ class AbsolutePathHelper
      * AbsolutePathHelper constructor.
      * @param string $baseDir
      */
-    public function __construct(string $baseDir)
+    public final function __construct(string $baseDir)
     {
         $this->baseDir = $baseDir;
     }
@@ -39,7 +39,7 @@ class AbsolutePathHelper
      * @param string $baseDir
      * @return AbsolutePathHelper|null
      */
-    public static function init(string $baseDir)
+    public static final function init(string $baseDir)
     {
         if (is_null(self::$instance) || serialize($baseDir) !== self::$instanceKey) {
             self::$instance = new self($baseDir);
@@ -54,7 +54,7 @@ class AbsolutePathHelper
      * @return string
      * @throws FileFactoryException
      */
-    public function get(string $relativePath)
+    public final function get(string $relativePath)
     {
         $absolutePath = sprintf("%s/%s", $this->getBaseDir(), $relativePath);
 
@@ -66,14 +66,12 @@ class AbsolutePathHelper
     }
 
     /**
-     * Magic method (eg. AbsolutePathHelper($baseDir)->{"relative/path/example"}
-     * ==> /var/www/htdocs/relative/path/example)
-     *
      * @param string $relativePath
      * @return string
      * @throws FileFactoryException
+     * @example AbsolutePathHelper($baseDir)->{"relative/path/example"}
      */
-    public function __get(string $relativePath)
+    public final function __get(string $relativePath)
     {
         return $this->get($relativePath);
     }
@@ -81,7 +79,7 @@ class AbsolutePathHelper
     /**
      * @return string
      */
-    public function getBaseDir(): string
+    public final function getBaseDir(): string
     {
         return $this->baseDir;
     }

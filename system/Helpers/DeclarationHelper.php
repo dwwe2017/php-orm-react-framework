@@ -9,7 +9,6 @@
 
 namespace Helpers;
 
-use Exception;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
@@ -62,7 +61,7 @@ class DeclarationHelper
      * @param string|null $exceptionClass
      * @return DeclarationHelper|null
      */
-    public static function init(?string $extension = null, ?string $class = null, ?string $function = null, ?string $exceptionClass = null)
+    public static final function init(?string $extension = null, ?string $class = null, ?string $function = null, ?string $exceptionClass = null)
     {
         if (is_null(self::$instance) || serialize($extension.$class.$function.$exceptionClass) !== self::$instanceKey) {
             self::$instance = new self($extension, $class, $function, $exceptionClass);
@@ -75,7 +74,7 @@ class DeclarationHelper
     /**
      * @return bool
      */
-    public function extensionLoaded(): bool
+    public final function extensionLoaded(): bool
     {
         return extension_loaded($this->extension) ? true
             : $this->throwOrFalse(sprintf("The required extension %s could not be loaded", $this->extension));
@@ -84,7 +83,7 @@ class DeclarationHelper
     /**
      * @return bool
      */
-    public function functionExists(): bool
+    public final function functionExists(): bool
     {
         return function_exists($this->function) ? true
             : $this->throwOrFalse(sprintf("The required function %s could not be loaded", $this->function));
@@ -93,7 +92,7 @@ class DeclarationHelper
     /**
      * @return bool
      */
-    public function classExists(): bool
+    public final function classExists(): bool
     {
         return class_exists($this->class) ? true
             : $this->throwOrFalse(sprintf("The required class %s could not be loaded", $this->class));
@@ -102,7 +101,7 @@ class DeclarationHelper
     /**
      * @return bool
      */
-    public function isDeclared(): bool
+    public final function isDeclared(): bool
     {
         if(!is_null($this->extension) && !$this->extensionLoaded()){
             return $this->throwOrFalse(sprintf("The required extension %s could not be loaded", $this->extension));

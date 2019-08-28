@@ -14,7 +14,6 @@ use Configula\ConfigValues;
 use Exception;
 use Exceptions\MinifyJsException;
 use JShrink\Minifier;
-use Phpfastcache\Helper\Psr16Adapter;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 class MinifyJsHandler extends Minifier
@@ -47,17 +46,11 @@ class MinifyJsHandler extends Minifier
     private $jsContent = [];
 
     /**
-     * @var Psr16Adapter
-     * @todo implement caching
-     */
-    private $cache;
-
-    /**
      * MinifyJsHandler constructor.
      * @param ConfigValues $config
      * @throws MinifyJsException
      */
-    public function __construct(ConfigValues $config)
+    public final function __construct(ConfigValues $config)
     {
         $this->baseDir = $config->get("base_dir");
 
@@ -125,7 +118,7 @@ class MinifyJsHandler extends Minifier
      * @return MinifyJsHandler|null
      * @throws MinifyJsException
      */
-    public static function init(ConfigValues $config)
+    public static final function init(ConfigValues $config)
     {
         if (is_null(self::$instance) || serialize($config) !== self::$instanceKey) {
             self::$instance = new self($config);
@@ -141,7 +134,7 @@ class MinifyJsHandler extends Minifier
      * @return bool|int
      * @throws MinifyJsException
      */
-    public function compileAndGet($clearOldFiles = true)
+    public final function compileAndGet($clearOldFiles = true)
     {
         $this->defaultMinifyJsFile = sprintf("%s/%s.js", $this->defaultMinifyJsDir, md5(self::$md5checksum));
 
@@ -177,7 +170,7 @@ class MinifyJsHandler extends Minifier
      * @param bool $relative
      * @return string|null
      */
-    public function getDefaultMinifyJsFile($relative = false): ?string
+    public final function getDefaultMinifyJsFile($relative = false): ?string
     {
         return $relative ? substr(str_replace($this->baseDir, "", $this->defaultMinifyJsFile), 1) : $this->defaultMinifyJsFile;
     }
@@ -187,7 +180,7 @@ class MinifyJsHandler extends Minifier
      * @param bool $codeAsString
      * @throws MinifyJsException
      */
-    public function addJsContent(string $fileOrString, $codeAsString = false)
+    public final function addJsContent(string $fileOrString, $codeAsString = false)
     {
         if ($codeAsString) {
             self::$md5checksum .= trim(md5($fileOrString));

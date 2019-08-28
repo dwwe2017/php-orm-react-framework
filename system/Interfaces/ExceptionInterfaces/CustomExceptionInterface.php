@@ -7,22 +7,16 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Traits\UtilTraits;
+namespace Interfaces\ExceptionInterfaces;
 
+
+use Throwable;
 
 /**
- * Class InstantiationStaticsConfigTrait
- * @package Traits\ConfigTraits
+ * Interface CustomExceptionInterface
+ * @package Interfaces\ExceptionInterfaces
  */
-trait InstantiationStaticsUtilTrait
+interface CustomExceptionInterface
 {
-    /**
-     * @var self|null
-     */
-    private static $instance = null;
-
-    /**
-     * @var string
-     */
-    private static $instanceKey = "";
+    public function __construct($message = "", $code = 0, Throwable $previous = null);
 }

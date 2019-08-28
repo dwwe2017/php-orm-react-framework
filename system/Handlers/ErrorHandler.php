@@ -10,7 +10,6 @@
 namespace Handlers;
 
 
-use Configs\DefaultConfig;
 use Configula\ConfigValues;
 use Exception;
 use Monolog\Handler\FirePHPHandler;
@@ -48,7 +47,7 @@ class ErrorHandler
      * @param ConfigValues|null $config
      * @param Logger|null $logger
      */
-    public function __construct(ConfigValues $config = null, Logger $logger = null)
+    public final function __construct(ConfigValues $config = null, Logger $logger = null)
     {
         $whoops = new Run();
         $baseDir = realpath(sprintf("%s/../..", __DIR__));
@@ -128,7 +127,7 @@ class ErrorHandler
      * @param Logger|null $logger
      * @return ErrorHandler|null
      */
-    public static function init(ConfigValues $config = null, Logger $logger = null)
+    public static final function init(ConfigValues $config = null, Logger $logger = null)
     {
         if (is_null(self::$instance) || serialize($config) . serialize($logger) !== self::$instanceKey) {
             self::$instance = new self($config, $logger);

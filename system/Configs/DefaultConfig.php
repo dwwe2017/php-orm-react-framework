@@ -12,7 +12,6 @@ namespace Configs;
 
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
-use Controllers\AbstractBase;
 use Exceptions\ConfigException;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\ApplicationConfigInterface;
@@ -22,7 +21,7 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 /**
  * Class DefaultConfig
  * @package Configs Revised and added options of the configuration file
- * @see ModuleManager::$cacheConfig
+ * @see ModuleManager::$defaultConfig
  */
 class DefaultConfig implements ApplicationConfigInterface
 {
@@ -55,15 +54,19 @@ class DefaultConfig implements ApplicationConfigInterface
 
     /**
      * DefaultConfig constructor.
+     * @see ModuleManager::__construct()
      * @param ModuleManager $moduleManager
      */
-    public function __construct(ModuleManager $moduleManager)
+    public final function __construct(ModuleManager $moduleManager)
     {
         $this->baseDir = $moduleManager->getBaseDir();
         $this->moduleBaseDir = $moduleManager->getModuleBaseDir();
         $this->moduleName = $moduleManager->getModuleName();
         $this->moduleShortName = $moduleManager->getModuleShortName();
 
+        /**
+         * Load global config files from base dir
+         */
         $configDir = sprintf("%s/config", $this->baseDir);
         FileHelper::init($configDir, ConfigException::class)->isReadable();
 
@@ -71,10 +74,11 @@ class DefaultConfig implements ApplicationConfigInterface
     }
 
     /**
+     * @see ModuleManager::__construct()
      * @param ModuleManager $moduleManager
      * @return DefaultConfig
      */
-    public static function init(ModuleManager $moduleManager): DefaultConfig
+    public static final function init(ModuleManager $moduleManager): DefaultConfig
     {
         if (is_null(self::$instance) || serialize($moduleManager) !== self::$instanceKey) {
             self::$instance = new self($moduleManager);
@@ -87,7 +91,7 @@ class DefaultConfig implements ApplicationConfigInterface
     /**
      * @return string
      */
-    public function getModuleName(): string
+    public final function getModuleName(): string
     {
         return $this->moduleName;
     }
@@ -95,7 +99,7 @@ class DefaultConfig implements ApplicationConfigInterface
     /**
      * @return string
      */
-    public function getModuleBaseDir(): string
+    public final function getModuleBaseDir(): string
     {
         return $this->moduleBaseDir;
     }
@@ -103,7 +107,7 @@ class DefaultConfig implements ApplicationConfigInterface
     /**
      * @return ConfigValues
      */
-    public function getConfigValues(): ConfigValues
+    public final function getConfigValues(): ConfigValues
     {
         return $this->configValues;
     }
@@ -111,7 +115,7 @@ class DefaultConfig implements ApplicationConfigInterface
     /**
      * @return string|null
      */
-    public function getModuleShortName(): ?string
+    public final function getModuleShortName(): ?string
     {
         return $this->moduleShortName;
     }
@@ -119,7 +123,7 @@ class DefaultConfig implements ApplicationConfigInterface
     /**
      * @return array
      */
-    public function getOptionsDefault(): array
+    public final function getOptionsDefault(): array
     {
         return [
             //General properties

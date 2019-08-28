@@ -48,7 +48,7 @@ class FileHelper
      * @param string|null $exceptionClass
      * @return FileHelper|null
      */
-    public static function init(string $file, ?string $exceptionClass = null)
+    public static final function init(string $file, ?string $exceptionClass = null)
     {
         if (is_null(self::$instance) || serialize($file.$exceptionClass) !== self::$instanceKey) {
             self::$instance = new self($file, $exceptionClass);
@@ -62,7 +62,7 @@ class FileHelper
      * @param bool $mkdir
      * @return bool
      */
-    public function fileExists($mkdir = false)
+    public final function fileExists($mkdir = false)
     {
         if (!file_exists($this->file)) {
             if ($mkdir) {
@@ -85,7 +85,7 @@ class FileHelper
     /**
      * @return bool
      */
-    public function isReadable()
+    public final function isReadable()
     {
         if (!$this->fileExists()) {
             return false;
@@ -104,7 +104,7 @@ class FileHelper
      * @param bool $mkdirAndSetChmod
      * @return bool
      */
-    public function isWritable($mkdirAndSetChmod = false)
+    public final function isWritable($mkdirAndSetChmod = false)
     {
         if (!$this->fileExists($mkdirAndSetChmod)) {
             return false;
