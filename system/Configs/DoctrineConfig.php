@@ -100,8 +100,8 @@ class DoctrineConfig implements VendorExtensionConfigInterface
          * Merge application options
          */
         $doctrineOptions = ["doctrine_options" => [
-            "system" => $doctrineSystemOptions->getArrayCopy()["system"],
-            "module" => $doctrineModuleOptions->getArrayCopy()["module"]
+            "system" => $doctrineSystemOptions->get("system"),
+            "module" => $doctrineModuleOptions->get("module")
         ]];
 
         $doctrineOptions = ConfigFactory::fromArray($doctrineOptions);

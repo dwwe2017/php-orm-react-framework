@@ -11,7 +11,6 @@ namespace Configs;
 
 
 use Configula\ConfigFactory;
-use Configula\ConfigValues;
 use Exception;
 use Exceptions\CacheException;
 use Helpers\ArrayHelper;
@@ -80,6 +79,11 @@ class CacheConfig implements VendorExtensionConfigInterface
     ];
 
     /**
+     * @var string|null
+     */
+    private $moduleShortName;
+
+    /**
      * CacheConfig constructor.
      * @param DefaultConfig $defaultConfig
      * @throws CacheException
@@ -89,28 +93,45 @@ class CacheConfig implements VendorExtensionConfigInterface
         $this->config = $defaultConfig->getConfigValues();
         $baseDir = $this->config->get("base_dir");
 
+        $this->moduleShortName = $defaultConfig->getModuleShortName();
+
         $defaultOptions = $this->getOptionsDefault();
-        $cacheOptionsDefault = ["cache_options" => $defaultOptions["cache_options"]];
-        $cacheOptions = ["cache_options" => $this->config->get("cache_options")];
-        $cacheConfig = ConfigFactory::fromArray($cacheOptionsDefault)->mergeValues($cacheOptions);
 
-        $cacheDriver = $cacheConfig->get("cache_options.driver.driverName");
-        $cacheClass =  $cacheConfig->get("cache_options.driver.driverClass", ConfigurationOption::class);
+        $cacheSystemOptionsDefault = ["system" => $defaultOptions["cache_options"]];
+        $cacheSystemOptions = $cacheSystemOptionsDefault;
+        $cacheSystemOptions["system"]["driver"]["driverClass"] = ConfigurationOption::class;
+        $cacheSystemDir = sprintf("%s/data/cache/system", $baseDir);
+        FileHelper::init($cacheSystemDir, CacheException::class)->isWritable(true);
 
-        if($cacheClass === ConfigurationOption::class && key_exists(strtolower($cacheDriver), self::CACHE_MANAGER_CONFIG_CLASSES)){
-            $cacheClass = self::CACHE_MANAGER_CONFIG_CLASSES[strtolower($cacheDriver)];
+        $cacheSystemOptions["system"]["driver"]["driverConfig"]["path"] = $cacheSystemDir;
+        $cacheSystemOptions = ConfigFactory::fromArray($cacheSystemOptions);
+
+        $cacheModuleOptionsDefault = ["module" => $defaultOptions["cache_options"]];
+        $cacheModuleOptions = ["module" => $this->config->get("cache_options")];
+        $cacheModuleOptions = ConfigFactory::fromArray($cacheModuleOptionsDefault)->mergeValues($cacheModuleOptions);
+
+        $cacheModuleDriver = $cacheModuleOptions->get("module.driver.driverName");
+        $cacheModuleClass =  $cacheModuleOptions->get("module.driver.driverClass", ConfigurationOption::class);
+
+        if($cacheModuleClass === ConfigurationOption::class && key_exists(strtolower($cacheModuleDriver), self::CACHE_MANAGER_CONFIG_CLASSES)){
+            $cacheModuleClass = self::CACHE_MANAGER_CONFIG_CLASSES[strtolower($cacheModuleDriver)];
         }
 
-        $cacheDir = sprintf("%s/%s", $baseDir, $cacheConfig->get("cache_options.driver.driverConfig.path", false));
+        $cacheModuleDir = sprintf("%s/%s", $baseDir, $cacheModuleOptions->get("module.driver.driverConfig.path", false));
 
-        if ($cacheDir !== false) {
-            FileHelper::init($cacheDir, CacheException::class)->isWritable(true);
-            $cacheConfig = $cacheConfig->mergeValues([
-                "cache_options" => ["driver" => ["driverConfig" => ["path" => $cacheDir], "driverClass" => $cacheClass]]
+        if ($cacheModuleDir !== false) {
+            FileHelper::init($cacheModuleDir, CacheException::class)->isWritable(true);
+            $cacheModuleOptions = $cacheModuleOptions->mergeValues([
+                "module" => ["driver" => ["driverConfig" => ["path" => $cacheModuleDir], "driverClass" => $cacheModuleClass]]
             ]);
         }
 
-        $this->configValues = $cacheConfig;
+        $cacheOptions = ["cache_options" => [
+            "system" => $cacheSystemOptions->get("system"),
+            "module" => $cacheModuleOptions->get("module")
+        ]];
+
+        $this->configValues = ConfigFactory::fromArray($cacheOptions);
     }
 
     /**
@@ -121,7 +142,10 @@ class CacheConfig implements VendorExtensionConfigInterface
     public function getOptionsDefault(): array
     {
         $isDebug = $this->config->get("debug_mode");
-        $cacheDir = "data/cache/result";
+        $dirName = is_null($this->moduleShortName) ? "system"
+            : sprintf("result/%s", strtolower($this->moduleShortName));
+
+        $cacheDir = sprintf("data/cache/%s", $dirName);
 
         $driver = [
             "driverName" => "files",
@@ -160,7 +184,7 @@ class CacheConfig implements VendorExtensionConfigInterface
     private function getFallbackDriverConfig($fallbackFallback = false)
     {
         $baseDir = $this->config->get("base_dir");
-        $cacheDir = sprintf("%s/data/cache/result", $baseDir);
+        $cacheDir = sprintf("%s/data/cache/system", $baseDir);
         FileHelper::init($cacheDir, CacheException::class)->isWritable(true);
 
         try {

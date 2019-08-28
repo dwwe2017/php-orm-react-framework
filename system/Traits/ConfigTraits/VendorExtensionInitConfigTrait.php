@@ -25,7 +25,7 @@ trait VendorExtensionInitConfigTrait
     private $configValues = null;
 
     /**
-     * @var ConfigValues
+     * @var DefaultConfig
      */
     private $config;
 

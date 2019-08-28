@@ -32,12 +32,12 @@ class CacheService implements VendorExtensionServiceInterface
     /**
      * @var string
      */
-    const CACHE_SYSTEM = "TeAmSpEaK_InTeRfAcE_2_SyStEm";
+    const CACHE_SYSTEM = "system";
 
     /**
      * @var string
      */
-    const CACHE_MODULE = "TeAmSpEaK_InTeRfAcE_2_MoDuLe";
+    const CACHE_MODULE = "module";
 
     /**
      * @var ModuleManager

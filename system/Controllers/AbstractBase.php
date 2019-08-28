@@ -78,7 +78,11 @@ abstract class AbstractBase
          */
         $this->cacheService = $this->getServiceManager()->getCacheService(); // !Only available for system
         $this->systemCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_SYSTEM); // !Only available for system
+        $this->systemCacheServiceHasFallback = $this->cacheService->hasFallback();
         $this->moduleCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_MODULE); // Available in modules
+        $this->moduleCacheServiceHasFallback = $this->cacheService->hasFallback();
+
+        throw new CacheException($this->moduleCacheServiceHasFallback ? "ja" : "nein");
 
         /**
          * Gettext locale services
@@ -123,7 +127,7 @@ abstract class AbstractBase
      */
     private function initHandlers(): void
     {
-        //Reinitialize error handler with logger instance
+        //Reinitialize error handler with logger instance for better persistence
         ErrorHandler::init($this->getConfig(), $this->getLoggerService());
 
         //Asset handlers

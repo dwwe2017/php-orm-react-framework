@@ -10,6 +10,7 @@
 namespace Helpers;
 
 
+use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exception;
 use Exceptions\CacheException;
@@ -44,7 +45,7 @@ class CacheHelper
     /**
      * CacheHelper constructor.
      * @param ConfigValues $config
-     * @param string|null $instanceId
+     * @param string $instanceId
      * @throws CacheException
      * @throws PhpfastcacheDriverCheckException
      * @throws PhpfastcacheDriverException
@@ -52,8 +53,12 @@ class CacheHelper
      * @throws PhpfastcacheInvalidArgumentException
      * @throws PhpfastcacheInvalidConfigurationException
      */
-    private function __construct(ConfigValues $config, ?string $instanceId = null)
+    private function __construct(ConfigValues $config, ?string $instanceId)
     {
+        $cacheOptions = ConfigFactory::fromArray(
+            $config->get(sprintf("cache_options.%s", $instanceId))
+        );
+
         /**
          * @var $defaultCacheDriverName string
          * @var $defaultCacheDriverClass string
@@ -64,9 +69,9 @@ class CacheHelper
          * |\Phpfastcache\Drivers\Predis\Config|\Phpfastcache\Drivers\Redis\Config
          * |\Phpfastcache\Drivers\Riak\Config|\Phpfastcache\Drivers\Ssdb\Config
          */
-        $defaultCacheDriverName = $config->get("cache_options.driver.driverName");
-        $defaultCacheDriverClass = $config->get("cache_options.driver.driverClass");
-        $defaultCacheDriverConfig = $config->get("cache_options.driver.driverConfig");
+        $defaultCacheDriverName = $cacheOptions->get("driver.driverName");
+        $defaultCacheDriverClass = $cacheOptions->get("driver.driverClass");
+        $defaultCacheDriverConfig = $cacheOptions->get("driver.driverConfig");
 
         try {
             $defaultCacheConfiguration = new $defaultCacheDriverClass($defaultCacheDriverConfig);
@@ -118,7 +123,7 @@ class CacheHelper
 
         $this->hasFallback = !(strcasecmp(
                 $this->cacheInstance->getDriverName(),
-                $config->get("cache_options.driver.driverName",
+                $cacheOptions->get("driver.driverName",
                     ConfigValues::NOT_SET)
             ) === 0
         );
