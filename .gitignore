@@ -3,6 +3,7 @@
 /.todo
 /docs
 /vendor
-/config/default-config.php
-/config/license.php
+/config
+!/config/default-config.php.dist
+!/config/.htaccess
 /phpDocumentor.phar
