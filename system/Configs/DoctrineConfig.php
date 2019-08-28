@@ -48,12 +48,14 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         $moduleBaseDir = $defaultConfig->getModuleBaseDir();
         $moduleShortName = $defaultConfig->getModuleShortName();
         $defaultConfigPath = sprintf("%s/config/default-config.php", $this->config->get("base_dir"));
-        $optionsDefault = $this->getOptionsDefault();
+        $defaultOptions = $this->getOptionsDefault();
+
+        //todo! if !$isModule!
 
         /**
          * Build connection options
          */
-        $connectionOptionsDefault = ["connection_options" => $optionsDefault["connection_options"]];
+        $connectionOptionsDefault = ["connection_options" => $defaultOptions["connection_options"]];
         $connectionOptions = ["connection_options" => $this->config->get("connection_options")];
         $connectionOptions = ConfigFactory::fromArray($connectionOptionsDefault)->mergeValues($connectionOptions);
 
@@ -72,7 +74,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         /**
          * Build application option for system
          */
-        $doctrineSystemOptionsDefault =  ["system" => $optionsDefault["doctrine_options"]];
+        $doctrineSystemOptionsDefault =  ["system" => $defaultOptions["doctrine_options"]];
         $doctrineSystemOptions = ["system" => $this->config->get("doctrine_options")];
         $doctrineSystemOptions["system"]["base_dir"] = $baseDir;
         $doctrineSystemOptions["system"]["em_class"] = EntityManager::class;
@@ -90,7 +92,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         /**
          * Build application option for module
          */
-        $doctrineModuleOptionsDefault = ["module" => $optionsDefault["doctrine_options"]];
+        $doctrineModuleOptionsDefault = ["module" => $defaultOptions["doctrine_options"]];
         $doctrineModuleOptions = ["module" => $this->config->get("doctrine_options")];
         $doctrineModuleOptions["module"]["base_dir"] = $moduleBaseDir;
         $doctrineModuleOptions["module"]["em_class"] = EntityManager::class;

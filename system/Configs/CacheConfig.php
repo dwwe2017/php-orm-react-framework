@@ -93,11 +93,11 @@ class CacheConfig implements VendorExtensionConfigInterface
     {
         $this->config = $defaultConfig->getConfigValues();
         $this->moduleShortName = $defaultConfig->getModuleShortName();
-
         $baseDir = $this->config->get("base_dir");
         $cacheSystemDir = sprintf("%s/data/cache/system", $baseDir);
-
         $defaultOptions = $this->getOptionsDefault();
+
+        //todo! if !$isModule!
 
         /**
          * Build system cache options
