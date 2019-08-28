@@ -10,6 +10,7 @@
 namespace Traits\ConfigTraits;
 
 
+use Configs\DefaultConfig;
 use Configula\ConfigValues;
 
 /**
@@ -30,22 +31,22 @@ trait VendorExtensionInitConfigTrait
 
     /**
      * VendorExtensionInitConfigTrait constructor.
-     * @param ConfigValues $config
+     * @param DefaultConfig $defaultConfig
      */
-    public function __construct(ConfigValues $config)
+    public function __construct(DefaultConfig $defaultConfig)
     {
 
     }
 
     /**
-     * @param ConfigValues $config
+     * @param DefaultConfig $defaultConfig
      * @return ConfigValues
      */
-    public static function init(ConfigValues $config): ConfigValues
+    public static function init(DefaultConfig $defaultConfig): ConfigValues
     {
-        if (is_null(self::$instance) || serialize($config) !== self::$instanceKey) {
-            self::$instance = new self($config);
-            self::$instanceKey = serialize($config);
+        if (is_null(self::$instance) || serialize($defaultConfig) !== self::$instanceKey) {
+            self::$instance = new self($defaultConfig);
+            self::$instanceKey = serialize($defaultConfig);
         }
 
         return self::$instance->configValues;

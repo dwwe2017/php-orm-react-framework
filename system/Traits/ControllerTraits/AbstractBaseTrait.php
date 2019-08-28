@@ -18,7 +18,9 @@ use Helpers\AbsolutePathHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
 use Monolog\Logger;
+use Services\CacheService;
 use Services\DoctrineService;
+use Services\LocaleService;
 use Services\TemplateService;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -80,6 +82,16 @@ trait AbstractBaseTrait
      * @var MinifyJsHandler
      */
     private $jsHandler;
+
+    /**
+     * @var CacheService
+     */
+    private $cacheService;
+
+    /**
+     * @var LocaleService
+     */
+    private $localeService;
 
     /**
      * @var Logger

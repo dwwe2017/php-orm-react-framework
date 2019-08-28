@@ -31,11 +31,11 @@ class LoggerConfig implements VendorExtensionConfigInterface
 
     /**
      * LoggerConfig constructor.
-     * @param ConfigValues $config
+     * @param DefaultConfig $defaultConfig
      */
-    public function __construct(ConfigValues $config)
+    public function __construct(DefaultConfig $defaultConfig)
     {
-        $this->config = $config;
+        $this->config = $defaultConfig->getConfigValues();
         $baseDir = $this->config->get("base_dir");
 
         $defaultOptions = $this->getOptionsDefault();

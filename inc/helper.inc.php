@@ -31,3 +31,14 @@ function purify($string)
 
     return $purifier->purify($string);
 }
+
+/**
+ * For development purposes for sorted output of objects, etc.
+ * @param $input
+ */
+function print_pre($input)
+{
+    print "<pre>";
+    print_r($input);
+    print "</pre>";
+}

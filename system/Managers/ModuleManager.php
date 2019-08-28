@@ -41,9 +41,9 @@ class ModuleManager
     private $baseDir = "";
 
     /**
-     * @var AbstractBase|null
+     * @var AbstractBase
      */
-    private $module = null;
+    private $module;
 
     /**
      * @var string
@@ -53,7 +53,7 @@ class ModuleManager
     /**
      * @var string
      */
-    private $moduleBasePath = "";
+    private $moduleBaseDir = "";
 
     /**
      * @var ConfigValues
@@ -102,22 +102,23 @@ class ModuleManager
         $this->moduleConfig = new ConfigValues([]);
 
         if ($this->isModule()) {
-            $this->moduleBasePath = sprintf("%s/modules/%s", $this->getBaseDir(), $this->getModuleShortName());
-            $moduleConfigPath = sprintf("%s/config", $this->moduleBasePath);
+            $this->moduleBaseDir = sprintf("%s/modules/%s", $this->getBaseDir(), $this->getModuleShortName());
+            $moduleConfigPath = sprintf("%s/config", $this->moduleBaseDir);
 
             if (file_exists($moduleConfigPath) && is_readable($moduleConfigPath)) {
                 $this->moduleConfig = ConfigFactory::loadSingleDirectory($moduleConfigPath);
             }
         }
 
-        $this->defaultConfig = DefaultConfig::init($this->getBaseDir());
+        $this->defaultConfig = DefaultConfig::init($this);
         $this->templateConfig = TemplateConfig::init($this->defaultConfig);
         $this->doctrineConfig = DoctrineConfig::init($this->defaultConfig);
         $this->loggerConfig = LoggerConfig::init($this->defaultConfig);
         $this->cacheConfig = CacheConfig::init($this->defaultConfig);
 
         $this->config = $this->moduleConfig
-            ->merge($this->defaultConfig)
+            ->merge($this->defaultConfig
+                ->getConfigValues())
             ->merge($this->templateConfig)
             ->merge($this->doctrineConfig)
             ->merge($this->loggerConfig)
@@ -190,15 +191,15 @@ class ModuleManager
     /**
      * @return string
      */
-    public final function getModuleBasePath(): string
+    public final function getModuleBaseDir(): string
     {
-        return $this->moduleBasePath;
+        return $this->moduleBaseDir;
     }
 
     /**
-     * @return AbstractBase|null
+     * @return AbstractBase
      */
-    public final function getModule(): ?AbstractBase
+    public final function getModule(): AbstractBase
     {
         return $this->module;
     }

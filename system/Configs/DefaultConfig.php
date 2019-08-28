@@ -12,9 +12,11 @@ namespace Configs;
 
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
+use Controllers\AbstractBase;
 use Exceptions\ConfigException;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\ApplicationConfigInterface;
+use Managers\ModuleManager;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
@@ -32,17 +34,35 @@ class DefaultConfig implements ApplicationConfigInterface
     private $baseDir = "";
 
     /**
+     * @var string
+     */
+    private $moduleBaseDir = "";
+
+    /**
+     * @var string
+     */
+    private $moduleName = "";
+
+    /**
+     * @var string|null
+     */
+    private $moduleShortName = "";
+
+    /**
      * @var ConfigValues
      */
     private $configValues = null;
 
     /**
      * DefaultConfig constructor.
-     * @param string $baseDir
+     * @param ModuleManager $moduleManager
      */
-    public function __construct(string $baseDir)
+    public function __construct(ModuleManager $moduleManager)
     {
-        $this->baseDir = $baseDir;
+        $this->baseDir = $moduleManager->getBaseDir();
+        $this->moduleBaseDir = $moduleManager->getModuleBaseDir();
+        $this->moduleName = $moduleManager->getModuleName();
+        $this->moduleShortName = $moduleManager->getModuleShortName();
 
         $configDir = sprintf("%s/config", $this->baseDir);
         FileHelper::init($configDir, ConfigException::class)->isReadable();
@@ -51,17 +71,49 @@ class DefaultConfig implements ApplicationConfigInterface
     }
 
     /**
-     * @param string $baseDir
-     * @return ConfigValues
+     * @param ModuleManager $moduleManager
+     * @return DefaultConfig
      */
-    public static function init(string $baseDir): ConfigValues
+    public static function init(ModuleManager $moduleManager): DefaultConfig
     {
-        if (is_null(self::$instance) || serialize($baseDir) !== self::$instanceKey) {
-            self::$instance = new self($baseDir);
-            self::$instanceKey = serialize($baseDir);
+        if (is_null(self::$instance) || serialize($moduleManager) !== self::$instanceKey) {
+            self::$instance = new self($moduleManager);
+            self::$instanceKey = serialize($moduleManager);
         }
 
-        return self::$instance->configValues;
+        return self::$instance;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModuleName(): string
+    {
+        return $this->moduleName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModuleBaseDir(): string
+    {
+        return $this->moduleBaseDir;
+    }
+
+    /**
+     * @return ConfigValues
+     */
+    public function getConfigValues(): ConfigValues
+    {
+        return $this->configValues;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getModuleShortName(): ?string
+    {
+        return $this->moduleShortName;
     }
 
     /**

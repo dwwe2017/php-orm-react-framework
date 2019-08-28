@@ -131,4 +131,20 @@ class ServiceManager
             ) === 0
         );
     }
+
+    /**
+     * @return ExtendedCacheItemPoolInterface
+     */
+    public function getCacheService(): ExtendedCacheItemPoolInterface
+    {
+        return $this->cacheService;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocaleService()
+    {
+        return $this->localeService;
+    }
 }

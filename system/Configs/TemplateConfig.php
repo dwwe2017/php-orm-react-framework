@@ -30,11 +30,11 @@ class TemplateConfig implements VendorExtensionConfigInterface
 
     /**
      * TemplateConfig constructor.
-     * @param ConfigValues $config
+     * @param DefaultConfig $defaultConfig
      */
-    public function __construct(ConfigValues $config)
+    public function __construct(DefaultConfig $defaultConfig)
     {
-        $this->config = $config;
+        $this->config = $defaultConfig->getConfigValues();
         $baseDir = $this->config->get("base_dir");
 
         $tplConfig = ["template_options" => $this->config->get("template_options", [])];

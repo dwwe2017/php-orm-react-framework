@@ -69,7 +69,7 @@ class LocaleService implements VendorExtensionServiceInterface
         $language = $config->get("language");
 
         $this->sysLocaleDir = sprintf("%s/locale", $baseDir);
-        $this->modLocaleDir = sprintf("%s/locale", $moduleManager->getModuleBasePath());
+        $this->modLocaleDir = sprintf("%s/locale", $moduleManager->getModuleBaseDir());
         if(!FileHelper::init($this->modLocaleDir)->isReadable()){
             $this->modLocaleDir = $this->sysLocaleDir;
         }

@@ -10,6 +10,7 @@
 namespace Interfaces\ConfigInterfaces;
 
 
+use Configs\DefaultConfig;
 use Configula\ConfigValues;
 
 /**
@@ -18,9 +19,9 @@ use Configula\ConfigValues;
  */
 interface VendorExtensionConfigInterface
 {
-    public function __construct(ConfigValues $config);
+    public function __construct(DefaultConfig $config);
 
-    public static function init(ConfigValues $config): ConfigValues;
+    public static function init(DefaultConfig $config): ConfigValues;
 
     public function getOptionsDefault(): array;
 }

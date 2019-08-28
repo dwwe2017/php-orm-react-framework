@@ -63,6 +63,8 @@ abstract class AbstractBase
     private function initServices()
     {
         $this->serviceManager = ServiceManager::init($this->getModuleManager());
+        $this->cacheService = $this->getServiceManager()->getCacheService();
+        $this->localeService = $this->getServiceManager()->getLocaleService();
         $this->loggerService = $this->getServiceManager()->getLoggerService();
         $this->doctrineService = $this->getServiceManager()->getDoctrineService();
         $this->templateService = $this->getServiceManager()->getTemplateService();
@@ -74,17 +76,12 @@ abstract class AbstractBase
      */
     private function initHandlers(): void
     {
-        ErrorHandler::init($this->getConfig(),
-            $this->loggerService
-        );
+        //Reinitialize error handler with logger instance
+        ErrorHandler::init($this->getConfig(), $this->loggerService);
 
-        $this->cssHandler = MinifyCssHandler::init(
-            $this->getConfig()
-        );
-
-        $this->jsHandler = MinifyJsHandler::init(
-            $this->getConfig()
-        );
+        //Asset handlers
+        $this->cssHandler = MinifyCssHandler::init($this->getConfig());
+        $this->jsHandler = MinifyJsHandler::init($this->getConfig());
     }
 
     /**

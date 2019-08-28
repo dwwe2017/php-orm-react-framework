@@ -10,7 +10,8 @@
 namespace Interfaces\ConfigInterfaces;
 
 
-use Configula\ConfigValues;
+use Configs\DefaultConfig;
+use Managers\ModuleManager;
 
 /**
  * Interface ApplicationConfigInterface
@@ -18,9 +19,9 @@ use Configula\ConfigValues;
  */
 interface ApplicationConfigInterface
 {
-    public function __construct(string $baseDir);
+    public function __construct(ModuleManager $moduleManager);
 
-    public static function init(string $baseDir): ConfigValues;
+    public static function init(ModuleManager $moduleManager): DefaultConfig;
 
     public function getOptionsDefault(): array;
 }

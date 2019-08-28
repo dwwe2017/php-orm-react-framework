@@ -19,6 +19,7 @@ use Exceptions\DoctrineException;
 use Helpers\DeclarationHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
+use Services\DoctrineService;
 use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Webmasters\Doctrine\ORM\EntityManager;
@@ -35,14 +36,16 @@ class DoctrineConfig implements VendorExtensionConfigInterface
 
     /**
      * DoctrineConfig constructor.
-     * @param ConfigValues $config
+     * @param DefaultConfig $defaultConfig
      * @throws DoctrineException
      */
-    public function __construct(ConfigValues $config)
+    public function __construct(DefaultConfig $defaultConfig)
     {
-        $this->config = $config;
+        $this->config = $defaultConfig->getConfigValues();
 
         $baseDir = $this->config->get("base_dir");
+        $moduleBaseDir = $defaultConfig->getModuleBaseDir();
+        $moduleShortName = $defaultConfig->getModuleShortName();
         $defaultConfigPath = sprintf("%s/config/default-config.php", $this->config->get("base_dir"));
         $optionsDefault = $this->getOptionsDefault();
 
@@ -54,7 +57,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         $connectionOptions = ConfigFactory::fromArray($connectionOptionsDefault)->mergeValues($connectionOptions);
 
         /**
-         * Check connection configuration
+         * Check default connection and configuration
          */
         $connectionOption = $connectionOptions->get("connection_options.connection_option");
         $connection = $connectionOptions->get(sprintf("connection_options.%s", $connectionOption), false);
@@ -66,41 +69,61 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         }
 
         /**
-         * Build doctrine application options
+         * Build application option for system
          */
-        $doctrineOptionsDefault = ["doctrine_options" => $optionsDefault["doctrine_options"]];
-        $doctrineOptions = ["doctrine_options" => $this->config->get("doctrine_options")];
-        $doctrineOptions["doctrine_options"]["base_dir"] = $baseDir;
-        $doctrineOptions["doctrine_options"]["em_class"] = EntityManager::class;
-        $doctrineOptions["doctrine_options"]["gedmo_ext"] = ["Timestampable"];
-        $doctrineOptions["doctrine_options"]["proxy_dir"] = sprintf("%s/data/proxy/%s", $baseDir, $connectionOption);
-        $doctrineOptions["doctrine_options"]["vendor_dir"] = sprintf("%s/vendor", $baseDir);
-        $doctrineOptions = ConfigFactory::fromArray($doctrineOptionsDefault)->mergeValues($doctrineOptions);
+        $doctrineSystemOptionsDefault =  ["system" => $optionsDefault["doctrine_options"]];
+        $doctrineSystemOptions = ["system" => $this->config->get("doctrine_options")];
+        $doctrineSystemOptions["system"]["base_dir"] = $baseDir;
+        $doctrineSystemOptions["system"]["em_class"] = EntityManager::class;
+        $doctrineSystemOptions["system"]["entity_dir"] = sprintf("%s/system/Entities", $baseDir);
+        $doctrineSystemOptions["system"]["entity_namespace"] = "Entities";
+        $doctrineSystemOptions["system"]["gedmo_ext"] = ["Timestampable"];
+        $doctrineSystemOptions["system"]["proxy_dir"] = sprintf("%s/data/proxy/%s", $baseDir, $connectionOption);
+        $doctrineSystemOptions["system"]["vendor_dir"] = sprintf("%s/vendor", $baseDir);
+        $doctrineSystemOptions = ConfigFactory::fromArray($doctrineSystemOptionsDefault)->mergeValues($doctrineSystemOptions);
 
         /**
-         * Create and check individual paths
+         * Build application option for module
          */
-        $entityDir = sprintf("%s/%s", $baseDir, $doctrineOptions->get("doctrine_options.entity_dir"));
-        FileHelper::init($entityDir, DoctrineException::class)->isReadable();
+        $doctrineModuleOptionsDefault = ["module" => $optionsDefault["doctrine_options"]];
+        $doctrineModuleOptions = ["module" => $this->config->get("doctrine_options")];
+        $doctrineModuleOptions["module"]["base_dir"] = $moduleBaseDir;
+        $doctrineModuleOptions["module"]["em_class"] = EntityManager::class;
+        $doctrineModuleOptions["module"]["entity_dir"] = sprintf("%s/src/Entities", $moduleBaseDir);
+        $doctrineModuleOptions["module"]["entity_namespace"] = sprintf("Modules/%s/Entities", $moduleShortName);
+        $doctrineModuleOptions["module"]["gedmo_ext"] = ["Timestampable"];
+        $doctrineModuleOptions["module"]["proxy_dir"] = sprintf("%s/data/proxy/%s", $baseDir, $connectionOption);
+        $doctrineModuleOptions["module"]["vendor_dir"] = sprintf("%s/vendor", $baseDir);
+        $doctrineModuleOptions = ConfigFactory::fromArray($doctrineModuleOptionsDefault)->mergeValues($doctrineModuleOptions);
 
         /**
-         * Merge file values with absolute path
+         * Merge application options
          */
-        $doctrineOptions = $doctrineOptions->mergeValues(!$doctrineOptions->has("doctrine_options.entity_namespace") ? [
-            "doctrine_options" => [
-                "entity_dir" => $entityDir,
-                "entity_namespace" => basename($entityDir)
-            ]
-        ] : [
-            "doctrine_options" => [
-                "entity_dir" => $entityDir,
-                "entity_namespace" => $doctrineOptions->get("doctrine_options.entity_namespace")
-            ]
-        ]);
+        $doctrineOptions = ["doctrine_options" => [
+            "system" => $doctrineSystemOptions->getArrayCopy()["system"],
+            "module" => $doctrineModuleOptions->getArrayCopy()["module"]
+        ]];
 
-        $defaultProxyDir = $doctrineOptions->get("doctrine_options.proxy_dir");
-        FileHelper::init($defaultProxyDir, DoctrineException::class)->isWritable(true);
+        $doctrineOptions = ConfigFactory::fromArray($doctrineOptions);
 
+        /**
+         * Create and check paths
+         */
+        FileHelper::init($doctrineOptions->get("doctrine_options.system.entity_dir"),
+            DoctrineException::class)->isReadable();
+
+        FileHelper::init($doctrineOptions->get("doctrine_options.module.entity_dir"),
+            DoctrineException::class)->isReadable();
+
+        FileHelper::init($doctrineOptions->get("doctrine_options.system.proxy_dir"),
+            DoctrineException::class)->isWritable(true);
+
+        FileHelper::init($doctrineOptions->get("doctrine_options.module.proxy_dir"),
+            DoctrineException::class)->isWritable(true);
+
+        /**
+         * Finished
+         */
         $this->configValues = ConfigValues::fromConfigValues($connectionOptions)->merge($doctrineOptions);
     }
 
@@ -125,6 +148,10 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         }
 
         return [
+            /**
+             * Several database connections can be used
+             * @see DoctrineService::getEntityManager()
+             */
             "connection_options" => [
                 "connection_option" => "default",
                 "default" => [
@@ -136,10 +163,14 @@ class DoctrineConfig implements VendorExtensionConfigInterface
                     "prefix" => "",
                 ]
             ],
+            /**
+             * Only these parameters can be changed by the user. The settings are
+             * adopted for the respective module as well as the system
+             * @see DoctrineConfig::__construct()
+             */
             "doctrine_options" => [
                 "autogenerate_proxy_classes" => true,
                 "debug_mode" => $isDebug,
-                "entity_dir" => "system/Entities",
                 "cache" => $cacheDriver
             ]
         ];

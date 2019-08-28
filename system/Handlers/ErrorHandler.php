@@ -52,13 +52,12 @@ class ErrorHandler
     {
         $whoops = new Run();
         $baseDir = realpath(sprintf("%s/../..", __DIR__));
+        $debugMode = true;
 
-        if (is_null($config)) {
-            $config = DefaultConfig::init($baseDir);
+        if ($config instanceof ConfigValues) {
+            $baseDir = $config->get("base_dir");
+            $debugMode = $config->get("debug_mode");
         }
-
-        $baseDir = $config->get("base_dir");
-        $debugMode = $config->get("debug_mode");
 
         if ($logger instanceof Logger) {
             $this->logger = $logger;

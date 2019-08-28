@@ -81,12 +81,12 @@ class CacheConfig implements VendorExtensionConfigInterface
 
     /**
      * CacheConfig constructor.
-     * @param ConfigValues $config
+     * @param DefaultConfig $defaultConfig
      * @throws CacheException
      */
-    public function __construct(ConfigValues $config)
+    public function __construct(DefaultConfig $defaultConfig)
     {
-        $this->config = $config;
+        $this->config = $defaultConfig->getConfigValues();
         $baseDir = $this->config->get("base_dir");
 
         $defaultOptions = $this->getOptionsDefault();
