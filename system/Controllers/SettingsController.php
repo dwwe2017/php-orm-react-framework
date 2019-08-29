@@ -10,9 +10,13 @@
 namespace Controllers;
 
 
-use Interfaces\ControllerInterfaces\MvcControllerInterface;
+use Interfaces\ControllerInterfaces\SettingsControllerInterface;
 
-class SettingsController extends AbstractBase implements MvcControllerInterface
+/**
+ * Class SettingsController
+ * @package Controllers
+ */
+class SettingsController extends AbstractBase implements SettingsControllerInterface
 {
     /**
      *

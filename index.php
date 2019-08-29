@@ -25,13 +25,13 @@ $controllerName = $controllerNamespace . ucfirst($controller) . 'Controller';
 if (class_exists($controllerName)) {
     $requestController = new $controllerName($baseDir);
     if (!method_exists($requestController, "run")) {
-        $requestController = new Controllers\MvcController($baseDir);
+        $requestController = new Controllers\PublicController($baseDir);
         $requestController->render404();
     } else {
         $requestController->run($action);
     }
 } else {
-    $requestController = new Controllers\MvcController($baseDir);
+    $requestController = new Controllers\PublicController($baseDir);
     $requestController->render404();
 }
 

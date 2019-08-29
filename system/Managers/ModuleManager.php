@@ -170,7 +170,7 @@ class ModuleManager
      */
     public final function getControllerShortName(): ?string
     {
-        return preg_replace('/^([A-Za-z]+\\\)+/', '', $this->getModuleName()); // i.e. MvcController
+        return preg_replace('/^([A-Za-z]+\\\)+/', '', $this->getModuleName()); // i.e. PublicController
     }
 
     /**

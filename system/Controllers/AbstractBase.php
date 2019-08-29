@@ -11,8 +11,6 @@ namespace Controllers;
 
 
 use Exceptions\CacheException;
-use Exceptions\MinifyCssException;
-use Exceptions\MinifyJsException;
 use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
@@ -38,8 +36,6 @@ abstract class AbstractBase
      * AbstractBase constructor.
      * @param string $baseDir
      * @throws CacheException
-     * @throws MinifyCssException
-     * @throws MinifyJsException
      */
     public function __construct(string $baseDir)
     {
@@ -123,8 +119,7 @@ abstract class AbstractBase
     }
 
     /**
-     * @throws MinifyCssException
-     * @throws MinifyJsException
+     *
      */
     private function initHandlers(): void
     {

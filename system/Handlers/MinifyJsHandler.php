@@ -13,6 +13,7 @@ namespace Handlers;
 use Configula\ConfigValues;
 use Exception;
 use Exceptions\MinifyJsException;
+use Helpers\FileHelper;
 use JShrink\Minifier;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
@@ -48,36 +49,21 @@ class MinifyJsHandler extends Minifier
     /**
      * MinifyJsHandler constructor.
      * @param ConfigValues $config
-     * @throws MinifyJsException
      */
-    public final function __construct(ConfigValues $config)
+    private final function __construct(ConfigValues $config)
     {
         $this->baseDir = $config->get("base_dir");
-
         $this->defaultMinifyJsDir = sprintf("%s/data/cache/js", $this->baseDir);
 
-        if (!file_exists($this->defaultMinifyJsDir)) {
-            if (!@mkdir($this->defaultMinifyJsDir, 0777, true)) {
-                throw new MinifyJsException(sprintf("The required directory '%s' can not be created, please check the directory permissions or create it manually.", $this->defaultMinifyJsDir), E_ERROR);
-            }
-        }
-
-        if (!is_writable($this->defaultMinifyJsDir)) {
-            if (!@chmod($this->defaultMinifyJsDir, 0777)) {
-                throw new MinifyJsException(sprintf("The required directory '%s' can not be written, please check the directory permissions.", $this->defaultMinifyJsDir), E_ERROR);
-            }
-        }
+        FileHelper::init($this->defaultMinifyJsDir, MinifyJsException::class)
+            ->isWritable(true);
     }
 
     /**
-     * @throws MinifyJsException
+     *
      */
     private function setDefaults()
     {
-        if (is_null(self::$instance)) {
-            throw new MinifyJsException("The class must be initiated first", E_ERROR);
-        }
-
         $defaultJsPaths = array(
             sprintf("%s/assets/js/libs/jquery-3.4.1.min.js", $this->baseDir),
             sprintf("%s/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js", $this->baseDir),
@@ -116,7 +102,6 @@ class MinifyJsHandler extends Minifier
     /**
      * @param ConfigValues $config
      * @return MinifyJsHandler|null
-     * @throws MinifyJsException
      */
     public static final function init(ConfigValues $config)
     {
@@ -178,21 +163,25 @@ class MinifyJsHandler extends Minifier
     /**
      * @param string $fileOrString
      * @param bool $codeAsString
-     * @throws MinifyJsException
      */
     public final function addJsContent(string $fileOrString, $codeAsString = false)
     {
         if ($codeAsString) {
             self::$md5checksum .= trim(md5($fileOrString));
-        } elseif (!file_exists($fileOrString)) {
-            throw new MinifyJsException(sprintf("The file '%s' does not exist, please check directory manually", $fileOrString), E_ERROR);
-        } elseif (!is_readable($fileOrString)) {
-            throw new MinifyJsException(sprintf("The file '%s' can not be loaded, please check the file permissions", $fileOrString), E_ERROR);
         } else {
+            FileHelper::init($fileOrString, MinifyJsException::class)->isReadable();
             $fileMtime = @filemtime($fileOrString);
             self::$md5checksum .= date('YmdHis', $fileMtime ? $fileMtime : NULL) . $fileOrString;
         }
 
         $this->jsContent[] = $fileOrString;
+    }
+
+    /**
+     * @param array $jsContent
+     */
+    public final function setJsContent(array $jsContent): void
+    {
+        $this->jsContent = $jsContent;
     }
 }

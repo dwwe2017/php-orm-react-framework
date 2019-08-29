@@ -7,22 +7,16 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Modules\Dashboard\Controllers;
+namespace Interfaces\ControllerInterfaces;
 
-
-use Controllers\PublicController;
 
 /**
- * Class PublicController
- * @package Modules\Dashboard\Controllers
+ * Interface RestrictedControllerInterface
+ * @package Interfaces\ControllerInterfaces
  */
-class IndexController extends PublicController
+interface RestrictedControllerInterface
 {
-    /**
-     *
-     */
-    public function indexAction(): void
-    {
+    public function indexAction(): void;
 
-    }
+    public function loginAction(): void;
 }

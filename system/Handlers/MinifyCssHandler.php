@@ -14,6 +14,7 @@ use Configula\ConfigValues;
 use CssMin;
 use Exception;
 use Exceptions\MinifyCssException;
+use Helpers\FileHelper;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 class MinifyCssHandler
@@ -48,36 +49,21 @@ class MinifyCssHandler
     /**
      * MinifyCssHandler constructor.
      * @param ConfigValues $config
-     * @throws MinifyCssException
      */
-    public final function __construct(ConfigValues $config)
+    private final function __construct(ConfigValues $config)
     {
         $this->baseDir = $config->get("base_dir");
-
         $this->defaultMinifyCssDir = sprintf("%s/data/cache/css", $this->baseDir);
 
-        if (!file_exists($this->defaultMinifyCssDir)) {
-            if (!@mkdir($this->defaultMinifyCssDir, 0777, true)) {
-                throw new MinifyCssException(sprintf("The required directory '%s' can not be created, please check the directory permissions or create it manually.", $this->defaultMinifyCssDir), E_ERROR);
-            }
-        }
-
-        if (!is_writable($this->defaultMinifyCssDir)) {
-            if (!@chmod($this->defaultMinifyCssDir, 0777)) {
-                throw new MinifyCssException(sprintf("The required directory '%s' can not be written, please check the directory permissions.", $this->defaultMinifyCssDir), E_ERROR);
-            }
-        }
+        FileHelper::init($this->defaultMinifyCssDir, MinifyCssException::class)
+            ->isWritable(true);
     }
 
     /**
-     * @throws MinifyCssException
+     *
      */
     private function setDefaults()
     {
-        if (is_null(self::$instance)) {
-            throw new MinifyCssException("The class must be initiated first", E_ERROR);
-        }
-
         $defaultCssPaths = array(
             sprintf("%s/bootstrap/css/bootstrap.min.css", $this->baseDir),
             sprintf("%s/assets/css/main.css", $this->baseDir),
@@ -94,7 +80,6 @@ class MinifyCssHandler
     /**
      * @param ConfigValues $config
      * @return MinifyCssHandler|null
-     * @throws MinifyCssException
      */
     public static final function init(ConfigValues $config)
     {
@@ -156,21 +141,25 @@ class MinifyCssHandler
     /**
      * @param string $fileOrString
      * @param bool $codeAsString
-     * @throws MinifyCssException
      */
     public final function addCss(string $fileOrString, $codeAsString = false)
     {
         if ($codeAsString) {
             self::$md5checksum .= trim(md5($fileOrString));
-        } elseif (!file_exists($fileOrString)) {
-            throw new MinifyCssException(sprintf("The file '%s' does not exist, please check directory manually", $fileOrString), E_ERROR);
-        } elseif (!is_readable($fileOrString)) {
-            throw new MinifyCssException(sprintf("The file '%s' can not be loaded, please check the file permissions", $fileOrString), E_ERROR);
         } else {
+            FileHelper::init($fileOrString, MinifyCssException::class)->isReadable();
             $fileMtime = @filemtime($fileOrString);
             self::$md5checksum .= date('YmdHis', $fileMtime ? $fileMtime : NULL) . $fileOrString;
         }
 
         $this->cssContent[] = $fileOrString;
+    }
+
+    /**
+     * @param array $cssContent
+     */
+    public final function setCssContent(array $cssContent): void
+    {
+        $this->cssContent = $cssContent;
     }
 }

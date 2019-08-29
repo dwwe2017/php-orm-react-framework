@@ -12,6 +12,8 @@ namespace Traits\ControllerTraits;
 
 use Configula\ConfigValues;
 use Doctrine\ORM\EntityManager;
+use Exceptions\MinifyCssException;
+use Exceptions\MinifyJsException;
 use Gettext\GettextTranslator;
 use Gettext\Translator;
 use Handlers\MinifyCssHandler;
@@ -249,6 +251,56 @@ trait AbstractBaseTrait
     protected final function getModuleCacheService()
     {
         return $this->moduleCacheService;
+    }
+
+    /**
+     * @param string $fileOrString
+     * @param bool $codeAsString
+     */
+    protected function addCss(string $fileOrString, bool $codeAsString = false)
+    {
+        $fileOrString = $codeAsString ? $fileOrString
+            : sprintf("%s/%s", $this->getBaseDir(), $fileOrString);
+
+        $this->getCssHandler()->addCss($fileOrString, $codeAsString);
+    }
+
+    /**
+     * @param array $cssFiles
+     */
+    protected function setCss(array $cssFiles)
+    {
+        $files = [];
+        foreach ($cssFiles as $file){
+            $files[] = sprintf("%s/%s", $this->getBaseDir(), $file);
+        }
+
+        $this->getCssHandler()->setCssContent($files);
+    }
+
+    /**
+     * @param string $fileOrString
+     * @param bool $codeAsString
+     */
+    protected function addJs(string $fileOrString, bool $codeAsString = false)
+    {
+        $fileOrString = $codeAsString ? $fileOrString
+            : sprintf("%s/%s", $this->getBaseDir(), $fileOrString);
+
+        $this->getJsHandler()->addJsContent($fileOrString, $codeAsString);
+    }
+
+    /**
+     * @param array $jsFiles
+     */
+    protected function setJs(array $jsFiles)
+    {
+        $files = [];
+        foreach ($jsFiles as $file){
+            $files[] = sprintf("%s/%s", $this->getBaseDir(), $file);
+        }
+
+        $this->getJsHandler()->setJsContent($files);
     }
 
     /**

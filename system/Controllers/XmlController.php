@@ -9,11 +9,11 @@
 
 namespace Controllers;
 
+
 use Interfaces\ControllerInterfaces\XmlControllerInterface;
 
-
 /**
- * Class MvcController
+ * Class PublicController
  * @package Controllers
  */
 class XmlController extends AbstractBase implements XmlControllerInterface

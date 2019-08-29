@@ -11,10 +11,10 @@ namespace Interfaces\ControllerInterfaces;
 
 
 /**
- * Interface MvcControllerInterface
+ * Interface SettingsControllerInterface
  * @package Interfaces\ControllerInterfaces
  */
-interface MvcControllerInterface
+interface SettingsControllerInterface
 {
     public function indexAction(): void;
 }

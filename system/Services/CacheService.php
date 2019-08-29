@@ -50,8 +50,8 @@ class CacheService implements VendorExtensionServiceInterface
 
     /**
      * CacheService constructor.
-     * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
+     * @see ServiceManager::__construct()
      */
     public final function __construct(ModuleManager $moduleManager)
     {
@@ -65,8 +65,7 @@ class CacheService implements VendorExtensionServiceInterface
      */
     public final function getCacheInstance(string $instance_id): ExtendedCacheItemPoolInterface
     {
-        try
-        {
+        try {
             /**
              * Init cache instance
              * @see CacheHelper::init()

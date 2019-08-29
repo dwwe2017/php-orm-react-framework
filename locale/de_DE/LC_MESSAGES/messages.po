@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TSI2\n"
 "POT-Creation-Date: 2019-08-25 20:04+0200\n"
-"PO-Revision-Date: 2019-08-27 19:14+0200\n"
+"PO-Revision-Date: 2019-08-29 23:37+0200\n"
 "Language-Team: DW </> Web-Engineering\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,10 +14,74 @@ msgstr ""
 "Language: de_DE\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-# Test-Text1
-msgid "This text is translated from English to German"
-msgstr "Dieser Text wird vom englischen ins deutsche übersetzt"
+# Sign In to your Account
+msgid "Sign In to your Account"
+msgstr "Melden Sie sich bei Ihrem Konto an"
 
-# Test-Text2
-msgid "This text is only included in the system-wide language file"
-msgstr "Dieser Text ist nur in der Systemweiten Sprachdatei enthalten"
+# Enter any username and password.
+msgid "Please enter your username and password."
+msgstr "Bitte geben Sie Ihren Benutzernamen sowie Ihr Kennwort ein."
+
+# Sign In
+msgid "Sign In"
+msgstr "Anmelden"
+
+# Sign Up for Free
+msgid "Sign Up for Free"
+msgstr "Registrieren Sie sich kostenlos"
+
+# I agree to the <a href=\"javascript:void(0)\">Terms of Service</a>
+msgid "I agree to the <a href=\"javascript:void(0)\">Terms of Service</a>"
+msgstr "Ich stimme den <a href=\"javascript:void(0)\">Nutzungsbedingungen</a> zu"
+
+# Back
+msgid "Back"
+msgstr "Zurück"
+
+# Sign Up
+msgid "Sign Up"
+msgstr "Registrieren"
+
+# Forgot Password?
+msgid "Forgot Password?"
+msgstr "Passwort vergessen?"
+
+# Reset your Password
+msgid "Reset your Password"
+msgstr "Zurücksetzen Ihres Passworts"
+
+# Great. We have sent you an email.
+msgid "Great. We have sent you an email."
+msgstr "Großartig. Wir haben Ihnen eine E-Mail geschickt."
+
+# or
+msgid "or"
+msgstr "oder"
+
+# Don't have an account yet? <strong>Sign Up</strong>
+msgid "Don't have an account yet?"
+msgstr "Sie haben noch kein Konto?"
+
+# Remember me
+msgid "Remember me"
+msgstr "Angemeldet bleiben"
+
+# Please enter your username.
+msgid "Please enter your username."
+msgstr "Bitte geben Sie Ihren Benutzernamen ein."
+
+# Please enter your password.
+msgid "Please enter your password."
+msgstr "Bitte geben Sie Ihr Passwort ein."
+
+# Enter email address
+msgid "Enter email address"
+msgstr "E-Mail Adresse eingeben"
+
+# Please enter your email.
+msgid "Please enter your email."
+msgstr "Bitte E-Mail-Adresse eintragen."
+
+# Please accept Terms first.
+msgid "Please accept Terms first."
+msgstr "Bitte akzeptieren Sie zuerst die Bedingungen."
