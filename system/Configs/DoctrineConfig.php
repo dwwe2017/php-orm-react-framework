@@ -50,8 +50,6 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         $defaultConfigPath = sprintf("%s/config/default-config.php", $this->config->get("base_dir"));
         $defaultOptions = $this->getOptionsDefault();
 
-        //todo! if !$isModule!
-
         /**
          * Build connection options
          */
@@ -85,30 +83,40 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         $doctrineSystemOptions["system"]["vendor_dir"] = sprintf("%s/vendor", $baseDir);
         $doctrineSystemOptions = ConfigFactory::fromArray($doctrineSystemOptionsDefault)->mergeValues($doctrineSystemOptions);
 
-        /**
-         * Create and check paths
-         */
+        $doctrineModuleOptions = new ConfigValues([]);
 
-        /**
-         * Build application option for module
-         */
-        $doctrineModuleOptionsDefault = ["module" => $defaultOptions["doctrine_options"]];
-        $doctrineModuleOptions = ["module" => $this->config->get("doctrine_options")];
-        $doctrineModuleOptions["module"]["base_dir"] = $moduleBaseDir;
-        $doctrineModuleOptions["module"]["em_class"] = EntityManager::class;
-        $doctrineModuleOptions["module"]["entity_dir"] = sprintf("%s/src/Entities", $moduleBaseDir);
-        $doctrineModuleOptions["module"]["entity_namespace"] = sprintf("Modules/%s/Entities", $moduleShortName);
-        $doctrineModuleOptions["module"]["gedmo_ext"] = ["Timestampable"];
-        $doctrineModuleOptions["module"]["proxy_dir"] = sprintf("%s/data/proxy/%s", $baseDir, $connectionOption);
-        $doctrineModuleOptions["module"]["vendor_dir"] = sprintf("%s/vendor", $baseDir);
-        $doctrineModuleOptions = ConfigFactory::fromArray($doctrineModuleOptionsDefault)->mergeValues($doctrineModuleOptions);
+        if(!is_null($moduleShortName)){
+            /**
+             * Build application option for module
+             */
+            $doctrineModuleOptionsDefault = ["module" => $defaultOptions["doctrine_options"]];
+            $doctrineModuleOptions = ["module" => $this->config->get("doctrine_options")];
+            $doctrineModuleOptions["module"]["base_dir"] = $moduleBaseDir;
+            $doctrineModuleOptions["module"]["em_class"] = EntityManager::class;
+            $doctrineModuleOptions["module"]["entity_dir"] = sprintf("%s/src/Entities", $moduleBaseDir);
+            $doctrineModuleOptions["module"]["entity_namespace"] = sprintf("Modules/%s/Entities", $moduleShortName);
+            $doctrineModuleOptions["module"]["gedmo_ext"] = ["Timestampable"];
+            $doctrineModuleOptions["module"]["proxy_dir"] = sprintf("%s/data/proxy/%s", $baseDir, $connectionOption);
+            $doctrineModuleOptions["module"]["vendor_dir"] = sprintf("%s/vendor", $baseDir);
+            $doctrineModuleOptions = ConfigFactory::fromArray($doctrineModuleOptionsDefault)->mergeValues($doctrineModuleOptions);
+
+            /**
+             * Create and check paths
+             */
+            FileHelper::init($doctrineModuleOptions->get("module.entity_dir"),
+                DoctrineException::class)->isReadable();
+
+            FileHelper::init($doctrineModuleOptions->get("module.proxy_dir"),
+                DoctrineException::class)->isWritable(true);
+        }
 
         /**
          * Merge application options
+         * Important! If no module controller is currently active, the system options are used for the module options
          */
         $doctrineOptions = ["doctrine_options" => [
             "system" => $doctrineSystemOptions->get("system"),
-            "module" => $doctrineModuleOptions->get("module")
+            "module" => $doctrineModuleOptions->get("module", $doctrineSystemOptions->get("system"))
         ]];
 
         $doctrineOptions = ConfigFactory::fromArray($doctrineOptions);
@@ -119,13 +127,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         FileHelper::init($doctrineOptions->get("doctrine_options.system.entity_dir"),
             DoctrineException::class)->isReadable();
 
-        FileHelper::init($doctrineOptions->get("doctrine_options.module.entity_dir"),
-            DoctrineException::class)->isReadable();
-
         FileHelper::init($doctrineOptions->get("doctrine_options.system.proxy_dir"),
-            DoctrineException::class)->isWritable(true);
-
-        FileHelper::init($doctrineOptions->get("doctrine_options.module.proxy_dir"),
             DoctrineException::class)->isWritable(true);
 
         /**

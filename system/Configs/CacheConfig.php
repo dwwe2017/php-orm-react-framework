@@ -11,6 +11,7 @@ namespace Configs;
 
 
 use Configula\ConfigFactory;
+use Configula\ConfigValues;
 use Exception;
 use Exceptions\CacheException;
 use Helpers\ArrayHelper;
@@ -97,8 +98,6 @@ class CacheConfig implements VendorExtensionConfigInterface
         $cacheSystemDir = sprintf("%s/data/cache/system", $baseDir);
         $defaultOptions = $this->getOptionsDefault();
 
-        //todo! if !$isModule!
-
         /**
          * Build system cache options
          */
@@ -114,39 +113,44 @@ class CacheConfig implements VendorExtensionConfigInterface
         FileHelper::init($cacheSystemOptions->get("system.driver.driverConfig.path"), CacheException::class)
             ->isWritable(true);
 
-        /**
-         * Build module cache options
-         */
-        $cacheModuleOptionsDefault = ["module" => $defaultOptions["cache_options"]];
-        $cacheModuleOptions = ["module" => $this->config->get("cache_options")];
-        $cacheModuleOptions = ConfigFactory::fromArray($cacheModuleOptionsDefault)->mergeValues($cacheModuleOptions);
-        $cacheModuleDriver = $cacheModuleOptions->get("module.driver.driverName");
-        $cacheModuleClass =  $cacheModuleOptions->get("module.driver.driverClass", ConfigurationOption::class);
+        $cacheModuleOptions = new ConfigValues([]);
 
-        if($cacheModuleClass === ConfigurationOption::class && key_exists(strtolower($cacheModuleDriver), self::CACHE_MANAGER_CONFIG_CLASSES)){
-            $cacheModuleClass = self::CACHE_MANAGER_CONFIG_CLASSES[strtolower($cacheModuleDriver)];
-        }
+        if(!is_null($this->moduleShortName)){
+            /**
+             * Build module cache options
+             */
+            $cacheModuleOptionsDefault = ["module" => $defaultOptions["cache_options"]];
+            $cacheModuleOptions = ["module" => $this->config->get("cache_options")];
+            $cacheModuleOptions = ConfigFactory::fromArray($cacheModuleOptionsDefault)->mergeValues($cacheModuleOptions);
+            $cacheModuleDriver = $cacheModuleOptions->get("module.driver.driverName");
+            $cacheModuleClass =  $cacheModuleOptions->get("module.driver.driverClass", ConfigurationOption::class);
 
-        /**
-         * Check file permissions for module cache dir if necessary
-         */
-        $cacheModuleDir = sprintf("%s/%s", $baseDir,
-            $cacheModuleOptions->get("module.driver.driverConfig.path", false)
-        );
+            if($cacheModuleClass === ConfigurationOption::class && key_exists(strtolower($cacheModuleDriver), self::CACHE_MANAGER_CONFIG_CLASSES)){
+                $cacheModuleClass = self::CACHE_MANAGER_CONFIG_CLASSES[strtolower($cacheModuleDriver)];
+            }
 
-        if ($cacheModuleDir !== false) {
-            FileHelper::init($cacheModuleDir, CacheException::class)->isWritable(true);
-            $cacheModuleOptions = $cacheModuleOptions->mergeValues([
-                "module" => ["driver" => ["driverConfig" => ["path" => $cacheModuleDir], "driverClass" => $cacheModuleClass]]
-            ]);
+            /**
+             * Check file permissions for module cache dir if necessary
+             */
+            $cacheModuleDir = sprintf("%s/%s", $baseDir,
+                $cacheModuleOptions->get("module.driver.driverConfig.path", false)
+            );
+
+            if ($cacheModuleDir !== false) {
+                FileHelper::init($cacheModuleDir, CacheException::class)->isWritable(true);
+                $cacheModuleOptions = $cacheModuleOptions->mergeValues([
+                    "module" => ["driver" => ["driverConfig" => ["path" => $cacheModuleDir], "driverClass" => $cacheModuleClass]]
+                ]);
+            }
         }
 
         /**
          * Merge cache options
+         * Important! If no module controller is currently active, the system options are used for the module options
          */
         $cacheOptions = ["cache_options" => [
             "system" => $cacheSystemOptions->get("system"),
-            "module" => $cacheModuleOptions->get("module")
+            "module" => $cacheModuleOptions->get("module", $cacheSystemOptions->get("system"))
         ]];
 
         /**

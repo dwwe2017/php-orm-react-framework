@@ -73,8 +73,10 @@ abstract class AbstractBase
          * @see AbstractBaseTrait::getCacheService()
          * @see AbstractBaseTrait::getSystemCacheService()
          * @see AbstractBaseTrait::getModuleCacheService()
+         * @internal AbstractBaseTrait::getModuleCacheService() => If no module controller is currently active, the system values are used
          * @see AbstractBaseTrait::systemCacheServiceHasFallback()
          * @see AbstractBaseTrait::moduleCacheServiceHasFallback()
+         * @internal AbstractBaseTrait::moduleCacheServiceHasFallback() => If no module controller is currently active, the system values are used
          */
         $this->cacheService = $this->getServiceManager()->getCacheService(); // !Only available for system
         $this->systemCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_SYSTEM); // !Only available for system
@@ -106,6 +108,7 @@ abstract class AbstractBase
          * @see AbstractBaseTrait::getDoctrineService()
          * @see AbstractBaseTrait::getSystemDbService()
          * @see AbstractBaseTrait::getModuleDbService()
+         * @internal AbstractBaseTrait::getModuleDbService() => If no module controller is currently active, the system values are used
          */
         $this->doctrineService = $this->getServiceManager()->getDoctrineService(); // !Only available for system
         $this->systemDbService = $this->getDoctrineService()->getSystemDoctrineService(); // !Only available for system
