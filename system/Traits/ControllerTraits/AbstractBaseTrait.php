@@ -12,8 +12,6 @@ namespace Traits\ControllerTraits;
 
 use Configula\ConfigValues;
 use Doctrine\ORM\EntityManager;
-use Exceptions\MinifyCssException;
-use Exceptions\MinifyJsException;
 use Gettext\GettextTranslator;
 use Gettext\Translator;
 use Handlers\MinifyCssHandler;
@@ -52,6 +50,11 @@ trait AbstractBaseTrait
      * @var ModuleManager
      */
     private $moduleManager;
+
+    /**
+     * @var string
+     */
+    private $moduleBaseDir = "";
 
     /**
      * @var ServiceManager
@@ -167,6 +170,16 @@ trait AbstractBaseTrait
     }
 
     /**
+     * @see ModuleManager::getModuleBaseDir()
+     * @internal Fallback if no module controller is active or empty string is AbstractBaseTrait::getBaseDir
+     * @return string
+     */
+    public final function getModuleBaseDir(): string
+    {
+        return $this->moduleBaseDir;
+    }
+
+    /**
      * PROTECTED AREA
      */
 
@@ -260,7 +273,7 @@ trait AbstractBaseTrait
     protected function addCss(string $fileOrString, bool $codeAsString = false)
     {
         $fileOrString = $codeAsString ? $fileOrString
-            : sprintf("%s/%s", $this->getBaseDir(), $fileOrString);
+            : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
 
         $this->getCssHandler()->addCss($fileOrString, $codeAsString);
     }
@@ -272,7 +285,7 @@ trait AbstractBaseTrait
     {
         $files = [];
         foreach ($cssFiles as $file){
-            $files[] = sprintf("%s/%s", $this->getBaseDir(), $file);
+            $files[] = sprintf("%s/%s", $this->getModuleBaseDir(), $file);
         }
 
         $this->getCssHandler()->setCssContent($files);
@@ -285,7 +298,7 @@ trait AbstractBaseTrait
     protected function addJs(string $fileOrString, bool $codeAsString = false)
     {
         $fileOrString = $codeAsString ? $fileOrString
-            : sprintf("%s/%s", $this->getBaseDir(), $fileOrString);
+            : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
 
         $this->getJsHandler()->addJsContent($fileOrString, $codeAsString);
     }
@@ -297,7 +310,7 @@ trait AbstractBaseTrait
     {
         $files = [];
         foreach ($jsFiles as $file){
-            $files[] = sprintf("%s/%s", $this->getBaseDir(), $file);
+            $files[] = sprintf("%s/%s", $this->getModuleBaseDir(), $file);
         }
 
         $this->getJsHandler()->setJsContent($files);

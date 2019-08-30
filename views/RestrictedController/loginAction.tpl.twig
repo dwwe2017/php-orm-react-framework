@@ -1,6 +1,8 @@
 {% extends "layout.default.tpl.twig" %}
 
 {% block layout_body %}
+    {% import "generic.forms.macro.tpl.twig" as forms %}
+
     <body class="login">
     <!-- Logo -->
     <div class="logo">
@@ -29,25 +31,8 @@
                     {% endtrans %}
                 </div>
 
-                <!-- Input Fields -->
-                <div class="form-group">
-                    <!--<label for="username">Username:</label>-->
-                    <div class="input-icon">
-                        <i class="icon-user"></i>
-                        <input type="text" name="username" class="form-control" placeholder="Username"
-                               autofocus="autofocus" data-rule-required="true"
-                               data-msg-required="{% trans %}Please enter your username.{% endtrans %}"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <!--<label for="password">Password:</label>-->
-                    <div class="input-icon">
-                        <i class="icon-lock"></i>
-                        <input type="password" name="password" class="form-control" placeholder="Password"
-                               data-rule-required="true" data-msg-required="{% trans %}Please enter your password.{% endtrans %}"/>
-                    </div>
-                </div>
-                <!-- /Input Fields -->
+                {{ forms.input_with_form_group("username", "text", "username", "Username", "icon-user", "", "true", "Please enter your username.") }}
+                {{ forms.input_with_form_group("password", "password", "password", "Password", "icon-lock", "", "true", "Please enter your password.") }}
 
                 <!-- Form Actions -->
                 <div class="form-actions">
@@ -66,36 +51,11 @@
                 <!-- Title -->
                 <h3 class="form-title">{% trans %}Sign Up for Free{% endtrans %}</h3>
 
-                <!-- Input Fields -->
-                <div class="form-group">
-                    <div class="input-icon">
-                        <i class="icon-user"></i>
-                        <input type="text" name="username" class="form-control" placeholder="Username"
-                               autofocus="autofocus" data-rule-required="true"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-icon">
-                        <i class="icon-lock"></i>
-                        <input type="password" name="password" class="form-control" placeholder="Password"
-                               id="register_password" data-rule-required="true"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-icon">
-                        <i class="icon-ok"></i>
-                        <input type="password" name="password_confirm" class="form-control"
-                               placeholder="Confirm Password" data-rule-required="true"
-                               data-rule-equalTo="#register_password"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-icon">
-                        <i class="icon-envelope"></i>
-                        <input type="text" name="Email" class="form-control" placeholder="Email address"
-                               data-rule-required="true" data-rule-email="true"/>
-                    </div>
-                </div>
+                {{ forms.input_with_form_group("register_username", "text", "username", "Username", "icon-user", "", "true", "Please enter a valid username.") }}
+                {{ forms.input_password_confirm_with_form_group("register_password", "password", "Password", "icon-lock") }}
+
+                {{ forms.input_with_form_group("register_email", "text", "email", "Email address", "icon-envelope", "", "true", "Please enter your Email address.", "", "true") }}
+
                 <div class="form-group spacing-top">
                     <label class="checkbox"><input type="checkbox" class="uniform" id="remember" name="remember"
                                                    data-rule-required="true"

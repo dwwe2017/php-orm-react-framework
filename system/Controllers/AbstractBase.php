@@ -40,6 +40,7 @@ abstract class AbstractBase
     public function __construct(string $baseDir)
     {
         $this->baseDir = $baseDir;
+        $this->moduleBaseDir = $this->getBaseDir();
 
         $this->initModule();
         $this->initServices();
@@ -53,6 +54,7 @@ abstract class AbstractBase
     private function initModule()
     {
         $this->moduleManager = ModuleManager::init($this);
+        $this->moduleBaseDir = $this->getModuleManager()->getModuleBaseDir();
         $this->config = $this->getModuleManager()->getConfig();
     }
 

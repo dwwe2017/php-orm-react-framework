@@ -94,6 +94,7 @@ class ModuleManager
         $this->baseDir = $controllerInstance->getBaseDir();
         $this->moduleName = get_class($controllerInstance);
         $this->moduleConfig = new ConfigValues([]);
+        $this->moduleBaseDir = $this->getBaseDir();
 
         if ($this->isModule()) {
             $this->moduleBaseDir = sprintf("%s/modules/%s", $this->getBaseDir(), $this->getModuleShortName());
