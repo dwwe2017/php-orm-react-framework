@@ -28,7 +28,9 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
      */
     public final function loginAction(): void
     {
+        $this->addCss("assets/css/plugins/nprogress.css");
         $this->addCss("assets/css/login.css");
+
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
             "bootstrap/js/bootstrap.min.js",

@@ -2,14 +2,14 @@
  * Core script to handle all login specific things
  */
 
-var Login = function() {
+const Login = function () {
 
 	"use strict";
 
 	/* * * * * * * * * * * *
 	 * Uniform
 	 * * * * * * * * * * * */
-	var initUniform = function() {
+	const initUniform = function () {
 		if ($.fn.uniform) {
 			$(':radio.uniform, :checkbox.uniform').uniform();
 		}
@@ -18,13 +18,13 @@ var Login = function() {
 	/* * * * * * * * * * * *
 	 * Sign In / Up Switcher
 	 * * * * * * * * * * * */
-	var initSignInUpSwitcher = function() {
+	const initSignInUpSwitcher = function () {
 		// Click on "Don't have an account yet? Sign Up"-text
 		$('.sign-up').click(function (e) {
 			e.preventDefault(); // Prevent redirect to #
 
 			// Hide login form
-			$('.login-form').slideUp(350, function() {
+			$('.login-form').slideUp(350, function () {
 				// Finished, so show register form
 				$('.register-form').slideDown(350);
 				$('.sign-up').hide();
@@ -36,7 +36,7 @@ var Login = function() {
 			e.preventDefault(); // Prevent redirect to #
 
 			// Hide register form
-			$('.register-form').slideUp(350, function() {
+			$('.register-form').slideUp(350, function () {
 				// Finished, so show login form
 				$('.login-form').slideDown(350);
 				$('.sign-up').show();
@@ -47,9 +47,9 @@ var Login = function() {
 	/* * * * * * * * * * * *
 	 * Forgot Password
 	 * * * * * * * * * * * */
-	var initForgotPassword = function() {
+	const initForgotPassword = function () {
 		// Click on "Forgot Password?" link
-		$('.forgot-password-link').click(function(e) {
+		$('.forgot-password-link').click(function (e) {
 			e.preventDefault(); // Prevent redirect to #
 
 			$('.forgot-password-form').slideToggle(200);
@@ -57,7 +57,7 @@ var Login = function() {
 		});
 
 		// Click on close-button
-		$('.inner-box .close').click(function() {
+		$('.inner-box .close').click(function () {
 			// Emulate click on forgot password link
 			// to reduce redundancy
 			$('.forgot-password-link').click();
@@ -67,13 +67,13 @@ var Login = function() {
 	/* * * * * * * * * * * *
 	 * Validation Defaults
 	 * * * * * * * * * * * */
-	var initValidationDefaults = function() {
+	const initValidationDefaults = function () {
 		if ($.validator) {
 			// Set default options
-			$.extend( $.validator.defaults, {
+			$.extend($.validator.defaults, {
 				errorClass: "has-error",
 				validClass: "has-success",
-				highlight: function(element, errorClass, validClass) {
+				highlight: function (element, errorClass, validClass) {
 					if (element.type === 'radio') {
 						this.findByName(element.name).addClass(errorClass).removeClass(validClass);
 					} else {
@@ -81,7 +81,7 @@ var Login = function() {
 					}
 					$(element).closest(".form-group").addClass(errorClass).removeClass(validClass);
 				},
-				unhighlight: function(element, errorClass, validClass) {
+				unhighlight: function (element, errorClass, validClass) {
 					if (element.type === 'radio') {
 						this.findByName(element.name).removeClass(errorClass).addClass(validClass);
 					} else {
@@ -94,49 +94,49 @@ var Login = function() {
 				}
 			});
 
-			var _base_resetForm = $.validator.prototype.resetForm;
-			$.extend( $.validator.prototype, {
-				resetForm: function() {
-					_base_resetForm.call( this );
+			const _base_resetForm = $.validator.prototype.resetForm;
+			$.extend($.validator.prototype, {
+				resetForm: function () {
+					_base_resetForm.call(this);
 					this.elements().closest('.form-group')
 						.removeClass(this.settings.errorClass + ' ' + this.settings.validClass);
 				},
-				showLabel: function(element, message) {
-					var label = this.errorsFor( element );
-					if ( label.length ) {
+				showLabel: function (element, message) {
+					let label = this.errorsFor(element);
+					if (label.length) {
 						// refresh error/success class
-						label.removeClass( this.settings.validClass ).addClass( this.settings.errorClass );
+						label.removeClass(this.settings.validClass).addClass(this.settings.errorClass);
 
 						// check if we have a generated label, replace the message then
-						if ( label.attr("generated") ) {
+						if (label.attr("generated")) {
 							label.html(message);
 						}
 					} else {
 						// create label
 						label = $("<" + this.settings.errorElement + "/>")
-							.attr({"for":  this.idOrName(element), generated: true})
+							.attr({"for": this.idOrName(element), generated: true})
 							.addClass(this.settings.errorClass)
 							.addClass('help-block')
 							.html(message || "");
-						if ( this.settings.wrapper ) {
+						if (this.settings.wrapper) {
 							// make sure the element is visible, even in IE
 							// actually showing the wrapped element is handled elsewhere
 							label = label.hide().show().wrap("<" + this.settings.wrapper + "/>").parent();
 						}
-						if ( !this.labelContainer.append(label).length ) {
-							if ( this.settings.errorPlacement ) {
-								this.settings.errorPlacement(label, $(element) );
+						if (!this.labelContainer.append(label).length) {
+							if (this.settings.errorPlacement) {
+								this.settings.errorPlacement(label, $(element));
 							} else {
-							label.insertAfter(element);
+								label.insertAfter(element);
 							}
 						}
 					}
-					if ( !message && this.settings.success ) {
+					if (!message && this.settings.success) {
 						label.text("");
-						if ( typeof this.settings.success === "string" ) {
-							label.addClass( this.settings.success );
+						if (typeof this.settings.success === "string") {
+							label.addClass(this.settings.success);
 						} else {
-							this.settings.success( label, element );
+							this.settings.success(label, element);
 						}
 					}
 					this.toShow = this.toShow.add(label);
@@ -148,7 +148,7 @@ var Login = function() {
 	/* * * * * * * * * * * *
 	 * Validation for Login
 	 * * * * * * * * * * * */
-	var initLoginValidation = function() {
+	const initLoginValidation = function () {
 		if ($.validator) {
 			$('.login-form').validate({
 				invalidHandler: function (event, validator) { // display error alert on form submit
@@ -171,7 +171,7 @@ var Login = function() {
 	/* * * * * * * * * * * *
 	 * Validation for Forgot Password
 	 * * * * * * * * * * * */
-	var initForgotPasswordValidation = function() {
+	const initForgotPasswordValidation = function () {
 		if ($.validator) {
 			$('.forgot-password-form').validate({
 				submitHandler: function (form) {
@@ -180,7 +180,7 @@ var Login = function() {
 					// Here on form submit you should
 					// implement some ajax (@see: http://api.jquery.com/jQuery.ajax/)
 
-					$('.inner-box').slideUp(350, function() {
+					$('.inner-box').slideUp(350, function () {
 						$('.forgot-password-form').hide();
 						$('.forgot-password-link').hide();
 						$('.inner-box .close').hide();
@@ -199,7 +199,7 @@ var Login = function() {
 	/* * * * * * * * * * * *
 	 * Validation for Registering
 	 * * * * * * * * * * * */
-	var initRegisterValidation = function() {
+	const initRegisterValidation = function () {
 		if ($.validator) {
 			$('.register-form').validate({
 				invalidHandler: function (event, validator) {
