@@ -1,12 +1,14 @@
 {% extends "layout.default.tpl.twig" %}
 
 {% block layout_body %}
-    {% import "generic.forms.macro.tpl.twig" as forms %}
+
+    {% import "generic.forms.macro.lib.twig" as forms %}
+    {% import "generic.errors.macro.lib.twig" as errors %}
 
     <body class="login">
     <!-- Logo -->
     <div class="logo">
-        <img src="assets/img/logo.png" alt="logo"/>
+        <img src="{{ asset("img/logo.png") }}" alt="logo" />
         <strong>TS</strong>INTERFACE
     </div>
     <!-- /Logo -->
@@ -14,36 +16,48 @@
     <!-- Login Box -->
     <div class="box">
         <div class="content">
+
             <!-- Login Formular -->
-            <form class="form-vertical login-form" action="" method="post">
-                <!-- Title -->
-                <h3 class="form-title">
-                    {% trans %}
-                    Sign In to your Account
-                    {% endtrans %}
-                </h3>
-
-                <!-- Error Message -->
-                <div class="alert fade in alert-danger" style="display: none;">
-                    <i class="icon-remove close" data-dismiss="alert"></i>
-                    {% trans %}
-                        Please enter your username and password.
-                    {% endtrans %}
-                </div>
-
-                {{ forms.input_with_form_group("username", "text", "username", "Username", "icon-user", "", "true", "Please enter your username.") }}
-                {{ forms.input_with_form_group("password", "password", "password", "Password", "icon-lock", "", "true", "Please enter your password.") }}
-
-                <!-- Form Actions -->
-                <div class="form-actions">
-                    <label class="checkbox pull-left"><input type="checkbox" class="uniform" name="remember">
-                        {% trans %}Remember me{% endtrans %}
-                    </label>
-                    <button type="submit" class="submit btn btn-primary pull-right">
-                        {% trans %}Sign In{% endtrans %} <i class="icon-angle-right"></i>
-                    </button>
-                </div>
-            </form>
+            {{ forms.form_vertical({
+                class: "form-vertical login-form",
+                action: "",
+                method: "post"
+            }, [
+                forms.h3_form_title("Sign In to your Account"),
+                errors.alert_fade_in_danger("Please enter your username and password."),
+                forms.div_form_group([
+                    forms.input_text({
+                        name: "username",
+                        placeholder: "Username",
+                        autofocus: "autofocus",
+                        required: "required",
+                        "data-msg-required": "Please enter your username."
+                    }, "icon-user")
+                ], "true"),
+                forms.div_form_group([
+                    forms.input_password({
+                        name: "password",
+                        placeholder: "Password",
+                        autofocus: "autofocus",
+                        required: "required",
+                        "data-msg-required": "Please enter your password."
+                    }, "icon-lock")
+                ], "true"),
+                forms.div_form_actions([
+                    forms.form_group_label({
+                        class: "checkbox pull-left"
+                    }, [
+                        forms.input_checkbox({
+                            name: "remember",
+                            text_after: "Remember me"
+                        })
+                    ], "true"),
+                    forms.input_button({
+                        type: "submit",
+                        text_before: "Sign In"
+                    }, "icon-angle-right", "submit btn btn-primary pull-right")
+                ], "true")
+            ], "true") }}
             <!-- /Login Formular -->
 
             <!-- Register Formular (hidden by default) -->
@@ -51,16 +65,33 @@
                 <!-- Title -->
                 <h3 class="form-title">{% trans %}Sign Up for Free{% endtrans %}</h3>
 
-                {{ forms.input_with_form_group("register_username", "text", "username", "Username", "icon-user", "", "true", "Please enter a valid username.") }}
-                {{ forms.input_password_confirm_with_form_group("register_password", "password", "Password", "icon-lock") }}
-
-                {{ forms.input_with_form_group("register_email", "text", "email", "Email address", "icon-envelope", "", "true", "Please enter your Email address.", "", "true") }}
-
+                <!-- Input Fields -->
+                <div class="form-group">
+                    <div class="input-icon">
+                        <i class="icon-user"></i>
+                        <input type="text" name="username" class="form-control" placeholder="{% trans %}Username{% endtrans %}" autofocus="autofocus" data-rule-required="true" data-msg-required="{% trans %}Please enter a valid username.{% endtrans %}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-icon">
+                        <i class="icon-lock"></i>
+                        <input type="password" name="password" class="form-control" placeholder="{% trans %}Password{% endtrans %}" id="register_password" data-rule-required="true" data-msg-required="{% trans %}Please enter a valid password.{% endtrans %}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-icon">
+                        <i class="icon-ok"></i>
+                        <input type="password" name="password_confirm" class="form-control" placeholder="{% trans %}Confirm Password{% endtrans %}" data-rule-required="true" data-rule-equalTo="#register_password" data-msg-required="{% trans %}Please confirm your password.{% endtrans %}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-icon">
+                        <i class="icon-envelope"></i>
+                        <input type="text" name="Email" class="form-control" placeholder="{% trans %}Email address{% endtrans %}" data-rule-required="true" data-rule-email="true" data-msg-required="{% trans %}Please enter your Email adress.{% endtrans %}" />
+                    </div>
+                </div>
                 <div class="form-group spacing-top">
-                    <label class="checkbox"><input type="checkbox" class="uniform" id="remember" name="remember"
-                                                   data-rule-required="true"
-                                                   data-msg-required="{% trans %}Please accept Terms first.{% endtrans %}">
-                        {% trans %}I agree to the <a href="javascript:void(0)">Terms of Service</a>{% endtrans %}</label>
+                    <label class="checkbox"><input type="checkbox" class="uniform" id="remember" name="remember" data-rule-required="true" data-msg-required="{% trans %}Please accept Terms first.{% endtrans %}"> {% trans %}I agree to the <a href="javascript:void(0)">Terms of Service</a>{% endtrans %}</label>
                     <label for="remember" class="has-error help-block" generated="true" style="display:none;"></label>
                 </div>
                 <!-- /Input Fields -->
@@ -68,7 +99,7 @@
                 <!-- Form Actions -->
                 <div class="form-actions">
                     <button type="button" class="back btn btn-default pull-left">
-                        <i class="icon-angle-left"></i> {% trans %}Back{% endtrans %}</i>
+                        <i class="icon-angle-left"></i> {% trans %}Back{% endtrans %}
                     </button>
                     <button type="submit" class="submit btn btn-primary pull-right">
                         {% trans %}Sign Up{% endtrans %} <i class="icon-angle-right"></i>
@@ -94,9 +125,7 @@
                         <!--<label for="email">Email:</label>-->
                         <div class="input-icon">
                             <i class="icon-envelope"></i>
-                            <input type="text" name="email" class="form-control" placeholder="{% trans %}Enter email address{% endtrans %}"
-                                   data-rule-required="true" data-rule-email="true"
-                                   data-msg-required="{% trans %}Please enter your email.{% endtrans %}"/>
+                            <input type="text" name="email" class="form-control" placeholder="{% trans %}Enter Email address{% endtrans %}" data-rule-required="true" data-rule-email="true" data-msg-required="{% trans %}Please enter your email.{% endtrans %}" />
                         </div>
                     </div>
                     <!-- /Input Fields -->
@@ -109,8 +138,7 @@
 
                 <!-- Shows up if reset-button was clicked -->
                 <div class="forgot-password-done hide-default">
-                    <i class="icon-ok success-icon"></i>
-                    <!-- Error-Alternative: <i class="icon-remove danger-icon"></i> -->
+                    <i class="icon-ok success-icon"></i> <!-- Error-Alternative: <i class="icon-remove danger-icon"></i> -->
                     <span>{% trans %}Great. We have sent you an email.{% endtrans %}</span>
                 </div>
             </div> <!-- /.content -->
@@ -123,6 +151,7 @@
     <div class="footer">
         <a href="#" class="sign-up">{% trans %}Don't have an account yet?{% endtrans %} <strong>{% trans %}Sign Up{% endtrans %}</strong></a>
     </div>
+    <!-- /Footer -->
 
     {% block layout_js %}
         {# block layout_js #}

@@ -39,6 +39,11 @@ class TemplateService implements VendorExtensionServiceInterface
     private $environment;
 
     /**
+     * @var string
+     */
+    private $assetBaseDir = "";
+
+    /**
      * TemplateService constructor.
      * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
@@ -47,6 +52,13 @@ class TemplateService implements VendorExtensionServiceInterface
     {
         $config = $moduleManager->getConfig();
         $baseDir = $config->get("base_dir");
+
+        $this->assetBaseDir = !$moduleManager->isModule() ? "assets/"
+            : str_replace(
+                sprintf("%s/", $baseDir), "",
+                sprintf("%s/assets/", $moduleManager->getModuleBaseDir())
+            );
+
         $moduleTplDir = !$moduleManager->isModule() ? null
             : sprintf("modules/%s/views", $moduleManager->getModuleShortName());
 
@@ -73,6 +85,10 @@ class TemplateService implements VendorExtensionServiceInterface
 
         $this->environment->addFunction(new TwigFunction("n__", function (string $original, string $plural, string $value){
             return n__($original, $plural, $value);
+        }));
+
+        $this->environment->addFunction(new TwigFunction("asset", function (string $file){
+            return sprintf("%s%s", $this->assetBaseDir, $file);
         }));
 
         return $this->environment;

@@ -28,6 +28,7 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
      */
     public final function loginAction(): void
     {
+        $this->getModuleLocaleService()->setLanguage("de_DE");
         $this->addCss("assets/css/plugins/nprogress.css");
         $this->addCss("assets/css/login.css");
 
