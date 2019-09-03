@@ -2,9 +2,6 @@
 
 {% block layout_body %}
 
-    {% import "generic.forms.macro.lib.twig" as forms %}
-    {% import "generic.errors.macro.lib.twig" as errors %}
-
     <body class="login">
     <!-- Logo -->
     <div class="logo">
@@ -17,140 +14,36 @@
     <div class="box">
         <div class="content">
 
-            <!-- Login Formular -->
-            {{ forms.form_vertical({
-                class: "form-vertical login-form",
-                action: "",
-                method: "post"
-            }, [
-                forms.h3_form_title("Sign In to your Account"),
-                errors.alert_fade_in_danger("Please enter your username and password."),
-                forms.div_form_group([
-                    forms.input_text({
-                        name: "username",
-                        placeholder: "Username",
-                        autofocus: "autofocus",
-                        required: "required",
-                        "data-msg-required": "Please enter your username."
-                    }, "icon-user")
-                ], "true"),
-                forms.div_form_group([
-                    forms.input_password({
-                        name: "password",
-                        placeholder: "Password",
-                        autofocus: "autofocus",
-                        required: "required",
-                        "data-msg-required": "Please enter your password."
-                    }, "icon-lock")
-                ], "true"),
-                forms.div_form_actions([
-                    forms.form_group_label({
-                        class: "checkbox pull-left"
-                    }, [
-                        forms.input_checkbox({
-                            name: "remember",
-                            text_after: "Remember me"
-                        })
-                    ], "true"),
-                    forms.input_button({
-                        type: "submit",
-                        text_before: "Sign In"
-                    }, "icon-angle-right", "submit btn btn-primary pull-right")
-                ], "true")
-            ], "true") }}
-            <!-- /Login Formular -->
+            {% block restricted_login_login_form %}
+                {# block restricted_login_login_form #}
+                {% import "generic.forms.macro.lib.twig" as forms %}
+                {{ forms.formular_login_default() }}
+            {% endblock restricted_login_login_form %}
 
-            <!-- Register Formular (hidden by default) -->
-            <form class="form-vertical register-form" action="index.html" method="post" style="display: none;">
-                <!-- Title -->
-                <h3 class="form-title">{% trans %}Sign Up for Free{% endtrans %}</h3>
+            {% block restricted_login_register_form %}
+                {# block restricted_login_register_form #}
+                {% import "generic.forms.macro.lib.twig" as forms %}
+                {{ forms.formular_register_default() }}
+            {% endblock restricted_login_register_form %}
 
-                <!-- Input Fields -->
-                <div class="form-group">
-                    <div class="input-icon">
-                        <i class="icon-user"></i>
-                        <input type="text" name="username" class="form-control" placeholder="{% trans %}Username{% endtrans %}" autofocus="autofocus" data-rule-required="true" data-msg-required="{% trans %}Please enter a valid username.{% endtrans %}" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-icon">
-                        <i class="icon-lock"></i>
-                        <input type="password" name="password" class="form-control" placeholder="{% trans %}Password{% endtrans %}" id="register_password" data-rule-required="true" data-msg-required="{% trans %}Please enter a valid password.{% endtrans %}" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-icon">
-                        <i class="icon-ok"></i>
-                        <input type="password" name="password_confirm" class="form-control" placeholder="{% trans %}Confirm Password{% endtrans %}" data-rule-required="true" data-rule-equalTo="#register_password" data-msg-required="{% trans %}Please confirm your password.{% endtrans %}" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-icon">
-                        <i class="icon-envelope"></i>
-                        <input type="text" name="Email" class="form-control" placeholder="{% trans %}Email address{% endtrans %}" data-rule-required="true" data-rule-email="true" data-msg-required="{% trans %}Please enter your Email adress.{% endtrans %}" />
-                    </div>
-                </div>
-                <div class="form-group spacing-top">
-                    <label class="checkbox"><input type="checkbox" class="uniform" id="remember" name="remember" data-rule-required="true" data-msg-required="{% trans %}Please accept Terms first.{% endtrans %}"> {% trans %}I agree to the <a href="javascript:void(0)">Terms of Service</a>{% endtrans %}</label>
-                    <label for="remember" class="has-error help-block" generated="true" style="display:none;"></label>
-                </div>
-                <!-- /Input Fields -->
-
-                <!-- Form Actions -->
-                <div class="form-actions">
-                    <button type="button" class="back btn btn-default pull-left">
-                        <i class="icon-angle-left"></i> {% trans %}Back{% endtrans %}
-                    </button>
-                    <button type="submit" class="submit btn btn-primary pull-right">
-                        {% trans %}Sign Up{% endtrans %} <i class="icon-angle-right"></i>
-                    </button>
-                </div>
-            </form>
-            <!-- /Register Formular -->
-        </div> <!-- /.content -->
-
-        <!-- Forgot Password Form -->
-        <div class="inner-box">
-            <div class="content">
-                <!-- Close Button -->
-                <i class="icon-remove close hide-default"></i>
-
-                <!-- Link as Toggle Button -->
-                <a href="#" class="forgot-password-link">{% trans %}Forgot Password?{% endtrans %}</a>
-
-                <!-- Forgot Password Formular -->
-                <form class="form-vertical forgot-password-form hide-default" action="login.html" method="post">
-                    <!-- Input Fields -->
-                    <div class="form-group">
-                        <!--<label for="email">Email:</label>-->
-                        <div class="input-icon">
-                            <i class="icon-envelope"></i>
-                            <input type="text" name="email" class="form-control" placeholder="{% trans %}Enter Email address{% endtrans %}" data-rule-required="true" data-rule-email="true" data-msg-required="{% trans %}Please enter your email.{% endtrans %}" />
-                        </div>
-                    </div>
-                    <!-- /Input Fields -->
-
-                    <button type="submit" class="submit btn btn-default btn-block">
-                        {% trans %}Reset your Password{% endtrans %}
-                    </button>
-                </form>
-                <!-- /Forgot Password Formular -->
-
-                <!-- Shows up if reset-button was clicked -->
-                <div class="forgot-password-done hide-default">
-                    <i class="icon-ok success-icon"></i> <!-- Error-Alternative: <i class="icon-remove danger-icon"></i> -->
-                    <span>{% trans %}Great. We have sent you an email.{% endtrans %}</span>
-                </div>
-            </div> <!-- /.content -->
         </div>
-        <!-- /Forgot Password Form -->
+
+        {% block restricted_login_reset_form %}
+            {# block restricted_login_reset_form #}
+            {% import "generic.forms.macro.lib.twig" as forms %}
+            {{ forms.formular_reset_default() }}
+        {% endblock restricted_login_reset_form %}
+
     </div>
     <!-- /Login Box -->
 
     <!-- Footer -->
-    <div class="footer">
-        <a href="#" class="sign-up">{% trans %}Don't have an account yet?{% endtrans %} <strong>{% trans %}Sign Up{% endtrans %}</strong></a>
-    </div>
+    {% block restricted_login_footer %}
+        {# block restricted_login_footer #}
+        <div class="footer">
+            <a href="#" class="sign-up">{% trans %}Don't have an account yet?{% endtrans %} <strong>{% trans %}Sign Up{% endtrans %}</strong></a>
+        </div>
+    {% endblock restricted_login_footer %}
     <!-- /Footer -->
 
     {% block layout_js %}

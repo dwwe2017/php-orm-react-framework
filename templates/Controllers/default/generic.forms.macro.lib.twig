@@ -13,7 +13,7 @@
     "Test <br/>", "Test2 <br/>"
 ], "true") }}
 #}
-{% macro form_horizontal(args=[], content=[], raw="") %}
+{% macro form_horizontal(args={}, content=[], raw="") %}
     <form
         {% if args.class is not defined %}
             class="form-horizontal"
@@ -51,7 +51,7 @@
     "Test <br/>", "Test2 <br/>"
 ], "true") }}
 #}
-{% macro form_vertical(args=[], content=[], raw="") %}
+{% macro form_vertical(args={}, content=[], raw="") %}
     <form
         {% if args.class is not defined %}
             class="form-vertical"
@@ -78,8 +78,8 @@
 @macro h3_form_title
 @param title string
 #}
-{% macro h3_form_title(title="") %}
-    <h3 class="form-title">
+{% macro h3_form_title(title="", class="form-title") %}
+    <h3 class="{{ class|escape }}">
         {{ title|trans }}
     </h3>
 {% endmacro %}
@@ -88,8 +88,8 @@
 @macro div_form_actions
 @param content array
 #}
-{% macro div_form_actions(content=[], raw="") %}
-    <div class="form-actions">
+{% macro div_form_actions(content=[], raw="", class="form-actions") %}
+    <div class="{{ class|escape }}">
         {% for item in content %}
             {% if(raw != false) %}
                 {{ item|raw }}
@@ -104,8 +104,8 @@
 @macro div_form_group
 @param content array
 #}
-{% macro div_form_group(content=[], raw="") %}
-    <div class="form-group">
+{% macro div_form_group(content=[], raw="", class="form-group") %}
+    <div class="{{ class|escape }}">
         {% for item in content %}
             {% if(raw != false) %}
                 {{ item|raw }}
@@ -123,7 +123,7 @@
 @param content array
 @todo implement args!
 #}
-{% macro form_group_label(args=[], content=[], raw="") %}
+{% macro form_group_label(args={}, content=[], raw="") %}
     <label
         {% if args.class is not defined %}
             class="form-vertical"
@@ -159,7 +159,7 @@
     "autofocus": "autofocus"
 }) }}
 #}
-{% macro input_text(args=[], icon="", class="form-control") %}
+{% macro input_text(args={}, icon="", class="form-control") %}
     {% if(icon != false) %}
         <div class="input-icon">
         <i class="{{ icon|escape }}"></i>
@@ -201,7 +201,7 @@
     "autofocus": "autofocus"
 }) }}
 #}
-{% macro input_checkbox(args=[], class="uniform") %}
+{% macro input_checkbox(args={}, class="uniform") %}
     {% if(args.text_before is defined) %}{{ args.text_before|trans }}{% endif %} <input type="checkbox"
             {% if(class != false) %} class="{{ class|escape }}" {% endif %}
             {% if(args) %}
@@ -238,7 +238,7 @@
     "autofocus": "autofocus"
 }) }}
 #}
-{% macro input_email(args=[], icon="", class="form-control") %}
+{% macro input_email(args={}, icon="", class="form-control") %}
     {% if(icon != false) %}
         <div class="input-icon">
         <i class="{{ icon|escape }}"></i>
@@ -281,7 +281,7 @@
     "autofocus": "autofocus"
 }) }}
 #}
-{% macro input_password(args=[], icon="", class="form-control") %}
+{% macro input_password(args={}, icon="", class="form-control") %}
     {% if(icon != false) %}
         <div class="input-icon">
         <i class="{{ icon|escape }}"></i>
@@ -321,7 +321,7 @@
     "text_after": "Submit"
 }) }}
 #}
-{% macro input_button(args=[], icon="", class="submit btn btn-primary pull-right") %}
+{% macro input_button(args={}, icon="", class="submit btn btn-primary pull-right") %}
     <button
         {% if(args.type is not defined) %}
             type="button"
@@ -343,4 +343,211 @@
         {% endif %}
         {% if(args.text_after is defined) %}{{ args.text_after|trans }}{% endif %}
     </button>
+{% endmacro %}
+
+{#
+@macro form_text
+@param text string
+@example
+{{ macro.form_text("Text to translate") }}
+#}
+{% macro form_text(text="", raw="") %}
+    {% if(raw != false) %}
+        {{ text|trans|raw }}
+    {% else %}
+        {{ text|trans|escape }}
+    {% endif %}
+{% endmacro %}
+
+{#
+@macro formular_login_default
+@require assets/js/libs/jquery-3.4.1.min.js
+@require bootstrap/js/bootstrap.min.js
+@require assets/js/libs/lodash.compat.min.js
+@require plugins/uniform/jquery.uniform.min.js
+@require plugins/validation/jquery.validate.min.js
+@require plugins/nprogress/nprogress.js
+@require assets/js/login.js
+#}
+{% macro formular_login_default() %}
+    {% if errors is not defined %}
+        {% import "generic.errors.macro.lib.twig" as errors %}
+    {% endif %}
+
+    {{ _self.form_vertical({
+        class: "form-vertical login-form",
+        action: "",
+        method: "post"
+    }, [
+        _self.h3_form_title("Sign In to your Account"),
+        errors.alert_fade_in_danger("Please enter your username and password."),
+        _self.div_form_group([
+            _self.input_text({
+                name: "username",
+                placeholder: "Username",
+                autofocus: "autofocus",
+                required: "required",
+                "data-msg-required": "Please enter your username."
+            }, "icon-user")
+        ], "true"),
+        _self.div_form_group([
+            _self.input_password({
+                name: "password",
+                placeholder: "Password",
+                autofocus: "autofocus",
+                required: "required",
+                "data-msg-required": "Please enter your password."
+            }, "icon-lock")
+        ], "true"),
+        _self.div_form_actions([
+            _self.form_group_label({
+                class: "checkbox pull-left"
+            }, [
+                _self.input_checkbox({
+                    name: "remember",
+                    text_after: "Remember me"
+                })
+            ], "true"),
+            _self.input_button({
+                type: "submit",
+                text_before: "Sign In"
+            }, "icon-angle-right", "submit btn btn-primary pull-right")
+        ], "true")
+    ], "true") }}
+{% endmacro %}
+
+{#
+@macro formular_register_default
+@require assets/js/libs/jquery-3.4.1.min.js
+@require bootstrap/js/bootstrap.min.js
+@require assets/js/libs/lodash.compat.min.js
+@require plugins/uniform/jquery.uniform.min.js
+@require plugins/validation/jquery.validate.min.js
+@require plugins/nprogress/nprogress.js
+@require assets/js/login.js
+#}
+{% macro formular_register_default(init_style="display: none;") %}
+    {{ _self.form_vertical({
+        class: "form-vertical register-form",
+        action: "",
+        method: "post",
+        style: init_style
+    }, [
+        _self.h3_form_title("Sign Up for Free"),
+        _self.div_form_group([
+            _self.input_text({
+                name: "username",
+                placeholder: "Username",
+                autofocus: "autofocus",
+                "data-msg-required": "Please enter a valid username.",
+                required: "required"
+            }, "icon-user")
+        ], "true"),
+        _self.div_form_group([
+            _self.input_password({
+                id: "register_password",
+                name: "password",
+                placeholder: "Password",
+                autofocus: "autofocus",
+                "data-msg-required": "Please enter a valid password.",
+                required: "required"
+            }, "icon-lock")
+        ], "true"),
+        _self.div_form_group([
+            _self.input_password({
+                name: "password_confirm",
+                placeholder: "Confirm Password",
+                autofocus: "autofocus",
+                "data-msg-required": "Please confirm your password.",
+                "data-rule-equalTo": "#register_password",
+                required: "required"
+            }, "icon-ok")
+        ], "true"),
+        _self.div_form_group([
+            _self.input_email({
+                name: "email",
+                placeholder: "Email address",
+                autofocus: "autofocus",
+                "data-msg-required": "Please enter your Email adress.",
+                required: "required"
+            }, "icon-ok")
+        ], "true"),
+        _self.div_form_group([
+            _self.form_group_label({
+                class: "checkbox"
+            }, [
+                _self.input_checkbox({
+                    id: "remember",
+                    name: "remember",
+                    "data-msg-required": "Please accept Terms first.",
+                    required: "required"
+                }),
+                _self.form_text("I agree to the <a href=\"javascript:void(0)\">Terms of Service</a>", "true")
+            ], "true"),
+            _self.form_group_label({
+                for: "remember",
+                class: "has-error help-block",
+                generated: "true",
+                style: "display: none;"
+            })
+        ], "true", "form-group spacing-top"),
+        _self.div_form_actions([
+            _self.input_button({
+                text_after: "Back"
+            }, "icon-angle-left", "back btn btn-default pull-left"),
+            _self.input_button({
+                text_before: "Sign Up",
+                type: "submit"
+            }, "icon-angle-right")
+        ], "true")
+    ], "true") }}
+{% endmacro %}
+
+{#
+@macro formular_reset_default
+@require assets/js/libs/jquery-3.4.1.min.js
+@require bootstrap/js/bootstrap.min.js
+@require assets/js/libs/lodash.compat.min.js
+@require plugins/uniform/jquery.uniform.min.js
+@require plugins/validation/jquery.validate.min.js
+@require plugins/nprogress/nprogress.js
+@require assets/js/login.js
+#}
+{% macro formular_reset_default() %}
+    <div class="inner-box">
+        <div class="content">
+
+            <!-- Close Button -->
+            <i class="icon-remove close hide-default"></i>
+
+            <!-- Link as Toggle Button -->
+            <a href="javascript:void(0)" class="forgot-password-link">{% trans %}Forgot Password?{% endtrans %}</a>
+
+            {{ _self.form_vertical({
+                class: "form-vertical forgot-password-form hide-default",
+                action: "",
+                method: "post"
+            }, [
+                _self.div_form_group([
+                    _self.input_email({
+                        name: "email",
+                        placeholder: "Enter Email address",
+                        "data-msg-required": "Please enter your email.",
+                        required: "required",
+                    }, "icon-envelope")
+                ], "true"),
+                _self.input_button({
+                    type: "submit",
+                    text_before: "Reset your Password"
+                }, "", "submit btn btn-default btn-block")
+            ], "true") }}
+
+            <!-- Shows up if reset-button was clicked -->
+            <div class="forgot-password-done hide-default">
+                <i class="icon-ok success-icon"></i> <!-- Error-Alternative: <i class="icon-remove danger-icon"></i> -->
+                <span>{% trans %}Great. We have sent you an email.{% endtrans %}</span>
+            </div>
+
+        </div>
+    </div>
 {% endmacro %}
