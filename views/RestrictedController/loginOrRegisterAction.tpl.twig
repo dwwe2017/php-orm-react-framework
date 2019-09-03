@@ -16,6 +16,7 @@
         <div class="content">
 
             {{ forms.formular_login_default() }}
+            {{ forms.formular_register_default() }}
 
         </div>
 
@@ -23,6 +24,12 @@
 
     </div>
     <!-- /Login Box -->
+
+    <!-- Footer -->
+    <div class="footer">
+        <a href="#" class="sign-up">{% trans %}Don't have an account yet?{% endtrans %} <strong>{% trans %}Sign Up{% endtrans %}</strong></a>
+    </div>
+    <!-- /Footer -->
 
     {% block layout_js %}
         {# block layout_js #}

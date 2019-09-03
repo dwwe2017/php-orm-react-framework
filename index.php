@@ -9,13 +9,13 @@ require_once 'inc/bootstrap.inc.php';
 session_start();
 
 $module = $_GET['module'] ?? null;
-$module = is_null($module) ? $module : preg_replace("/[^a-z]/", "", $module);
+$module = is_null($module) ? $module : htmlentities(lcfirst($module));
 
 $controller = $_GET['controller'] ?? (!is_null($module) ? 'index' : 'mvc');
-$controller = preg_replace("/[^a-z]/", "", $controller);
+$controller = htmlentities(lcfirst($controller));
 
 $action = $_GET['action'] ?? 'index';
-$action = preg_replace("/[^a-z]/", "", $action);
+$action = htmlentities(lcfirst($action));
 
 $controllerNamespace = is_null($module) ? 'Controllers\\'
     : sprintf("Modules\\%s\\Controllers\\", ucfirst($module));
