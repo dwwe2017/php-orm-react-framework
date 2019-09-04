@@ -79,6 +79,14 @@ class TemplateService implements VendorExtensionServiceInterface
      */
     public final function getEnvironment(): Environment
     {
+        $this->environment->addFunction(new TwigFunction("sha1", function (string $string){
+            return sha1($string);
+        }));
+
+        $this->environment->addFunction(new TwigFunction("md5", function (string $string){
+            return md5($string);
+        }));
+
         $this->environment->addFunction(new TwigFunction("__", function (string $original){
             return __($original);
         }));

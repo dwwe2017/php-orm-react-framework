@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TSI2\n"
 "POT-Creation-Date: 2019-08-25 20:04+0200\n"
-"PO-Revision-Date: 2019-09-01 12:38+0200\n"
+"PO-Revision-Date: 2019-09-04 07:21+0200\n"
 "Language-Team: DW </> Web-Engineering\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -51,8 +51,8 @@ msgid "Reset your Password"
 msgstr "Zurücksetzen deines Passworts"
 
 # Great. We have sent you an email.
-msgid "Great. We have sent you an email."
-msgstr "Großartig. Wir haben dir eine E-Mail geschickt."
+msgid "We have sent you an email."
+msgstr "Wir haben dir eine E-Mail geschickt."
 
 # or
 msgid "or"

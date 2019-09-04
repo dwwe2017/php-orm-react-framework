@@ -57,6 +57,8 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
             "plugins/uniform/jquery.uniform.min.js",
             "plugins/validation/jquery.validate.min.js",
             "plugins/nprogress/nprogress.js",
+            "plugins/cryptojs/aes.js",
+            "plugins/cryptojs/md5.js",
             "assets/js/login.js"
         ]);
 
@@ -78,6 +80,8 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
             "plugins/uniform/jquery.uniform.min.js",
             "plugins/validation/jquery.validate.min.js",
             "plugins/nprogress/nprogress.js",
+            "plugins/cryptojs/aes.js",
+            "plugins/cryptojs/md5.js",
             "assets/js/login.js"
         ]);
 
@@ -99,6 +103,8 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
             "plugins/uniform/jquery.uniform.min.js",
             "plugins/validation/jquery.validate.min.js",
             "plugins/nprogress/nprogress.js",
+            "plugins/cryptojs/aes.js",
+            "plugins/cryptojs/md5.js",
             "assets/js/login.js"
         ]);
 

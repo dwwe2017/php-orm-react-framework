@@ -182,6 +182,10 @@ class MinifyJsHandler extends Minifier
      */
     public final function setJsContent(array $jsContent): void
     {
-        $this->jsContent = $jsContent;
+        $this->jsContent = [];
+
+        foreach ($jsContent as $item) {
+            $this->addJsContent($item);
+        }
     }
 }

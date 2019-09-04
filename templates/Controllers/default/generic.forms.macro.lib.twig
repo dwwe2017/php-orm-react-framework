@@ -361,13 +361,13 @@
 
 {#
 @macro formular_login_default
-@require assets/js/libs/jquery-3.4.1.min.js
-@require bootstrap/js/bootstrap.min.js
-@require assets/js/libs/lodash.compat.min.js
-@require plugins/uniform/jquery.uniform.min.js
-@require plugins/validation/jquery.validate.min.js
-@require plugins/nprogress/nprogress.js
-@require assets/js/login.js
+@requires assets/js/libs/jquery-3.4.1.min.js
+@requires bootstrap/js/bootstrap.min.js
+@requires assets/js/libs/lodash.compat.min.js
+@requires plugins/uniform/jquery.uniform.min.js
+@requires plugins/validation/jquery.validate.min.js
+@requires plugins/nprogress/nprogress.js
+@requires assets/js/login.js
 #}
 {% macro formular_login_default() %}
     {% if errors is not defined %}
@@ -381,8 +381,15 @@
     }, [
         _self.h3_form_title("Sign In to your Account"),
         errors.alert_fade_in_danger("Please enter your username and password."),
+        _self.input_text({
+            id: "loginPassphrase",
+            name: "passphrase",
+            value: sha1(random()),
+            style: "display: none;"
+        }),
         _self.div_form_group([
             _self.input_text({
+                id: "loginUsername",
                 name: "username",
                 placeholder: "Username",
                 autofocus: "autofocus",
@@ -392,6 +399,7 @@
         ], "true"),
         _self.div_form_group([
             _self.input_password({
+                id: "loginPassword",
                 name: "password",
                 placeholder: "Password",
                 autofocus: "autofocus",
@@ -418,13 +426,13 @@
 
 {#
 @macro formular_register_default
-@require assets/js/libs/jquery-3.4.1.min.js
-@require bootstrap/js/bootstrap.min.js
-@require assets/js/libs/lodash.compat.min.js
-@require plugins/uniform/jquery.uniform.min.js
-@require plugins/validation/jquery.validate.min.js
-@require plugins/nprogress/nprogress.js
-@require assets/js/login.js
+@requires assets/js/libs/jquery-3.4.1.min.js
+@requires bootstrap/js/bootstrap.min.js
+@requires assets/js/libs/lodash.compat.min.js
+@requires plugins/uniform/jquery.uniform.min.js
+@requires plugins/validation/jquery.validate.min.js
+@requires plugins/nprogress/nprogress.js
+@requires assets/js/login.js
 #}
 {% macro formular_register_default(init_style="display: none;") %}
     {{ _self.form_vertical({
@@ -434,8 +442,15 @@
         style: init_style
     }, [
         _self.h3_form_title("Sign Up for Free"),
+        _self.input_text({
+            id: "registerPassphrase",
+            name: "passphrase",
+            value: sha1(random()),
+            style: "display: none;"
+        }),
         _self.div_form_group([
             _self.input_text({
+                id: "registerUsername",
                 name: "username",
                 placeholder: "Username",
                 autofocus: "autofocus",
@@ -445,7 +460,7 @@
         ], "true"),
         _self.div_form_group([
             _self.input_password({
-                id: "register_password",
+                id: "registerPassword",
                 name: "password",
                 placeholder: "Password",
                 autofocus: "autofocus",
@@ -455,16 +470,18 @@
         ], "true"),
         _self.div_form_group([
             _self.input_password({
+                id: "registerPasswordConfirm",
                 name: "password_confirm",
                 placeholder: "Confirm Password",
                 autofocus: "autofocus",
                 "data-msg-required": "Please confirm your password.",
-                "data-rule-equalTo": "#register_password",
+                "data-rule-equalTo": "#registerPassword",
                 required: "required"
             }, "icon-ok")
         ], "true"),
         _self.div_form_group([
             _self.input_email({
+                id: "registerEmail",
                 name: "email",
                 placeholder: "Email address",
                 autofocus: "autofocus",
@@ -505,13 +522,13 @@
 
 {#
 @macro formular_reset_default
-@require assets/js/libs/jquery-3.4.1.min.js
-@require bootstrap/js/bootstrap.min.js
-@require assets/js/libs/lodash.compat.min.js
-@require plugins/uniform/jquery.uniform.min.js
-@require plugins/validation/jquery.validate.min.js
-@require plugins/nprogress/nprogress.js
-@require assets/js/login.js
+@requires assets/js/libs/jquery-3.4.1.min.js
+@requires bootstrap/js/bootstrap.min.js
+@requires assets/js/libs/lodash.compat.min.js
+@requires plugins/uniform/jquery.uniform.min.js
+@requires plugins/validation/jquery.validate.min.js
+@requires plugins/nprogress/nprogress.js
+@requires assets/js/login.js
 #}
 {% macro formular_reset_default() %}
     <div class="inner-box">
@@ -529,7 +546,14 @@
                 method: "post"
             }, [
                 _self.div_form_group([
+                    _self.input_text({
+                        id: "resetPassphrase",
+                        name: "passphrase",
+                        value: sha1(random()),
+                        style: "display: none;"
+                    }),
                     _self.input_email({
+                        id: "resetEmail",
                         name: "email",
                         placeholder: "Enter Email address",
                         "data-msg-required": "Please enter your email.",
@@ -545,7 +569,7 @@
             <!-- Shows up if reset-button was clicked -->
             <div class="forgot-password-done hide-default">
                 <i class="icon-ok success-icon"></i> <!-- Error-Alternative: <i class="icon-remove danger-icon"></i> -->
-                <span>{% trans %}Great. We have sent you an email.{% endtrans %}</span>
+                <span>{% trans %}We have sent you an email.{% endtrans %}</span>
             </div>
 
         </div>

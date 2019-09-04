@@ -47,6 +47,7 @@
         "natxet/cssmin": "^3.0",
         "caseyamcl/configula": "^3.0",
         "gettext/gettext": "^4.6",
-        "twig/extensions": "^1.5"
+        "twig/extensions": "^1.5",
+        "blocktrail/cryptojs-aes-php": "^0.1.0"
     }
 }

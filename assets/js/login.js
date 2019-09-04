@@ -6,6 +6,38 @@ const Login = function () {
 
 	"use strict";
 
+	/**
+	 * @todo Implement with persistent hash key instead of btoa
+	 * @param b
+	 * @param k
+	 * @param d
+	 * @returns {*}
+	 * @requires CryptoJS.AES
+	 */
+	function aes(b, k, d) {
+		return CryptoJS.AES.encrypt(b, k, d);
+	}
+
+	/**
+	 * @todo Could possibly still be needed to form the hash key
+	 * @param b
+	 * @requires CryptoJS.MD5
+	 */
+	function md5(b) {
+		return CryptoJS.MD5(b)
+	}
+
+	/**
+	 * @param b
+	 * @param k
+	 * @param d
+	 * @returns {*}
+	 * @requires CryptoJS.AES
+	 */
+	function decrypt(b, k, d) {
+		return CryptoJS.AES.decrypt(b, k, d).toString(CryptoJS.enc.Utf8);
+	}
+
 	/* * * * * * * * * * * *
 	 * Uniform
 	 * * * * * * * * * * * */
@@ -156,13 +188,23 @@ const Login = function () {
 					$('.login-form .alert-danger').show();
 					NProgress.done(); // Demo Purpose Only!
 				},
-
 				submitHandler: function (form) {
-					// This is just example code for the live preview
-					//
-					// In reality, you want to remove this submitHandler
-					// to use the native browser submitting
-					window.location.href = "index.html";
+
+					let passphrase = $(form).find("#loginPassphrase").val();
+
+					// Encrypt data for submission
+					let username = $(form).find("#loginUsername");
+					let usernameVal = username.val();
+					username.css("color", "#ffffff");
+					username.val(aes(usernameVal, passphrase));
+
+					// Encrypt data for submission
+					let password = $(form).find("#loginPassword");
+					let passwordVal = password.val();
+					password.css("color", "#ffffff");
+					password.val(aes(passwordVal, passphrase));
+
+					form.submit();
 				}
 			});
 		}
@@ -175,10 +217,14 @@ const Login = function () {
 		if ($.validator) {
 			$('.forgot-password-form').validate({
 				submitHandler: function (form) {
-					// Currently demo purposes only
-					//
-					// Here on form submit you should
-					// implement some ajax (@see: http://api.jquery.com/jQuery.ajax/)
+
+					let passphrase = $(form).find("#resetPassphrase").val();
+
+					// Encrypt data for submission
+					let email = $(form).find("#resetEmail");
+					let emailVal = email.val();
+					email.css("color", "#ffffff");
+					email.val(aes(emailVal, passphrase));
 
 					$('.inner-box').slideUp(350, function () {
 						$('.forgot-password-form').hide();
@@ -205,12 +251,35 @@ const Login = function () {
 				invalidHandler: function (event, validator) {
 					// Your invalid handler goes here
 				},
-
 				submitHandler: function (form) {
-					window.location.href = "index.html";
 
-					// Maybe you want here something like:
-					// $(form).submit();
+					let passphrase = $(form).find("#registerPassphrase").val();
+
+					// Encrypt data for submission
+					let username = $(form).find("#registerUsername");
+					let usernameVal = username.val();
+					username.css("color", "#ffffff");
+					username.val(aes(usernameVal, passphrase));
+
+					// Encrypt data for submission
+					let password = $(form).find("#registerPassword");
+					let passwordVal = password.val();
+					password.css("color", "#ffffff");
+					password.val(aes(passwordVal, passphrase));
+
+					// Encrypt data for submission
+					let passwordConfirm = $(form).find("#registerPasswordConfirm");
+					let passwordConfirmVal = passwordConfirm.val();
+					passwordConfirm.css("color", "#ffffff");
+					passwordConfirm.val(aes(passwordConfirmVal, passphrase));
+
+					// Encrypt data for submission
+					let email = $(form).find("#registerEmail");
+					let emailVal = email.val();
+					email.css("color", "#ffffff");
+					email.val(aes(emailVal, passphrase));
+
+					form.submit();
 				}
 			});
 		}
