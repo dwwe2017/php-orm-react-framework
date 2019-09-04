@@ -160,6 +160,10 @@ class MinifyCssHandler
      */
     public final function setCssContent(array $cssContent): void
     {
-        $this->cssContent = $cssContent;
+        $this->cssContent = [];
+
+        foreach ($cssContent as $item) {
+            $this->addCss($item);
+        }
     }
 }
