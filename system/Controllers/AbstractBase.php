@@ -14,6 +14,7 @@ use Exceptions\CacheException;
 use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
+use Handlers\RequestHandler;
 use Helpers\AbsolutePathHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
@@ -125,12 +126,26 @@ abstract class AbstractBase
      */
     private function initHandlers(): void
     {
-        //Reinitialize error handler with logger instance for better persistence
+        /**
+         * Error handler
+         * Reinitialize error handler with logger instance for better persistence
+         * !Not dynamically modifiable
+         */
         ErrorHandler::init($this->getConfig(), $this->getLoggerService());
 
-        //Asset handlers
+        /**
+         * Asset handlers
+         * @see AbstractBaseTrait::getCssHandler() // !Only available for system
+         * @see AbstractBaseTrait::getJsHandler() // !Only available for system
+         */
         $this->cssHandler = MinifyCssHandler::init($this->getConfig());
         $this->jsHandler = MinifyJsHandler::init($this->getConfig());
+
+        /**
+         * Request handler
+         * @see AbstractBaseTrait::getRequestHandler() // Available in modules
+         */
+        $this->requestHandler = RequestHandler::init();
     }
 
     /**
@@ -138,7 +153,7 @@ abstract class AbstractBase
      */
     private function initHelpers(): void
     {
-        $this->absolutePathHelper = AbsolutePathHelper::init($this->getBaseDir());
+        $this->absolutePathHelper = AbsolutePathHelper::init($this->getBaseDir()); // Available in modules
     }
 
     /**
@@ -172,7 +187,7 @@ abstract class AbstractBase
     {
         header('HTTP/1.0 404 Not Found');
         /** @noinspection PhpIncludeInspection */
-        $error = require_once $this->getAbsolutePathHelper()->{"templates/Handlers/errors/error404.php"};
+        $error = require_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error404.php");
         exit($error);
     }
 

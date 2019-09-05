@@ -16,6 +16,7 @@ use Gettext\GettextTranslator;
 use Gettext\Translator;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
+use Handlers\RequestHandler;
 use Helpers\AbsolutePathHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
@@ -92,6 +93,11 @@ trait AbstractBaseTrait
     private $jsHandler;
 
     /**
+     * @var RequestHandler
+     */
+    private $requestHandler;
+
+    /**
      * @var CacheService
      */
     private $cacheService;
@@ -122,12 +128,12 @@ trait AbstractBaseTrait
     private $localeService;
 
     /**
-     * @var
+     * @var Translator
      */
     private $systemLocaleService;
 
     /**
-     * @var
+     * @var GettextTranslator
      */
     private $moduleLocaleService;
 
@@ -170,9 +176,9 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @see ModuleManager::getModuleBaseDir()
-     * @internal Fallback if no module controller is active or empty string is AbstractBaseTrait::getBaseDir
      * @return string
+     * @internal Fallback if no module controller is active or empty string is AbstractBaseTrait::getBaseDir
+     * @see ModuleManager::getModuleBaseDir()
      */
     public final function getModuleBaseDir(): string
     {
@@ -225,6 +231,7 @@ trait AbstractBaseTrait
 
     /**
      * @return Logger
+     * @example $this->getLoggerService()->error("Error message")
      */
     protected final function getLoggerService(): Logger
     {
@@ -233,6 +240,7 @@ trait AbstractBaseTrait
 
     /**
      * @return AbsolutePathHelper
+     * @example $this->getAbsolutePathHelper()->get("relative/path/to/example.png") => "/var/www/.../htdocs/tsi/.."
      */
     protected final function getAbsolutePathHelper(): AbsolutePathHelper
     {
@@ -240,7 +248,9 @@ trait AbstractBaseTrait
     }
 
     /**
+     * Returns the Doctrine 2 instance of each module currently active
      * @return DoctrineService
+     * @example $this->getModuleDbService()->getEntityManager()
      */
     protected final function getModuleDbService(): DoctrineService
     {
@@ -250,8 +260,9 @@ trait AbstractBaseTrait
     /**
      * For translations in Twig-Template-files use the function {% trans%},
      * which only contains the language files of the respective module.
-     * @see LocaleService::getModuleTranslator()
      * @return GettextTranslator
+     * @see LocaleService::getModuleTranslator()
+     * @example $this->getModuleLocaleService()->setLanguage("de_DE")
      */
     protected final function getModuleLocaleService()
     {
@@ -260,6 +271,7 @@ trait AbstractBaseTrait
 
     /**
      * @return ExtendedCacheItemPoolInterface
+     * @example $this->getModuleCacheService()->getItem()
      */
     protected final function getModuleCacheService()
     {
@@ -269,8 +281,9 @@ trait AbstractBaseTrait
     /**
      * @param string $fileOrString
      * @param bool $codeAsString
+     * @example $this->addCss("assets/css/custom.css")
      */
-    protected function addCss(string $fileOrString, bool $codeAsString = false)
+    protected final function addCss(string $fileOrString, bool $codeAsString = false)
     {
         $fileOrString = $codeAsString ? $fileOrString
             : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
@@ -280,11 +293,17 @@ trait AbstractBaseTrait
 
     /**
      * @param array $cssFiles
+     * @example $this->setCss([
+     *  "assets/css/custom1.css",
+     *  "assets/css/custom2.css",
+     *  "assets/css/custom3.css",
+     *  ".."
+     * ])
      */
-    protected function setCss(array $cssFiles)
+    protected final function setCss(array $cssFiles)
     {
         $files = [];
-        foreach ($cssFiles as $file){
+        foreach ($cssFiles as $file) {
             $files[] = sprintf("%s/%s", $this->getModuleBaseDir(), $file);
         }
 
@@ -294,8 +313,9 @@ trait AbstractBaseTrait
     /**
      * @param string $fileOrString
      * @param bool $codeAsString
+     * @example $this->addJs("assets/js/custom.js")
      */
-    protected function addJs(string $fileOrString, bool $codeAsString = false)
+    protected final function addJs(string $fileOrString, bool $codeAsString = false)
     {
         $fileOrString = $codeAsString ? $fileOrString
             : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
@@ -305,15 +325,33 @@ trait AbstractBaseTrait
 
     /**
      * @param array $jsFiles
+     * @example $this->setJs([
+     *  "assets/js/custom1.js",
+     *  "assets/js/custom2.js",
+     *  "assets/js/custom3.js",
+     *  ".."
+     * ])
      */
-    protected function setJs(array $jsFiles)
+    protected final function setJs(array $jsFiles)
     {
         $files = [];
-        foreach ($jsFiles as $file){
+        foreach ($jsFiles as $file) {
             $files[] = sprintf("%s/%s", $this->getModuleBaseDir(), $file);
         }
 
         $this->getJsHandler()->setJsContent($files);
+    }
+
+    /**
+     * @return RequestHandler
+     * @example $this->getRequestHandler()->isPost()
+     * @example $this->getRequestHandler()->getPost()->getArrayCopy()
+     * @example $this->getRequestHandler()->getQuery()->controller
+     * @example $this->getRequestHandler()->getQuery()->get("action", "default")
+     */
+    protected final function getRequestHandler(): RequestHandler
+    {
+        return $this->requestHandler;
     }
 
     /**
@@ -346,6 +384,7 @@ trait AbstractBaseTrait
 
     /**
      * @param string $templatePath
+     * @example $this->setView($templatePath)
      */
     private function setView(string $templatePath): void
     {
@@ -358,6 +397,7 @@ trait AbstractBaseTrait
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     * @example $this->setTemplate($methodName)
      */
     private function setTemplate(?string $templatePath = null): void
     {
@@ -419,8 +459,8 @@ trait AbstractBaseTrait
     /**
      * For translations in the controller, use the global functions __() and n__(),
      * each of which uses the language files of the system and the module.
-     * @see LocaleService::getSystemTranslator()
      * @return Translator
+     * @see LocaleService::getSystemTranslator()
      */
     private function getSystemLocaleService()
     {

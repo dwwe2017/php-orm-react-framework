@@ -52,28 +52,13 @@ class AbsolutePathHelper
     /**
      * @param string $relativePath
      * @return string
-     * @throws FileFactoryException
      */
     public final function get(string $relativePath)
     {
         $absolutePath = sprintf("%s/%s", $this->getBaseDir(), $relativePath);
-
-        if (!file_exists($absolutePath) || !is_readable($absolutePath)) {
-            throw new FileFactoryException(sprintf("The file %s could not be found or can not be loaded", $absolutePath));
-        }
+        FileHelper::init($absolutePath, FileFactoryException::class)->isReadable();
 
         return sprintf("%s/%s", $this->getBaseDir(), $relativePath);
-    }
-
-    /**
-     * @param string $relativePath
-     * @return string
-     * @throws FileFactoryException
-     * @example AbsolutePathHelper($baseDir)->{"relative/path/example"}
-     */
-    public final function __get(string $relativePath)
-    {
-        return $this->get($relativePath);
     }
 
     /**
