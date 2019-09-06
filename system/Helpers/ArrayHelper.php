@@ -68,6 +68,25 @@ class ArrayHelper
     }
 
     /**
+     * @param $class
+     * @param bool $camelize
+     */
+    public final function mapClass($class, $camelize = true)
+    {
+        foreach ($this->array as $key => $value) {
+            if ($camelize) {
+                $setterName = 'set' . StringHelper::init($key)->camelize();
+            } else {
+                $setterName = 'set' . ucfirst($key);
+            }
+
+            if (method_exists($class, $setterName)) {
+                $class->$setterName($value);
+            }
+        }
+    }
+
+    /**
      * @param $name
      */
     public final function __get($name)
