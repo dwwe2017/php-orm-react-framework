@@ -10,7 +10,8 @@
 namespace Entities;
 
 use Doctrine\ORM\Mapping as ORM;
-use Helpers\ArrayHelper;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Traits\EntityTraits\ConstructorMappingEntityTrait;
 
 
 /**
@@ -20,6 +21,8 @@ use Helpers\ArrayHelper;
  */
 class User
 {
+    use ConstructorMappingEntityTrait;
+
     /**
      * @var int
      * @ORM\Id
@@ -34,14 +37,30 @@ class User
      */
     public $group_id;
 
+    public $nickname;
+
+    public $password;
+
     /**
-     * User constructor.
-     * @param array $data
+     * @var \DateTime|null
+     * @Gedmo\Timestampable(on="change ", field={"group_id", "nickname", "password"})
+     * @ORM\Column(type="datetime")
      */
-    public function __construct(array $data = array())
-    {
-        ArrayHelper::init($data)->mapClass($this);
-    }
+    public $changed;
+
+    /**
+     * @var \DateTime|null
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     */
+    public $updated;
+
+    /**
+     * @var \DateTime|null
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    public $created;
 
     /**
      * @return int|null
@@ -57,5 +76,21 @@ class User
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getCreated(): ?\DateTime
+    {
+        return $this->created;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getUpdated(): ?\DateTime
+    {
+        return $this->updated;
     }
 }
