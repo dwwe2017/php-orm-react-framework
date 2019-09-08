@@ -11,7 +11,7 @@ session_start();
 $module = $_GET['module'] ?? null;
 $module = is_null($module) ? $module : htmlentities(lcfirst($module));
 
-$controller = $_GET['controller'] ?? (!is_null($module) ? 'index' : 'mvc');
+$controller = $_GET['controller'] ?? (!is_null($module) ? 'index' : 'public');
 $controller = htmlentities(lcfirst($controller));
 
 $action = $_GET['action'] ?? 'index';

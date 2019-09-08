@@ -27,6 +27,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^7.2 || ^7.3",
+        "ext-pdo": "*",
         "ext-json": "*",
         "doctrine/orm": "^2.5.5",
         "gedmo/doctrine-extensions": "^2.4.24",

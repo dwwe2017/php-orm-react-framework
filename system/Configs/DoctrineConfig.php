@@ -19,6 +19,7 @@ use Exceptions\DoctrineException;
 use Helpers\DeclarationHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
+use PDO;
 use Services\DoctrineService;
 use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -36,9 +37,9 @@ class DoctrineConfig implements VendorExtensionConfigInterface
 
     /**
      * DoctrineConfig constructor.
-     * @see ModuleManager::__construct()
      * @param DefaultConfig $defaultConfig
      * @throws DoctrineException
+     * @see ModuleManager::__construct()
      */
     public final function __construct(DefaultConfig $defaultConfig)
     {
@@ -62,9 +63,13 @@ class DoctrineConfig implements VendorExtensionConfigInterface
          */
         $connectionOption = $connectionOptions->get("connection_options.connection_option");
         $connection = $connectionOptions->get(sprintf("connection_options.%s", $connectionOption), false);
+        $connectionDriver = $connectionOptions->get(sprintf("connection_options.%s.driver", $connectionOption));
 
-        if (!$connectionOptions) {
-            throw new DoctrineException(sprintf("The global configuration file '%s' did not specify a valid database connection", $defaultConfigPath), E_ERROR);
+        if (strcasecmp($connectionDriver, "pdo_sqlite") == 0) {
+            $connectionPath = $connectionOptions->get(sprintf("connection_options.%s.path", $connectionOption));
+            if (!FileHelper::init($connectionPath)->isWritable()) {
+                new PDO(sprintf("sqlite:%s", $connectionPath));
+            }
         } elseif (!$connection || count($connection) < 6) {
             throw new DoctrineException(sprintf("The '%s' field of the global configuration file '%s' does not contain a valid database connection", $connectionOption, $defaultConfigPath), E_ERROR);
         }
@@ -72,7 +77,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         /**
          * Build application option for system
          */
-        $doctrineSystemOptionsDefault =  ["system" => $defaultOptions["doctrine_options"]];
+        $doctrineSystemOptionsDefault = ["system" => $defaultOptions["doctrine_options"]];
         $doctrineSystemOptions = ["system" => $this->config->get("doctrine_options")];
         $doctrineSystemOptions["system"]["base_dir"] = $baseDir;
         $doctrineSystemOptions["system"]["em_class"] = EntityManager::class;
@@ -85,7 +90,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
 
         $doctrineModuleOptions = new ConfigValues([]);
 
-        if(!is_null($moduleShortName)){
+        if (!is_null($moduleShortName)) {
             /**
              * Build application option for module
              */
@@ -164,12 +169,9 @@ class DoctrineConfig implements VendorExtensionConfigInterface
             "connection_options" => [
                 "connection_option" => "default",
                 "default" => [
-                    "driver" => "pdo_mysql",
-                    "dbname" => "",
-                    "host" => "",
-                    "user" => "",
-                    "password" => "",
-                    "prefix" => "",
+                    "driver" => "pdo_sqlite",
+                    "path" => sprintf("%s/system/db.sql", $baseDir),
+                    "prefix" => "tsi2_"
                 ]
             ],
             /**
