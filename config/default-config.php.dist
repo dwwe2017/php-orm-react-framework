@@ -18,12 +18,10 @@ $config = [
     //Database configuration
     "connection_options" => [
         "default" => [
-            "driver" => "pdo_mysql",
-            "dbname" => "",
-            "host" => "",
-            "user" => "",
-            "password" => "",
-            "prefix" => "",
+            "driver" => "pdo_sqlite",
+            "path" => __DIR__  . "/../system/db.sqlite",
+            "charset" => "UTF-8",
+            "prefix" => "tsi2_"
         ]
     ],
     //Doctrine configuration

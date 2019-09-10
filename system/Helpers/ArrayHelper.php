@@ -75,7 +75,7 @@ class ArrayHelper
     {
         foreach ($this->array as $key => $value) {
             if ($camelize) {
-                $setterName = 'set' . StringHelper::init($key)->camelize();
+                $setterName = 'set' . StringHelper::init($key)->camelize()->getString();
             } else {
                 $setterName = 'set' . ucfirst($key);
             }

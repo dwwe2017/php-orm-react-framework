@@ -49,39 +49,73 @@ class StringHelper
     }
 
     /**
-     * @return string
+     * @return $this
      */
     public function decamelize()
     {
-        return ltrim(
+        $this->string = ltrim(
             strtolower(
                 preg_replace('/([A-Z])/', '_$1', $this->string)
             ),
             '_'
         );
+
+        return $this;
     }
 
     /**
-     * @return mixed
+     * @return $this
      */
     public function camelize()
     {
-        return str_replace(
+        $this->string =  str_replace(
             ' ',
             '',
             ucwords(
                 str_replace('_', ' ', $this->string)
             )
         );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function camelizeLcFirst()
+    {
+        $this->string = lcfirst(
+            $this->camelize()
+        );
+
+        return  $this;
+    }
+
+    /**
+     * @param $search
+     * @param $replace
+     * @return $this
+     */
+    public function replace($search, $replace)
+    {
+        $this->string = str_replace($search, $replace, $this->string);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function toLower()
+    {
+        $this->string = strtolower($this->string);
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function camelizeLcFirst()
+    public function getString(): string
     {
-        return lcfirst(
-            $this->camelize()
-        );
+        return $this->string;
     }
 }

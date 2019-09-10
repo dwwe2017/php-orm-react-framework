@@ -125,4 +125,15 @@ class FileHelper
 
         return true;
     }
+
+    /**
+     *
+     */
+    public final function delete(): void
+    {
+        if($this->fileExists())
+        {
+            @unlink($this->file);
+        }
+    }
 }

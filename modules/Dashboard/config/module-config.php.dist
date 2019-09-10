@@ -12,14 +12,20 @@ $config = [
     "debug_mode" => false,
     //Database configuration
     "connection_options" => [
-        "default" => [
+        "module" => [
             "driver" => "pdo_mysql",
             "dbname" => "",
             "host" => "",
             "user" => "",
             "password" => "",
             "prefix" => "",
-        ]
+        ],
+         "auto" => [
+             "driver" => "pdo_sqlite",
+             "path" => __DIR__ . "/../src/module.sqlite",
+             "charset" => "UTF-8",
+             "prefix" => "tsi2dash_"
+         ]
     ],
     //Doctrine configuration
     "doctrine_options" => [

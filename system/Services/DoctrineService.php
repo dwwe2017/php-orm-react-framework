@@ -11,14 +11,26 @@ namespace Services;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\SchemaTool;
+use Exception;
+use Exceptions\DoctrineException;
+use Helpers\ArrayHelper;
+use Helpers\DirHelper;
+use Helpers\FileHelper;
+use Helpers\StringHelper;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
-use Managers\ServiceManager;
+use PDO;
+use Traits\ControllerTraits\AbstractBaseTrait;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Webmasters\Doctrine\Bootstrap as WDB;
 use Webmasters\Doctrine\ORM\Util\OptionsCollection;
 
+/**
+ * Class DoctrineService
+ * @package Services
+ */
 class DoctrineService extends WDB implements VendorExtensionServiceInterface
 {
     use InstantiationStaticsUtilTrait;
@@ -55,9 +67,9 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     }
 
     /**
-     * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
      * @return DoctrineService|null
+     * @throws DoctrineException
      */
     public static final function init(ModuleManager $moduleManager)
     {
@@ -72,8 +84,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     }
 
     /**
-     * ORM for Entites of the module
-     * @see DoctrineService::init()
+     * @throws DoctrineException
      */
     public final function setModuleDoctrineService(): void
     {
@@ -83,15 +94,16 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
         $connectionOptions = $config->get(sprintf("connection_options.%s", $connectionOption));
         $applicationOptions = $config->get("doctrine_options.module");
         $this->moduleDoctrineService = new static($this->moduleManager);
-        $this->moduleDoctrineService->setConnectionOptions($connectionOptions);
         $this->moduleDoctrineService->setApplicationOptions($applicationOptions);
+        $this->moduleDoctrineService->setConnectionOptions($connectionOptions);
         $this->moduleDoctrineService->errorMode();
     }
 
     /**
-     * ORM for Entites of the module
-     * @see DoctrineService::setModuleDoctrineService()
+     * ORM for Entities of the module
      * @return DoctrineService
+     * @see DoctrineService::setModuleDoctrineService()
+     * @see AbstractBaseTrait::getModuleDbService()
      */
     public final function getModuleDoctrineService(): DoctrineService
     {
@@ -99,8 +111,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     }
 
     /**
-     * ORM for Entites of the system
-     * @see DoctrineService::init()
+     * @throws DoctrineException
      */
     public final function setSystemDoctrineService(): void
     {
@@ -110,21 +121,23 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
         $connectionOptions = $config->get(sprintf("connection_options.%s", $connectionOption));
         $applicationOptions = $config->get("doctrine_options.system");
         $this->systemDoctrineService = new static($this->moduleManager);
-        $this->systemDoctrineService->setConnectionOptions($connectionOptions);
         $this->systemDoctrineService->setApplicationOptions($applicationOptions);
+        $this->systemDoctrineService->setConnectionOptions($connectionOptions);
         $this->systemDoctrineService->errorMode();
     }
 
     /**
      * @param null $connectionOption
      * @return EntityManager
+     * @throws DoctrineException
+     * @example $this->getModuleDbService()->getEntityManager("module");
      */
     public final function getEntityManager($connectionOption = null)
     {
         if (!is_null($connectionOption) && $this->currentConnectionOption !== $connectionOption) {
             $config = $this->moduleManager->getConfig();
             $connectionOptions = $config->get(sprintf("connection_options.%s", $connectionOption));
-            $this->currentConnectionOption = $connectionOptions;
+            $this->currentConnectionOption = $connectionOption;
             $this->setConnectionOptions($connectionOptions);
         }
 
@@ -132,9 +145,10 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     }
 
     /**
-     * ORM for Entites of the system
-     * @see DoctrineService::setSystemDoctrineService()
+     * ORM for Entities of the system
      * @return DoctrineService
+     * @see DoctrineService::setSystemDoctrineService()
+     * @see AbstractBaseTrait::getSystemDbService()
      */
     public final function getSystemDoctrineService(): DoctrineService
     {
@@ -147,5 +161,71 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     protected final function setApplicationOptions($options)
     {
         $this->applicationOptions = new OptionsCollection($options);
+    }
+
+    /**
+     * @param $options
+     * @throws DoctrineException
+     */
+    protected final function setConnectionOptions($options): void
+    {
+        parent::setConnectionOptions($options);
+        $options = ArrayHelper::init($options);
+
+        /**
+         * @internal Both for the system and for modules, if the default driver "pdo_sqlite"
+         * is selected, the database is automatically created if it does not exist.
+         */
+        if (strcasecmp($options->get("driver", false), "pdo_sqlite") == 0) {
+            $sqLitePath = $options->get("path", false);
+            if ($sqLitePath && !FileHelper::init($sqLitePath)->isWritable()) {
+                try {
+                    $em = $this->getEntityManager($this->currentConnectionOption);
+                    $tool = new SchemaTool($em);
+                    $schemas = $this->getEntitySchemas($em);
+                    if (empty($schemas)) {
+                        return;
+                    }
+
+                    /**
+                     * @internal SQLite connection is always UTF-8
+                     * @see http://www.alberton.info/dbms_charset_settings_explained.html
+                     */
+                    $pdo = new PDO(sprintf("sqlite:%s", $sqLitePath));
+                    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    foreach ($tool->getCreateSchemaSql($schemas) as $query) {
+                        $pdo->exec($query);
+                    }
+                } catch (Exception $e) {
+                    throw new DoctrineException($e->getMessage(), $e->getCode(), $e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Prepare array with all necessary metadata of the entities to be able to automatically create the database if necessary.
+     * @param EntityManager $em
+     * @return array
+     * @see DoctrineService::setConnectionOptions()
+     */
+    private function getEntitySchemas(EntityManager $em)
+    {
+        try {
+            $result = [];
+            $entityDir = $this->getOption("entity_dir");
+            $entityNamespace = $this->getOption("entity_namespace");
+            $entities = DirHelper::init($entityDir)->getScan([".php"]);
+            if (!empty($entities)) {
+                foreach ($entities as $entity) {
+                    $entityName = StringHelper::init($entity)->replace(".php", "")->getString();
+                    $result[] = $em->getClassMetadata(sprintf("\\%s\\%s", $entityNamespace, $entityName));
+                }
+
+                return $result;
+            }
+        } catch (Exception $e) {
+        }
+        return $result;
     }
 }

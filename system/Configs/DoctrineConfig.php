@@ -19,7 +19,6 @@ use Exceptions\DoctrineException;
 use Helpers\DeclarationHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
-use PDO;
 use Services\DoctrineService;
 use Traits\ConfigTraits\VendorExtensionInitConfigTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -65,13 +64,13 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         $connection = $connectionOptions->get(sprintf("connection_options.%s", $connectionOption), false);
         $connectionDriver = $connectionOptions->get(sprintf("connection_options.%s.driver", $connectionOption));
 
-        if (strcasecmp($connectionDriver, "pdo_sqlite") == 0) {
-            $connectionPath = $connectionOptions->get(sprintf("connection_options.%s.path", $connectionOption));
-            if (!FileHelper::init($connectionPath)->isWritable()) {
-                new PDO(sprintf("sqlite:%s", $connectionPath));
+        /**
+         * Check db connection
+         */
+        if (strcasecmp($connectionDriver, "pdo_sqlite") != 0) {
+            if (!$connection || count($connection) < 6) {
+                throw new DoctrineException(sprintf("The '%s' field of the global configuration file '%s' does not contain a valid database connection", $connectionOption, $defaultConfigPath), E_ERROR);
             }
-        } elseif (!$connection || count($connection) < 6) {
-            throw new DoctrineException(sprintf("The '%s' field of the global configuration file '%s' does not contain a valid database connection", $connectionOption, $defaultConfigPath), E_ERROR);
         }
 
         /**
@@ -99,7 +98,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
             $doctrineModuleOptions["module"]["base_dir"] = $moduleBaseDir;
             $doctrineModuleOptions["module"]["em_class"] = EntityManager::class;
             $doctrineModuleOptions["module"]["entity_dir"] = sprintf("%s/src/Entities", $moduleBaseDir);
-            $doctrineModuleOptions["module"]["entity_namespace"] = sprintf("Modules/%s/Entities", $moduleShortName);
+            $doctrineModuleOptions["module"]["entity_namespace"] = sprintf("Modules\\%s\\Entities", $moduleShortName);
             $doctrineModuleOptions["module"]["gedmo_ext"] = ["Timestampable"];
             $doctrineModuleOptions["module"]["proxy_dir"] = sprintf("%s/data/proxy/%s", $baseDir, $connectionOption);
             $doctrineModuleOptions["module"]["vendor_dir"] = sprintf("%s/vendor", $baseDir);
@@ -170,7 +169,8 @@ class DoctrineConfig implements VendorExtensionConfigInterface
                 "connection_option" => "default",
                 "default" => [
                     "driver" => "pdo_sqlite",
-                    "path" => sprintf("%s/system/db.sql", $baseDir),
+                    "path" => sprintf("%s/system/db.sqlite", $baseDir),
+                    "charset" => "UTF-8",
                     "prefix" => "tsi2_"
                 ]
             ],
