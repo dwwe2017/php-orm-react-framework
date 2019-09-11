@@ -11,8 +11,8 @@ namespace Entities;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Helpers\ArrayHelper;
 use Interfaces\EntityInterfaces\CustomEntityInterface;
+use Traits\EntityTraits\CustomEntityTrait;
 
 
 /**
@@ -23,6 +23,8 @@ use Interfaces\EntityInterfaces\CustomEntityInterface;
  */
 class User implements CustomEntityInterface
 {
+    use CustomEntityTrait;
+
     /**
      * @var int
      * @ORM\Id
@@ -57,15 +59,6 @@ class User implements CustomEntityInterface
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $created;
-
-    /**
-     * User constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = array())
-    {
-        ArrayHelper::init($data)->mapClass($this);
-    }
 
     /**
      * @return int|null

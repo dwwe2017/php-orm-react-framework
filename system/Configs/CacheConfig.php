@@ -35,7 +35,7 @@ class CacheConfig implements VendorExtensionConfigInterface
     use VendorExtensionInitConfigTrait;
 
     /**
-     *  @var array Array of driver names only for developement
+     *  @var array Array of driver names only for development
      */
     const DEV_CACHE_DRIVERS = [
         "devfalse", "devtrue", "devnull"
