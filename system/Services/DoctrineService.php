@@ -258,7 +258,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
             foreach ($listeners as $hash => $listener) {
                 if ($listener instanceof $instanceof) {
                     $em->getEventManager()->removeEventListener([$event], $listener);
-                    break;
+                    break 2;
                 }
             }
         }
