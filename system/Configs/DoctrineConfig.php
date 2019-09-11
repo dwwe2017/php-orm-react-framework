@@ -67,7 +67,7 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         /**
          * Check db connection
          */
-        if (strcasecmp($connectionDriver, "pdo_sqlite") != 0) {
+        if (strpos($connectionDriver, "sqlite") === false) {
             if (!$connection || count($connection) < 6) {
                 throw new DoctrineException(sprintf("The '%s' field of the global configuration file '%s' does not contain a valid database connection", $connectionOption, $defaultConfigPath), E_ERROR);
             }

@@ -23,6 +23,6 @@ class IndexController extends PublicController
      */
     public function indexAction(): void
     {
-
+        $em = $this->getModuleDbService()->getEntityManager();
     }
 }

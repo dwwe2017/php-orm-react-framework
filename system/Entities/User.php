@@ -11,6 +11,8 @@ namespace Entities;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Helpers\ArrayHelper;
+use Interfaces\EntityInterfaces\CustomEntityInterface;
 
 
 /**
@@ -19,7 +21,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Entity
  * @ORM\Table(name="user")
  */
-class User
+class User implements CustomEntityInterface
 {
     /**
      * @var int
@@ -56,9 +58,13 @@ class User
      */
     protected $created;
 
-    public function __construct()
+    /**
+     * User constructor.
+     * @param array $data
+     */
+    public function __construct(array $data = array())
     {
-
+        ArrayHelper::init($data)->mapClass($this);
     }
 
     /**

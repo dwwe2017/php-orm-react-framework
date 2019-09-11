@@ -10,7 +10,9 @@
 namespace Services;
 
 
+use Doctrine\DBAL\Event\Listeners\MysqlSessionInit;
 use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Events;
 use Doctrine\ORM\Tools\SchemaTool;
 use Exception;
 use Exceptions\DoctrineException;
@@ -141,7 +143,23 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
             $this->setConnectionOptions($connectionOptions);
         }
 
-        return parent::getEm();
+        /**
+         * @var $em EntityManager
+         */
+        $em = parent::getEm();
+
+        /**
+         * @internal Hack for pdo_sqlite and Doctrine\DBAL\Exception\SyntaxErrorException while
+         * executing 'SET NAMES utf8': SQLSTATE[HY000]: General error: 1 near "SET": syntax error
+         * @internal SQLite connection is always UTF-8
+         * @see http://www.alberton.info/dbms_charset_settings_explained.html
+         */
+        if (strcasecmp($em->getConnection()->getDriver()->getName(), "pdo_sqlite") == 0
+            && $em->getEventManager()->hasListeners(Events::postConnect)) {
+            $this->removeEventListener($em, Events::postConnect, MysqlSessionInit::class);
+        }
+
+        return $em;
     }
 
     /**
@@ -227,5 +245,22 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
         } catch (Exception $e) {
         }
         return $result;
+    }
+
+    /**
+     * @param EntityManager $em
+     * @param $event
+     * @param string $instanceof
+     */
+    private function removeEventListener(EntityManager $em, $event, $instanceof = self::class): void
+    {
+        foreach ($em->getEventManager()->getListeners() as $key => $listeners) {
+            foreach ($listeners as $hash => $listener) {
+                if ($listener instanceof $instanceof) {
+                    $em->getEventManager()->removeEventListener([$event], $listener);
+                    break;
+                }
+            }
+        }
     }
 }
