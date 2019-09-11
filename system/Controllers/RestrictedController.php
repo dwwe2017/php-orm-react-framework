@@ -10,6 +10,8 @@
 namespace Controllers;
 
 
+use Entities\Group;
+use Entities\User;
 use Interfaces\ControllerInterfaces\RestrictedControllerInterface;
 use Throwable;
 use Twig\Error\LoaderError;
@@ -22,6 +24,16 @@ use Twig\Error\SyntaxError;
  */
 class RestrictedController extends AbstractBase implements RestrictedControllerInterface
 {
+    /**
+     * @var User|null
+     */
+    private $user;
+
+    /**
+     * @var Group|null
+     */
+    private $group;
+
     /**
      *
      */
