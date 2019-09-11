@@ -1,9 +1,10 @@
 /.less
 /.idea
 /.todo
-/docs
-/vendor
-/config
+/config/*
 !/config/default-config.php.dist
 !/config/.htaccess
-/phpDocumentor.phar
+/docs
+/log/*
+!/log/.htaccess
+/vendor
