@@ -153,6 +153,10 @@ abstract class AbstractBase
      */
     private function initHelpers(): void
     {
+        /**
+         * Path helper
+         * @see AbstractBaseTrait::getAbsolutePathHelper()
+         */
         $this->absolutePathHelper = AbsolutePathHelper::init($this->getBaseDir()); // Available in modules
     }
 
