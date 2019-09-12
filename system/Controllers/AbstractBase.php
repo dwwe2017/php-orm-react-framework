@@ -138,9 +138,6 @@ abstract class AbstractBase
      */
     private function initHandlers(): void
     {
-        $test = NavigationHandler::init($this);
-        print_pre($test->getRoutes());
-
         /**
          * Error handler
          * Reinitialize error handler with logger instance for better persistence
@@ -161,6 +158,12 @@ abstract class AbstractBase
          * @see AbstractBaseTrait::getRequestHandler() // Available in modules
          */
         $this->requestHandler = RequestHandler::init();
+
+        /**
+         * Navigation handler
+         * @see AbstractBaseTrait::getNavigationHandler() // !Only available for system
+         */
+        $this->navigationHandler = NavigationHandler::init($this);
     }
 
     /**

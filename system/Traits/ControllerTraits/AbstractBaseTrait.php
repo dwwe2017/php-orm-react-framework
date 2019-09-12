@@ -16,6 +16,7 @@ use Gettext\GettextTranslator;
 use Gettext\Translator;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
+use Handlers\NavigationHandler;
 use Handlers\RequestHandler;
 use Helpers\AbsolutePathHelper;
 use Managers\ModuleManager;
@@ -96,6 +97,11 @@ trait AbstractBaseTrait
      * @var RequestHandler
      */
     private $requestHandler;
+
+    /**
+     * @var NavigationHandler
+     */
+    private $navigationHandler;
 
     /**
      * @var CacheService
@@ -505,5 +511,13 @@ trait AbstractBaseTrait
     private function moduleCacheServiceHasFallback(): bool
     {
         return $this->moduleCacheServiceHasFallback;
+    }
+
+    /**
+     * @return NavigationHandler
+     */
+    private function getNavigationHandler(): NavigationHandler
+    {
+        return $this->navigationHandler;
     }
 }
