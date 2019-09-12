@@ -11,6 +11,7 @@ namespace Controllers;
 
 
 use Doctrine\Common\Annotations\AnnotationException;
+use Doctrine\Common\Annotations\AnnotationReader;
 use Exceptions\CacheException;
 use Exceptions\DoctrineException;
 use Handlers\ErrorHandler;
@@ -19,10 +20,9 @@ use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
 use Handlers\RequestHandler;
 use Helpers\AbsolutePathHelper;
-use Helpers\ReflectionHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
-use Modules\Dashboard\Controllers\IndexController;
+use ReflectionClass;
 use ReflectionException;
 use Services\CacheService;
 use Throwable;
@@ -167,15 +167,28 @@ abstract class AbstractBase
     }
 
     /**
-     *
+     * @throws AnnotationException
+     * @throws ReflectionException
      */
     private function initHelpers(): void
     {
         /**
          * Path helper
-         * @see AbstractBaseTrait::getAbsolutePathHelper()
+         * @see AbstractBaseTrait::getAbsolutePathHelper() // Available in modules
          */
         $this->absolutePathHelper = AbsolutePathHelper::init($this->getBaseDir()); // Available in modules
+
+        /**
+         * Reflection Helper
+         * @see AbstractBaseTrait::getReflectionHelper() // !Only available for system
+         */
+        $this->reflectionHelper = new ReflectionClass($this);
+
+        /**
+         * Annotation Helper
+         * @see AbstractBaseTrait::getAnnotationReader() // !Only available for system
+         */
+        $this->annotationReader = new AnnotationReader();
     }
 
     /**

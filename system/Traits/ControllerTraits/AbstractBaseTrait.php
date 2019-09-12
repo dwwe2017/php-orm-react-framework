@@ -11,6 +11,7 @@ namespace Traits\ControllerTraits;
 
 
 use Configula\ConfigValues;
+use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
 use Gettext\GettextTranslator;
 use Gettext\Translator;
@@ -23,6 +24,7 @@ use Managers\ModuleManager;
 use Managers\ServiceManager;
 use Monolog\Logger;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
+use ReflectionClass;
 use Services\CacheService;
 use Services\DoctrineService;
 use Services\LocaleService;
@@ -172,6 +174,16 @@ trait AbstractBaseTrait
      * @var AbsolutePathHelper;
      */
     private $absolutePathHelper;
+
+    /**
+     * @var ReflectionClass
+     */
+    private $reflectionHelper;
+
+    /**
+     * @var AnnotationReader
+     */
+    private $annotationReader;
 
     /**
      * @return string
@@ -519,5 +531,40 @@ trait AbstractBaseTrait
     private function getNavigationHandler(): NavigationHandler
     {
         return $this->navigationHandler;
+    }
+
+    /**
+     * @return ReflectionClass
+     */
+    private function getReflectionHelper(): ReflectionClass
+    {
+        return $this->reflectionHelper;
+    }
+
+    /**
+     * @return AnnotationReader
+     */
+    private function getAnnotationReader(): AnnotationReader
+    {
+        return $this->annotationReader;
+    }
+
+    /**
+     * @return array
+     */
+    private function getSelfAnnotations()
+    {
+        $reader = $this->getAnnotationReader();
+        return $reader->getClassAnnotations($this->getReflectionHelper());
+    }
+
+    /**
+     * @param string $annotationName
+     * @return object|null
+     */
+    private function getSelfAnnotation(string $annotationName)
+    {
+        $reader = $this->getAnnotationReader();
+        return $reader->getClassAnnotation($this->getReflectionHelper(), sprintf("Annotations\\%s", $annotationName));
     }
 }
