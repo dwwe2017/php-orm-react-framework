@@ -29,7 +29,7 @@ class InvokeController extends AbstractBase implements InvokeControllerInterface
 
     /**
      * @param string $action
-     * @return void
+     * @return mixed
      * @throws MethodNotFoundException
      */
     public final function run(string $action)
