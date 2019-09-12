@@ -10,7 +10,6 @@ use Controllers\SettingsController;
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Exceptions\NavigationException;
-use Helpers\ArrayHelper;
 use Helpers\DirHelper;
 use Helpers\StringHelper;
 use ReflectionClass;

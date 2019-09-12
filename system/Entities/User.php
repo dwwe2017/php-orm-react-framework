@@ -9,6 +9,7 @@
 
 namespace Entities;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Interfaces\EntityInterfaces\CustomEntityInterface;
@@ -40,21 +41,21 @@ class User implements CustomEntityInterface
     protected $group_id;
 
     /**
-     * @var \DateTime|null
+     * @var DateTime|null
      * @Gedmo\Timestampable(on="change", field={"group_id"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $changed;
 
     /**
-     * @var \DateTime|null
+     * @var DateTime|null
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $updated;
 
     /**
-     * @var \DateTime|null
+     * @var DateTime|null
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -77,17 +78,17 @@ class User implements CustomEntityInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getCreated(): ?\DateTime
+    public function getCreated(): ?DateTime
     {
         return $this->created;
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getUpdated(): ?\DateTime
+    public function getUpdated(): ?DateTime
     {
         return $this->updated;
     }

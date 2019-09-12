@@ -10,7 +10,9 @@
 namespace Controllers;
 
 
+use Doctrine\Common\Annotations\AnnotationException;
 use Exceptions\CacheException;
+use Exceptions\DoctrineException;
 use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
@@ -21,6 +23,7 @@ use Helpers\ReflectionHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
 use Modules\Dashboard\Controllers\IndexController;
+use ReflectionException;
 use Services\CacheService;
 use Throwable;
 use Traits\ControllerTraits\AbstractBaseTrait;
@@ -39,7 +42,11 @@ abstract class AbstractBase
     /**
      * AbstractBase constructor.
      * @param string $baseDir
+     * @throws AnnotationException
      * @throws CacheException
+     * @throws ReflectionException
+     * @throws DoctrineException
+     * @throws DoctrineException
      */
     public function __construct(string $baseDir)
     {
@@ -64,6 +71,7 @@ abstract class AbstractBase
 
     /**
      * @throws CacheException
+     * @throws DoctrineException
      */
     private function initServices()
     {
@@ -125,7 +133,8 @@ abstract class AbstractBase
     }
 
     /**
-     *
+     * @throws AnnotationException
+     * @throws ReflectionException
      */
     private function initHandlers(): void
     {

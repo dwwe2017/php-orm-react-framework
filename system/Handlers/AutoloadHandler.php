@@ -32,7 +32,6 @@ class AutoloadHandler
      * AutoloadHandler constructor.
      * @param string $baseDir
      * @param ClassLoader $classLoader
-     * @throws FileFactoryException
      */
     public final function __construct(string $baseDir, ClassLoader $classLoader)
     {
@@ -63,7 +62,6 @@ class AutoloadHandler
      * @param string $baseDir
      * @param ClassLoader $classLoader
      * @return AutoloadHandler|null
-     * @throws FileFactoryException
      */
     public static final function init(string $baseDir, ClassLoader $classLoader)
     {
