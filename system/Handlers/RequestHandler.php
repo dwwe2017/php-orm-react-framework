@@ -12,7 +12,9 @@ namespace Handlers;
 
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
+use Dflydev\DotAccessData\Util;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
+use Whoops\Util\Misc;
 
 /**
  * Class RequestHandler
@@ -48,6 +50,11 @@ class RequestHandler
     private $server;
 
     /**
+     * @var bool
+     */
+    private $xmlRequest = false;
+
+    /**
      * RequestHandler constructor.
      */
     public function __construct()
@@ -57,6 +64,8 @@ class RequestHandler
         $this->post = ConfigFactory::fromArray($_POST ?? []);
         $this->query = ConfigFactory::fromArray($_GET ?? []);
         $this->server = ConfigFactory::fromArray($_SERVER ?? []);
+        $this->xmlRequest = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
     }
 
     /**
@@ -117,5 +126,13 @@ class RequestHandler
     public function getServer(): ConfigValues
     {
         return $this->server;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isXmlRequest(): bool
+    {
+        return $this->xmlRequest;
     }
 }
