@@ -10,6 +10,7 @@
 namespace Controllers;
 
 
+use Exceptions\MethodNotFoundException;
 use Interfaces\ControllerInterfaces\InvokeControllerInterface;
 
 /**
@@ -28,7 +29,8 @@ class InvokeController extends AbstractBase implements InvokeControllerInterface
 
     /**
      * @param string $action
-     * @return bool|void
+     * @return void
+     * @throws MethodNotFoundException
      */
     public final function run(string $action)
     {
@@ -36,7 +38,7 @@ class InvokeController extends AbstractBase implements InvokeControllerInterface
         if (method_exists($this, $methodName)) {
             return $this->$methodName();
         } else {
-            return false;
+            throw new MethodNotFoundException(sprintf("Method %s in class %s was not found or could not be loaded", $methodName, get_class($this)));
         }
     }
 }
