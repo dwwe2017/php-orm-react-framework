@@ -37,14 +37,19 @@ class AutoloadHandler
     {
         $this->classLoader = $classLoader;
 
+        /**
+         * @internal Make annotations also available for modules
+         */
         $annotations = sprintf("%s/system/Annotations", $baseDir);
         foreach (DirHelper::init($annotations, FileFactoryException::class)->getScan([".php"]) as $class) {
             $className = sprintf("Annotations\\%s", substr($class, 0, -4));
             $this->classLoader->loadClass($className);
         }
 
+        /**
+         * @internal Existing modules will be loaded automatically
+         */
         $modulesDir = sprintf("%s/modules", $baseDir);
-
         foreach (scandir($modulesDir) as $item) {
             $path = sprintf("%s/%s", $modulesDir, $item);
             if ($item == "." || $item == ".." || is_file($path)) {

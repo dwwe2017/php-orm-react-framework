@@ -35,34 +35,6 @@ class CacheConfig implements VendorExtensionConfigInterface
     use VendorExtensionInitConfigTrait;
 
     /**
-     *  @var array Array of driver names only for development
-     */
-    const DEV_CACHE_DRIVERS = [
-        "devfalse", "devtrue", "devnull"
-    ];
-
-    /**
-     *  @var array Array of memory-based driver names
-     */
-    const MEMORY_CACHE_DRIVERS = [
-        "apc", "apcu", "memcache", "memcached", "memstatic", "predis", "redis", "wincache", "xcache", "Zend Memory Cache"
-    ];
-
-    /**
-     * @var array Array of NoSql-based driver names
-     */
-    const NOSQL_CACHE_DRIVERS = [
-        "cassandra", "couchbase", "couchdb", "leveldb", "mongodb", "riak", "ssdb"
-    ];
-
-    /**
-     * @var array Array of file-based driver names
-     */
-    const FILE_CACHE_DRIVERS = [
-        "files", "zenddisk"
-    ];
-
-    /**
      * @var array Contains the required Configuration Option class for specific drivers
      */
     const CACHE_MANAGER_CONFIG_CLASSES = [

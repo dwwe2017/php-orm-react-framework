@@ -17,6 +17,6 @@ $classLoader = require_once __DIR__ . '/vendor/autoload.php';
 use Handlers\AutoloadHandler;
 
 /**
- * Dynamic autoloader for modules and their namespaces
+ * Dynamic autoloader for annotations, modules and their namespaces
  */
 AutoloadHandler::init($baseDir, $classLoader)->register();
