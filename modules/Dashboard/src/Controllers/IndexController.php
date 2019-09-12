@@ -10,19 +10,39 @@
 namespace Modules\Dashboard\Controllers;
 
 
+use Annotations\Access;
+use Annotations\Sidebar;
+use Annotations\TopMenu;
 use Controllers\PublicController;
+use Controllers\RestrictedController;
 
 /**
  * Class PublicController
  * @package Modules\Dashboard\Controllers
+ * @Access(role="reseller")
  */
 class IndexController extends PublicController
 {
     /**
-     *
+     * @Sidebar(text="Overview", title="Overview")
+     * @Access(role="admin")
      */
     public function indexAction(): void
     {
-        $em = $this->getModuleDbService()->getEntityManager();
+
+    }
+
+    /**
+     * @Access(role="user")
+     * @TopMenu(title="Test")
+     */
+    public function testAction(): void
+    {
+
+    }
+
+    public function externalAction(): void
+    {
+
     }
 }

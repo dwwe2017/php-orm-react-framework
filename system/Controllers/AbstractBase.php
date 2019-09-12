@@ -14,10 +14,13 @@ use Exceptions\CacheException;
 use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
+use Handlers\NavigationHandler;
 use Handlers\RequestHandler;
 use Helpers\AbsolutePathHelper;
+use Helpers\ReflectionHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
+use Modules\Dashboard\Controllers\IndexController;
 use Services\CacheService;
 use Throwable;
 use Traits\ControllerTraits\AbstractBaseTrait;
@@ -126,6 +129,9 @@ abstract class AbstractBase
      */
     private function initHandlers(): void
     {
+        $test = NavigationHandler::init($this);
+        print_pre($test->getRoutes());
+
         /**
          * Error handler
          * Reinitialize error handler with logger instance for better persistence

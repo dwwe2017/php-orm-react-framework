@@ -19,4 +19,4 @@ use Handlers\AutoloadHandler;
 /**
  * Dynamic autoloader for modules and their namespaces
  */
-AutoloadHandler::init($baseDir, $classLoader);
+AutoloadHandler::init($baseDir, $classLoader)->register();

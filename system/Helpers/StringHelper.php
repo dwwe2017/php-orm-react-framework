@@ -118,4 +118,13 @@ class StringHelper
     {
         return $this->string;
     }
+
+    /**
+     * @param string $filter
+     * @return bool
+     */
+    public function hasFilter(string $filter)
+    {
+        return strpos($this->string, $filter) !== false;
+    }
 }

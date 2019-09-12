@@ -11,6 +11,8 @@ namespace Handlers;
 
 
 use Composer\Autoload\ClassLoader;
+use Exceptions\FileFactoryException;
+use Helpers\DirHelper;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
@@ -28,12 +30,19 @@ class AutoloadHandler
 
     /**
      * AutoloadHandler constructor.
-     * @param ClassLoader $classLoader
      * @param string $baseDir
+     * @param ClassLoader $classLoader
+     * @throws FileFactoryException
      */
     public final function __construct(string $baseDir, ClassLoader $classLoader)
     {
         $this->classLoader = $classLoader;
+
+        $annotations = sprintf("%s/system/Annotations", $baseDir);
+        foreach (DirHelper::init($annotations, FileFactoryException::class)->getScan([".php"]) as $class) {
+            $className = sprintf("Annotations\\%s", substr($class, 0, -4));
+            $this->classLoader->loadClass($className);
+        }
 
         $modulesDir = sprintf("%s/modules", $baseDir);
 
@@ -54,14 +63,23 @@ class AutoloadHandler
      * @param string $baseDir
      * @param ClassLoader $classLoader
      * @return AutoloadHandler|null
+     * @throws FileFactoryException
      */
     public static final function init(string $baseDir, ClassLoader $classLoader)
     {
-        if (is_null(self::$instance) || serialize($baseDir).serialize($classLoader) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($baseDir) . serialize($classLoader) !== self::$instanceKey) {
             self::$instance = new self($baseDir, $classLoader);
-            self::$instanceKey = serialize($baseDir).serialize($classLoader);
+            self::$instanceKey = serialize($baseDir) . serialize($classLoader);
         }
 
         return self::$instance;
+    }
+
+    /**
+     * @param bool $prepend
+     */
+    public function register($prepend = false): void
+    {
+        $this->classLoader->register($prepend);
     }
 }
