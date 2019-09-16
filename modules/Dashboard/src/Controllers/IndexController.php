@@ -11,37 +11,25 @@ namespace Modules\Dashboard\Controllers;
 
 
 use Annotations\Access;
-use Annotations\Sidebar;
-use Annotations\TopMenu;
-use Controllers\PublicController;
+use Annotations\Info;
+use Annotations\Navigation;
+use Annotations\SubNavigation;
 use Controllers\RestrictedController;
 
 /**
  * Class PublicController
  * @package Modules\Dashboard\Controllers
- * @Access(role="reseller")
+ * @Access(role="user")
+ * @Navigation(position="sidebar")
+ * @Info(author="DW </> Web-Engineering", website="https://dwwe.de", email="daniel@dwwe.de")
  */
-class IndexController extends PublicController
+class IndexController extends RestrictedController
 {
     /**
-     * @Sidebar(text="Overview", title="Overview")
      * @Access(role="admin")
+     * @SubNavigation(text="Overview")
      */
     public function indexAction(): void
-    {
-
-    }
-
-    /**
-     * @Access(role="user")
-     * @TopMenu(title="Test")
-     */
-    public function testAction(): void
-    {
-
-    }
-
-    public function externalAction(): void
     {
 
     }

@@ -146,6 +146,20 @@ abstract class AbstractBase
         ErrorHandler::init($this->getConfig(), $this->getLoggerService());
 
         /**
+         * Request handler
+         * @see AbstractBaseTrait::getRequestHandler() // Available in modules
+         */
+        $this->requestHandler = RequestHandler::init($this);
+
+        /**
+         * @see RequestHandler::isXml()
+         * @see RequestHandler::isXmlRequest()
+         */
+        if($this->getRequestHandler()->isXml()){
+            return;
+        }
+
+        /**
          * Asset handlers
          * @see AbstractBaseTrait::getCssHandler() // !Only available for system
          * @see AbstractBaseTrait::getJsHandler() // !Only available for system
@@ -154,16 +168,11 @@ abstract class AbstractBase
         $this->jsHandler = MinifyJsHandler::init($this->getConfig());
 
         /**
-         * Request handler
-         * @see AbstractBaseTrait::getRequestHandler() // Available in modules
-         */
-        $this->requestHandler = RequestHandler::init();
-
-        /**
          * Navigation handler
          * @see AbstractBaseTrait::getNavigationHandler() // !Only available for system
          */
         $this->navigationHandler = NavigationHandler::init($this);
+        $this->addContext("navigation_routes", $this->getNavigationHandler()->getRoutes());
     }
 
     /**
@@ -230,8 +239,10 @@ abstract class AbstractBase
      * @param string|null $module
      * @param string|null $controller
      * @param string|null $action
+     * @param array $querys
+     * @param string $tab
      */
-    protected function redirect(?string $module = null, ?string $controller = null, ?string $action = null): void
+    protected function redirect(?string $module = null, ?string $controller = null, ?string $action = null, array $querys = [], $tab = ""): void
     {
         $params = [];
 
@@ -247,12 +258,17 @@ abstract class AbstractBase
             $params[] = 'action=' . $action;
         }
 
+        if (!empty($querys)) {
+            foreach ($querys as $key => $query)
+                $params[] = $key . '=' . $query;
+        }
+
         $to = '';
         if (!empty($params)) {
             $to = '?' . implode('&', $params);
         }
 
-        header('Location: index.php' . $to);
+        header('Location: index.php' . $to.$tab);
         exit;
     }
 

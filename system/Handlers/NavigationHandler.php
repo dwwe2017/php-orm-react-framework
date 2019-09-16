@@ -42,6 +42,11 @@ class NavigationHandler
     const ADMIN = 3;
 
     /**
+     * @var int
+     */
+    const ROOT = 4;
+
+    /**
      * @var string
      */
     const RESTRICTED_NAV = "restricted";
@@ -99,9 +104,9 @@ class NavigationHandler
      */
     private final function __construct(AbstractBase $controllerInstance)
     {
-        $this->setNavType($controllerInstance);
         $baseDir = $controllerInstance->getBaseDir();
         $modulesBaseDir = sprintf("%s/modules", $baseDir);
+        $this->setNavType($controllerInstance);
         $haystack = DirHelper::init($modulesBaseDir,
             NavigationException::class)->getScan();
 
@@ -172,66 +177,105 @@ class NavigationHandler
      */
     private function setRoutes(AbstractBase $controllerInstance): void
     {
-        $this->routes["sidebar"] = [];
-        $this->routes["top_menu"] = [];
         $annotationReader = new AnnotationReader();
 
         foreach ($this->modulesNamespaces as $key => $modulesNamespace) {
             if (is_array($modulesNamespace)) {
+
                 $key = strtolower($key);
+
                 foreach ($modulesNamespace as $item) {
 
                     $reflectionClass = new ReflectionClass($item);
-                    $reflectionClassName = $reflectionClass->getName();
-                    $reflectionClassNamespace = $reflectionClass->getNamespaceName();
-                    $reflectionClassShortName = $reflectionClass->getShortName();
+                    $reflectionClassNavigationAnnotation = $annotationReader
+                        ->getClassAnnotation($reflectionClass, "Annotations\\Navigation");
 
-                    $active = get_class($controllerInstance) === $reflectionClassName;
-                    $accessAnnotationsParent = $annotationReader->getClassAnnotation($reflectionClass, "Annotations\\Access");
-                    $accessType = $this->getNavTypeFromReflection($reflectionClass);
-                    $accessRoleParent = $accessAnnotationsParent->role ? constant(strtoupper("self::" . $accessAnnotationsParent->role))
-                        : ($accessType === self::PUBLIC_NAV ? $this::ANY : $this::USER);
+                    if (!$reflectionClassNavigationAnnotation || !$reflectionClassNavigationAnnotation->position) {
+                        continue;
+                    }
 
-                    $infoAnnotations = $annotationReader->getClassAnnotation($reflectionClass, "Annotations\\Info");
+                    if(!$reflectionClassNavigationAnnotation->text){
+                        $reflectionClassNavigationAnnotation->text = ucfirst($key);
+                    }
 
-                    $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
-                    foreach ($reflectionMethods as $method) {
-                        if (!StringHelper::init($method)->hasFilter("Action")) {
-                            continue;
-                        }
+                    $reflectionClassPosition = $reflectionClassNavigationAnnotation->position;
+                    $positions = is_array($reflectionClassPosition) ? $reflectionClassPosition : [$reflectionClassPosition];
 
-                        $moduleShortName = StringHelper::init($reflectionClassNamespace)->replace(["Modules\\", "\\Controllers"], "")->getString();
-                        $controllerShortName = StringHelper::init($reflectionClassShortName)->replace("Controller", "")->getString();
-                        $actionShortName = ucfirst(StringHelper::init($method->getName())->replace("Action", "")->getString());
+                    foreach ($positions as $position) {
+                        $reflectionClassName = $reflectionClass->getName();
+                        $reflectionClassNamespace = $reflectionClass->getNamespaceName();
+                        $reflectionClassShortName = $reflectionClass->getShortName();
 
-                        $navKeys = [
-                            "sidebar" => $annotationReader->getMethodAnnotation($method, "Annotations\\Sidebar"),
-                            "top_menu" => $annotationReader->getMethodAnnotation($method, "Annotations\\TopMenu"),
-                            "misc" => ""
-                        ];
+                        /**
+                         * Get access level properties from annotations
+                         */
+                        $reflectionClassAccessAnnotation = $annotationReader->getClassAnnotation($reflectionClass, "Annotations\\Access");
+                        $reflectionClassSiteAccessLevel = $this->getNavTypeFromReflection($reflectionClass);
+                        $reflectionClassAccessRole = $reflectionClassAccessAnnotation->role ?? ($reflectionClassSiteAccessLevel === self::PUBLIC_NAV ? "ANY" : "USER");
+                        $reflectionClassAccessRole = constant(strtoupper("self::" . $reflectionClassAccessRole));
+                        $reflectionClassAccessRole = $reflectionClassAccessRole === self::ANY && $reflectionClassSiteAccessLevel === self::RESTRICTED_NAV
+                            ? self::USER : $reflectionClassAccessRole;
 
-                        foreach ($navKeys as $navKey => $options) {
-                            if (!$options) {
+                        /**
+                         * Get some informations about class from annotations
+                         */
+                        $reflectionClassInfoAnnotation = $annotationReader
+                            ->getClassAnnotation($reflectionClass, "Annotations\\Info");
+
+                        /**
+                         * Check if controller is selected
+                         */
+                        $reflectionClassPropertyIsActive = get_class($controllerInstance) === $reflectionClassName;
+
+                        $this->routes[$position][$key]["controller_access"] = $reflectionClassSiteAccessLevel;
+                        $this->routes[$position][$key]["required_user_group"] = $this->getRoleConvertedIntoReadableTerms($reflectionClassAccessRole);
+                        $this->routes[$position][$key]["active"] = $reflectionClassPropertyIsActive;
+                        $this->routes[$position][$key]["options"] = $this->annotationToArray($reflectionClassNavigationAnnotation);
+                        $this->routes[$position][$key]["info"] = $reflectionClassInfoAnnotation;
+
+                        $reflectionClassMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+                        foreach ($reflectionClassMethods as $method) {
+                            if (!StringHelper::init($method)->hasFilter("Action")) {
                                 continue;
                             }
 
-                            $this->routes[$navKey][$key]["active"] = $active;
-                            $this->routes[$navKey][$key]["access_type"] = $accessType;
-                            $this->routes[$navKey][$key]["access_role"] = $this->getRoleReadable($accessRoleParent);
-                            $this->routes[$navKey][$key]["info"] = $infoAnnotations;
+                            $reflectionMethodSubNavigationAnnotation = $annotationReader
+                                ->getMethodAnnotation($method, "Annotations\\SubNavigation");
 
-                            $accessAnnotationsChild[$navKey] = $annotationReader->getMethodAnnotation($method, "Annotations\\Access");
-                            $accessRoleChild[$navKey] = $this->getAtLeastParentRole($accessRoleParent, $accessAnnotationsChild[$navKey]);
-                            $infoAnnotations = $annotationReader->getMethodAnnotation($method, "Annotations\\Info");
+                            if (!$reflectionMethodSubNavigationAnnotation) {
+                                continue;
+                            }
 
-                            $this->routes[$navKey][$key]["routes"][] = [
-                                "access_role" => $this->getRoleReadable($accessRoleChild[$navKey]),
-                                "active" => $this->currentAction === lcfirst($actionShortName),
-                                "options" => $options,
-                                "info" => $infoAnnotations,
-                                "module" => lcfirst($moduleShortName),
-                                "controller" => lcfirst($controllerShortName),
-                                "action" => lcfirst($actionShortName)
+                            $moduleShortNameFromMethod = StringHelper::init($reflectionClassNamespace)
+                                ->replace(["Modules\\", "\\Controllers"], "")->lcFirst()->getString();
+
+                            $controllerShortNameFromMethod = StringHelper::init($reflectionClassShortName)
+                                ->replace("Controller", "")->lcFirst()->getString();
+
+                            $actionShortNameFromMethod = StringHelper::init($method->getName())
+                                ->replace("Action", "")->lcFirst()->getString();
+
+                            if(!$reflectionMethodSubNavigationAnnotation->text){
+                                $reflectionMethodSubNavigationAnnotation->text = ucfirst($actionShortNameFromMethod);
+                            }
+
+                            if(!$reflectionMethodSubNavigationAnnotation->href){
+                                $reflectionMethodSubNavigationAnnotation->href = sprintf("index.php?module=%s&controller=%s&action=%s",
+                                $moduleShortNameFromMethod, $controllerShortNameFromMethod, $actionShortNameFromMethod);
+                            }
+
+                            $accessAnnotationsChild = $annotationReader->getMethodAnnotation($method, "Annotations\\Access");
+                            $accessRoleChild = $this->getAtLeastParentRole($reflectionClassAccessRole, $accessAnnotationsChild);
+                            $reflectionMethodInfoAnnotation = $annotationReader->getMethodAnnotation($method, "Annotations\\Info");
+
+                            $this->routes[$position][$key]["routes"][] = [
+                                "required_user_group" => $this->getRoleConvertedIntoReadableTerms($accessRoleChild),
+                                "active" => $this->currentAction === lcfirst($actionShortNameFromMethod),
+                                "options" => $this->annotationToArray($reflectionMethodSubNavigationAnnotation),
+                                "info" => $reflectionMethodInfoAnnotation,
+                                "module" => $moduleShortNameFromMethod,
+                                "controller" => $controllerShortNameFromMethod,
+                                "action" => $actionShortNameFromMethod
                             ];
                         }
                     }
@@ -252,9 +296,11 @@ class NavigationHandler
      * @param $accessRoleConstant
      * @return string
      */
-    public function getRoleReadable($accessRoleConstant)
+    public function getRoleConvertedIntoReadableTerms($accessRoleConstant)
     {
-        switch ($accessRoleConstant){
+        switch ($accessRoleConstant) {
+            case self::ROOT:
+                return "root";
             case self::ADMIN:
                 return "admin";
             case self::RESELLER:
@@ -279,6 +325,20 @@ class NavigationHandler
         $child = $child->role ?? "ANY";
         $child = constant("self::" . strtoupper($child));
 
-        return $child<$parent ? $parent : $child;
+        return $child < $parent ? $parent : $child;
+    }
+
+    /**
+     * @param $annotation
+     * @return array
+     */
+    public function annotationToArray($annotation)
+    {
+        $result = [];
+        foreach ($annotation as $key => $item){
+            $result[$key] = $item;
+        }
+
+        return $result;
     }
 }

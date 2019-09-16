@@ -10,10 +10,16 @@ use Doctrine\Common\Annotations\Annotation\Enum;
  * Class Access
  * @package Annotations
  * @Annotation
- * @Target({"METHOD", "CLASS"})
+ * @Target("CLASS")
  */
-class Sidebar
+class Navigation
 {
+    /**
+     * @var string
+     * @Enum({"sidebar", "top", "misc"})
+     */
+    public $position;
+
     /**
      * @var string
      */
@@ -22,12 +28,12 @@ class Sidebar
     /**
      * @var string
      */
-    public $title;
+    public $icon = "icon-angle-right";
 
     /**
      * @var string
      */
-    public $alt;
+    public $title;
 
     /**
      * @var bool
@@ -42,17 +48,12 @@ class Sidebar
     /**
      * @var string
      */
-    public $class;
-
-    /**
-     * @var string
-     */
     public $description;
 
     /**
      * @var string
      */
-    public $externalLink;
+    public $href = "javascript:void(0)";
 
     /**
      * @var string

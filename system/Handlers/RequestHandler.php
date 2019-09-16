@@ -12,9 +12,10 @@ namespace Handlers;
 
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
-use Dflydev\DotAccessData\Util;
+use Controllers\AbstractBase;
+use Controllers\PublicXmlController;
+use Controllers\RestrictedXmlController;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
-use Whoops\Util\Misc;
 
 /**
  * Class RequestHandler
@@ -50,31 +51,58 @@ class RequestHandler
     private $server;
 
     /**
+     * @var string|null
+     */
+    private $requestUrl;
+
+    /**
      * @var bool
      */
     private $xmlRequest = false;
 
     /**
-     * RequestHandler constructor.
+     * @var bool
      */
-    public function __construct()
+    private $xml = false;
+
+    /**
+     * RequestHandler constructor.
+     * @param AbstractBase $controllerInstance
+     */
+    public function __construct(AbstractBase $controllerInstance)
     {
         $this->headers = ConfigFactory::fromArray(getallheaders() ?? []);
         $this->request = ConfigFactory::fromArray($_REQUEST ?? []);
         $this->post = ConfigFactory::fromArray($_POST ?? []);
         $this->query = ConfigFactory::fromArray($_GET ?? []);
         $this->server = ConfigFactory::fromArray($_SERVER ?? []);
+
+        $this->requestUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI]";
+
         $this->xmlRequest = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
             && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+
+        /**
+         * @see RequestHandler::isXml()
+         */
+        if ($controllerInstance instanceof RestrictedXmlController) {
+            $this->xml = true;
+        } elseif ($controllerInstance instanceof PublicXmlController) {
+            $this->xml = true;
+        } else {
+            $this->xml = $this->isXmlRequest();
+        }
     }
 
     /**
-     *
+     * @param AbstractBase $controllerInstance
+     * @return RequestHandler|null
      */
-    public static function init()
+    public static function init(AbstractBase $controllerInstance)
     {
-        if (is_null(self::$instance)) {
-            self::$instance = new self();
+        if (is_null(self::$instance) || serialize($controllerInstance) !== self::$instanceKey) {
+            self::$instance = new self($controllerInstance);
+            self::$instanceKey = serialize($controllerInstance);
         }
 
         return self::$instance;
@@ -134,5 +162,22 @@ class RequestHandler
     public function isXmlRequest(): bool
     {
         return $this->xmlRequest;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRequestUrl(): ?string
+    {
+        return $this->requestUrl;
+    }
+
+    /**
+     * In contrast to isXmlRequest, it also checks whether it is currently the call of an XmlController
+     * @return bool
+     */
+    public function isXml(): bool
+    {
+        return $this->xml;
     }
 }

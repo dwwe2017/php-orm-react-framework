@@ -17,10 +17,4 @@ namespace Interfaces\ControllerInterfaces;
 interface RestrictedControllerInterface
 {
     public function indexAction(): void;
-
-    public function loginOrRegisterAction(): void;
-
-    public function loginAction(): void;
-
-    public function registerAction(): void;
 }

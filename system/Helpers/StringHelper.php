@@ -127,4 +127,13 @@ class StringHelper
     {
         return strpos($this->string, $filter) !== false;
     }
+
+    /**
+     * @return $this
+     */
+    public function lcFirst()
+    {
+        $this->string = lcfirst($this->string);
+        return $this;
+    }
 }

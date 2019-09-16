@@ -4,13 +4,15 @@
 namespace Annotations;
 
 
+use Doctrine\Common\Annotations\Annotation\Enum;
+
 /**
  * Class Access
  * @package Annotations
  * @Annotation
- * @Target({"METHOD", "CLASS"})
+ * @Target("METHOD")
  */
-class TopMenu
+class SubNavigation
 {
     /**
      * @var string
@@ -20,12 +22,12 @@ class TopMenu
     /**
      * @var string
      */
-    public $title;
+    public $icon = "icon-angle-right";
 
     /**
      * @var string
      */
-    public $alt;
+    public $title;
 
     /**
      * @var bool
@@ -40,17 +42,12 @@ class TopMenu
     /**
      * @var string
      */
-    public $class;
-
-    /**
-     * @var string
-     */
     public $description;
 
     /**
      * @var string
      */
-    public $externalLink;
+    public $href;
 
     /**
      * @var string

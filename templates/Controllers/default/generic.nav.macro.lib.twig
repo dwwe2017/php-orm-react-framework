@@ -1,0 +1,52 @@
+{#
+@macro nav_sidebar
+@param navigation array
+ #}
+{% macro sidebar(navigation_routes=[]) %}
+    <ul id="nav">
+    {% if(navigation_routes != false) %}
+        {% if navigation_routes.sidebar is defined %}
+            {% for key, item in navigation_routes.sidebar %}
+                <li {% if(item.active is defined) %}{% if(item.active != false) %}class="current open"{% endif %}{% endif %}
+                        {% if(item.options.hidden is defined) %}{% if(item.options.hidden != false) %}style="display: none;"{% endif %}{% endif %}>
+                    <a href="{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}"
+                       title="{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                    >
+                        {% if(item.options.icon is defined) %}
+                            {% if(item.options.icon != false) %}
+                                <i class="{{ item.options.icon }}"></i>
+                            {% endif %}
+                        {% endif %}
+                        {% if(item.options.text is defined) %}
+                            {{ item.options.text|trans }}
+                        {% endif %}
+                    </a>
+                    {% if item.routes is defined %}
+                        {% if(item.routes != false) %}
+                            <ul class="sub-menu">
+                                {% for route in item.routes %}
+                                    <li {% if(route.active is defined) %}{% if(route.active != false) %}class="current"{% endif %}{% endif %}
+                                            {% if(route.options.hidden is defined) %}{% if(route.options.hidden != false) %}style="display: none;"{% endif %}{% endif %}>
+                                        <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
+                                           title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
+                                        >
+                                            {% if(route.options.icon is defined) %}
+                                                {% if(route.options.icon != false) %}
+                                                    <i class="{{ route.options.icon }}"></i>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if(route.options.text is defined) %}
+                                                {{ route.options.text|trans }}
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    </ul>
+{% endmacro %}
