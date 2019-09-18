@@ -20,7 +20,7 @@ use Controllers\RestrictedController;
  * Class PublicController
  * @package Modules\Dashboard\Controllers
  * @Access(role="user")
- * @Navigation(position="sidebar")
+ * @Navigation(position="sidebar", icon="icon-dashboard")
  * @Info(author="DW </> Web-Engineering", website="https://dwwe.de", email="daniel@dwwe.de")
  */
 class IndexController extends RestrictedController

@@ -4,6 +4,7 @@
 namespace Handlers;
 
 
+use Annotations\Access;
 use Controllers\AbstractBase;
 use Controllers\PublicController;
 use Controllers\SettingsController;
@@ -20,31 +21,6 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 class NavigationHandler
 {
     use InstantiationStaticsUtilTrait;
-
-    /**
-     * @var int
-     */
-    const ANY = -1;
-
-    /**
-     * @var int
-     */
-    const USER = 1;
-
-    /**
-     * @var int
-     */
-    const RESELLER = 2;
-
-    /**
-     * @var int
-     */
-    const ADMIN = 3;
-
-    /**
-     * @var int
-     */
-    const ROOT = 4;
 
     /**
      * @var string
@@ -212,9 +188,9 @@ class NavigationHandler
                         $reflectionClassAccessAnnotation = $annotationReader->getClassAnnotation($reflectionClass, "Annotations\\Access");
                         $reflectionClassSiteAccessLevel = $this->getNavTypeFromReflection($reflectionClass);
                         $reflectionClassAccessRole = $reflectionClassAccessAnnotation->role ?? ($reflectionClassSiteAccessLevel === self::PUBLIC_NAV ? "ANY" : "USER");
-                        $reflectionClassAccessRole = constant(strtoupper("self::" . $reflectionClassAccessRole));
-                        $reflectionClassAccessRole = $reflectionClassAccessRole === self::ANY && $reflectionClassSiteAccessLevel === self::RESTRICTED_NAV
-                            ? self::USER : $reflectionClassAccessRole;
+                        $reflectionClassAccessRole = constant("Annotations\\Access::" . strtoupper($reflectionClassAccessRole));
+                        $reflectionClassAccessRole = $reflectionClassAccessRole === Access::ANY && $reflectionClassSiteAccessLevel === self::RESTRICTED_NAV
+                            ? Access::USER : $reflectionClassAccessRole;
 
                         /**
                          * Get some informations about class from annotations
@@ -299,15 +275,15 @@ class NavigationHandler
     public function getRoleConvertedIntoReadableTerms($accessRoleConstant)
     {
         switch ($accessRoleConstant) {
-            case self::ROOT:
+            case Access::ROOT:
                 return "root";
-            case self::ADMIN:
+            case Access::ADMIN:
                 return "admin";
-            case self::RESELLER:
+            case Access::RESELLER:
                 return "reseller";
-            case self::USER:
+            case Access::USER:
                 return "user";
-            case self::ANY:
+            case Access::ANY:
                 return "any";
         }
 
@@ -321,9 +297,9 @@ class NavigationHandler
      */
     public function getAtLeastParentRole(int $parent, $child)
     {
-        $parent = $parent ?? self::ANY;
+        $parent = $parent ?? Access::ANY;
         $child = $child->role ?? "ANY";
-        $child = constant("self::" . strtoupper($child));
+        $child = constant("Annotations\\Access::" . strtoupper($child));
 
         return $child < $parent ? $parent : $child;
     }

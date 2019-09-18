@@ -9,9 +9,7 @@
 
 namespace Entities;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Interfaces\EntityInterfaces\CustomEntityInterface;
 use Traits\EntityTraits\CustomEntityTrait;
 
@@ -27,69 +25,8 @@ class User implements CustomEntityInterface
     use CustomEntityTrait;
 
     /**
-     * @var int
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer", length=11, nullable=false)
-     */
-    protected $id;
-
-    /**
      * @var int|null
      * @ORM\Column(type="integer", length=11, nullable=true)
      */
     protected $group_id;
-
-    /**
-     * @var DateTime|null
-     * @Gedmo\Timestampable(on="change", field={"group_id"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    protected $changed;
-
-    /**
-     * @var DateTime|null
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    protected $updated;
-
-    /**
-     * @var DateTime|null
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    protected $created;
-
-    /**
-     * @return int|null
-     */
-    public function getGroupId(): ?int
-    {
-        return $this->group_id;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return DateTime|null
-     */
-    public function getCreated(): ?DateTime
-    {
-        return $this->created;
-    }
-
-    /**
-     * @return DateTime|null
-     */
-    public function getUpdated(): ?DateTime
-    {
-        return $this->updated;
-    }
 }

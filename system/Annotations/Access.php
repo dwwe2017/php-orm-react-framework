@@ -15,6 +15,31 @@ use Doctrine\Common\Annotations\Annotation\Enum;
 class Access
 {
     /**
+     *
+     */
+    const ROOT = 4;
+
+    /**
+     *
+     */
+    const ADMIN = 3;
+
+    /**
+     *
+     */
+    const RESELLER = 2;
+
+    /**
+     *
+     */
+    const USER = 1;
+
+    /**
+     *
+     */
+    const ANY = -1;
+
+    /**
      * @Enum({"root", "admin", "reseller", "user"})
      */
     public $role;

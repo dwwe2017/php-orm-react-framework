@@ -1,4 +1,6 @@
 {% block layout_header %}
+    {% import "generic.nav.macro.lib.twig" as navigation %}
+
     <header class="header navbar navbar-fixed-top" role="banner">
         <!-- Top Navigation Bar -->
         <div class="container">
@@ -22,31 +24,12 @@
             <!-- /Sidebar Toggler -->
 
             <!-- Top Left Menu -->
-            <ul class="nav navbar-nav navbar-left hidden-xs hidden-sm">
-                <li>
-                    <a href="#">
-                        Dashboard
-                    </a>
-                </li>
-            </ul>
+            {{ navigation.top_left(navigation_routes) }}
             <!-- /Top Left Menu -->
 
             <!-- Top Right Menu -->
-            <ul class="nav navbar-nav navbar-right">
-                <!-- User Login Dropdown -->
-                <li class="dropdown user">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="icon-male"></i>
-                        <span class="username">John Doe</span>
-                        <i class="icon-caret-down small"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="login.html"><i class="icon-key"></i> Log Out</a></li>
-                    </ul>
-                </li>
-                <!-- /user login dropdown -->
-            </ul>
-            <!-- /Top Right Menu -->
+            {{ navigation.top_right(navigation_routes) }}
+            <!-- Top Right Menu -->
         </div>
         <!-- /top navigation bar -->
     </header> <!-- /.header -->

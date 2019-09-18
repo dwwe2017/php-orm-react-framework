@@ -30,7 +30,7 @@ $(document).ready(function(){
 	});
 
 	//===== Sparklines =====//
-
+	/*
 	$("#sparkline-bar").sparkline('html', {
 		type: 'bar',
 		height: '35px',
@@ -43,7 +43,7 @@ $(document).ready(function(){
 		height: '35px',
 		zeroAxis: false,
 		barColor: App.getLayoutColorCode('green')
-	});
+	});*/
 
 	//===== Refresh-Button on Widgets =====//
 

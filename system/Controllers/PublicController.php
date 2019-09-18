@@ -24,7 +24,6 @@ class PublicController extends AbstractBase implements PublicControllerInterface
      */
     public final function loginOrRegisterAction(): void
     {
-        $this->addCss("assets/css/plugins/nprogress.css");
         $this->addCss("assets/css/login.css");
 
         $this->setJs([
@@ -47,7 +46,6 @@ class PublicController extends AbstractBase implements PublicControllerInterface
      */
     public final function loginAction(): void
     {
-        $this->addCss("assets/css/plugins/nprogress.css");
         $this->addCss("assets/css/login.css");
 
         $this->setJs([
@@ -70,7 +68,6 @@ class PublicController extends AbstractBase implements PublicControllerInterface
      */
     public final function registerAction(): void
     {
-        $this->addCss("assets/css/plugins/nprogress.css");
         $this->addCss("assets/css/login.css");
 
         $this->setJs([

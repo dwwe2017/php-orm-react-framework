@@ -1,6 +1,6 @@
 {#
 @macro nav_sidebar
-@param navigation array
+@param navigation_routes array
  #}
 {% macro sidebar(navigation_routes=[]) %}
     <ul id="nav">
@@ -20,27 +20,115 @@
                                 {{ item.options.text|trans }}
                             {% endif %}
                         </a>
-                        {% if item.routes is defined %}
-                            {% if(item.routes != false) %}
-                                <ul class="sub-menu">
-                                    {% for route in item.routes %}
-                                        <li {% if(route.active != false) %}class="current"{% endif %}
-                                            {% if(route.options.hidden != false) %}style="display: none;"{% endif %}
+                        {% if(item.routes != false) %}
+                            <ul class="sub-menu">
+                                {% for route in item.routes %}
+                                    <li {% if(route.active != false) %}class="current"{% endif %}
+                                        {% if(route.options.hidden != false) %}style="display: none;"{% endif %}
+                                    >
+                                        <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
+                                           title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
                                         >
-                                            <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
-                                               title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
-                                            >
-                                                {% if(route.options.icon != false) %}
-                                                    <i class="{{ route.options.icon }}"></i>
-                                                {% endif %}
-                                                {% if(route.options.text != false) %}
-                                                    {{ route.options.text|trans }}
-                                                {% endif %}
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
+                                            {% if(route.options.icon != false) %}
+                                                <i class="{{ route.options.icon }}"></i>
+                                            {% endif %}
+                                            {% if(route.options.text != false) %}
+                                                {{ route.options.text|trans }}
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    </ul>
+{% endmacro %}
+
+{#
+@macro top_left
+@param navigation_routes array
+ #}
+{% macro top_left(navigation_routes=[]) %}
+    <ul class="nav navbar-nav navbar-left hidden-xs hidden-sm">
+        {% if navigation_routes.top_left is defined %}
+            {% if navigation_routes.top_left != false %}
+                {% for item in navigation_routes.top_left %}
+                    <li class="dropdown">
+                        <a href="{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}"
+                           title="{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                           class="dropdown-toggle" data-toggle="dropdown"
+                        >
+                            {% if(item.options.text != false) %}
+                                {{ item.options.text|trans }}
                             {% endif %}
+                             <i class="icon-caret-down small"></i>
+                        </a>
+                        {% if(item.routes != false) %}
+                            <ul class="dropdown-menu">
+                                {% for route in item.routes %}
+                                    <li>
+                                        <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
+                                           title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
+                                        >
+                                            {% if(route.options.icon != false) %}
+                                                <i class="{{ route.options.icon }}"></i>
+                                            {% endif %}
+                                            {% if(route.options.text != false) %}
+                                                {{ route.options.text|trans }}
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                    <!--<li class="divider"></li>-->
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    </ul>
+{% endmacro %}
+
+{#
+@macro top_right
+@param navigation_routes array
+ #}
+{% macro top_right(navigation_routes=[]) %}
+    <ul class="nav navbar-nav navbar-right">
+        {% if navigation_routes.top_right is defined %}
+            {% if navigation_routes.top_right != false %}
+                {% for item in navigation_routes.top_right %}
+                    <li class="dropdown">
+                        <a href="{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}"
+                           title="{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                           class="dropdown-toggle" data-toggle="dropdown"
+                        >
+                            {% if(item.options.text != false) %}
+                                {{ item.options.text|trans }}
+                            {% endif %}
+                            <i class="icon-caret-down small"></i>
+                        </a>
+                        {% if(item.routes != false) %}
+                            <ul class="dropdown-menu">
+                                {% for route in item.routes %}
+                                    <li>
+                                        <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
+                                           title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
+                                        >
+                                            {% if(route.options.icon != false) %}
+                                                <i class="{{ route.options.icon }}"></i>
+                                            {% endif %}
+                                            {% if(route.options.text != false) %}
+                                                {{ route.options.text|trans }}
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                    <!--<li class="divider"></li>-->
+                                {% endfor %}
+                            </ul>
                         {% endif %}
                     </li>
                 {% endfor %}

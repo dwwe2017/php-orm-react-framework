@@ -172,7 +172,6 @@ abstract class AbstractBase
          * @see AbstractBaseTrait::getNavigationHandler() // !Only available for system
          */
         $this->navigationHandler = NavigationHandler::init($this);
-        $this->addContext("navigation_routes", $this->getNavigationHandler()->getRoutes());
     }
 
     /**
@@ -283,6 +282,7 @@ abstract class AbstractBase
         $this->addContext("message", $this->getMessage());
         $this->addContext("minified_css", $this->getCssHandler()->getDefaultMinifyCssFile(true));
         $this->addContext("minified_js", $this->getJsHandler()->getDefaultMinifyJsFile(true));
+        $this->addContext("navigation_routes", $this->getNavigationHandler()->getRoutes());
 
         echo $this->template->render($this->context);
     }

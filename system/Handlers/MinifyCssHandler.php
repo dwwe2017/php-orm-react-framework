@@ -65,9 +65,29 @@ class MinifyCssHandler
     private function setDefaults()
     {
         $defaultCssPaths = array(
+            //Bootstrap
             sprintf("%s/bootstrap/css/bootstrap.min.css", $this->baseDir),
             sprintf("%s/assets/css/main.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins.css", $this->baseDir),
+            //Plugins
+            sprintf("%s/assets/css/plugins/bootstrap-colorpicker.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/bootstrap-multiselect.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/bootstrap-switch.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/bootstrap-wizard.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/bootstrap-wysihtml5.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/datatables.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/datatables_bootstrap.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/daterangepicker.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/duallistbox.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/fullcalendar.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/jquery-ui.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/nestable.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/nprogress.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/pickadate.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/select2.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/tagsinput.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/typeahead.css", $this->baseDir),
+            sprintf("%s/assets/css/plugins/uniform.css", $this->baseDir),
+            //General
             sprintf("%s/assets/css/responsive.css", $this->baseDir),
             sprintf("%s/assets/css/icons.css", $this->baseDir)
         );

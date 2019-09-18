@@ -11,6 +11,9 @@ namespace Traits\ControllerTraits;
 
 
 use Configula\ConfigValues;
+use Controllers\PublicController;
+use Controllers\RestrictedController;
+use Controllers\SettingsController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
 use Gettext\GettextTranslator;
@@ -331,7 +334,6 @@ trait AbstractBaseTrait
     /**
      * @param string $fileOrString
      * @param bool $codeAsString
-     * @example $this->addJs("assets/js/custom.js")
      */
     protected final function addJs(string $fileOrString, bool $codeAsString = false)
     {
@@ -370,6 +372,22 @@ trait AbstractBaseTrait
     protected final function getRequestHandler(): RequestHandler
     {
         return $this->requestHandler;
+    }
+
+    /**
+     * @return string
+     */
+    protected final function getControllerAccessLevel()
+    {
+        if ($this instanceof RestrictedController) {
+            return "restricted";
+        } elseif ($this instanceof PublicController) {
+            return "public";
+        } elseif ($this instanceof SettingsController) {
+            return "settings";
+        } else {
+            return "misc";
+        }
     }
 
     /**

@@ -16,7 +16,7 @@ class Navigation
 {
     /**
      * @var string
-     * @Enum({"sidebar", "top", "misc"})
+     * @Enum({"sidebar", "top_left", "top_right", "misc"})
      */
     public $position;
 

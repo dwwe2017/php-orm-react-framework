@@ -132,7 +132,6 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * @param null $connectionOption
      * @return EntityManager
      * @throws DoctrineException
-     * @example $this->getModuleDbService()->getEntityManager("module");
      */
     public final function getEntityManager($connectionOption = null)
     {
