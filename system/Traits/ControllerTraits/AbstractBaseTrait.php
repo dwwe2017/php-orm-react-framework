@@ -629,6 +629,7 @@ trait AbstractBaseTrait
      * @param array $args
      * @param int $expiration
      * @return mixed
+     * @example $this->fromSystemCache($this->getNavigationHandler(), "getRoutes", [], 60)
      */
     private function fromSystemCache($object, string $method, array $args = array(), $expiration = 3600)
     {
@@ -674,13 +675,5 @@ trait AbstractBaseTrait
      * CACHED AREA - PRIVATE
      */
 
-    /**
-     * @param int $expiration
-     * @return mixed
-     * @see AbstractBaseTrait::fromSystemCache()
-     */
-    private function getNavigationRoutes($expiration = 3600)
-    {
-        return $this->fromSystemCache($this->getNavigationHandler(), "getRoutes", [], $expiration);
-    }
+    //***
 }

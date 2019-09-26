@@ -395,7 +395,9 @@ abstract class AbstractBase
          * Navigation vars
          * @see AbstractBaseTrait::getNavigationHandler()
          */
-        $this->addContext("navigation_routes", $this->getNavigationRoutes());
+        $this->addContext("navigation_routes",
+            $this->getNavigationHandler()->getRoutes()
+        );
 
         /**
          * Render Twig
