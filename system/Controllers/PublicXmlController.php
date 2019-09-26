@@ -45,28 +45,6 @@ class PublicXmlController extends PublicController implements XmlControllerInter
     /**
      *
      */
-    public final function render404(): void
-    {
-        header(self::HEADER_ERROR_404);
-        header(self::HEADER_CONTENT_TYPE_JSON);
-        $this->addContext("error", "Not Found");
-        die(json_encode($this->getContext()));
-    }
-
-    /**
-     *
-     */
-    public final function forbiddenAction(): void
-    {
-        header(self::HEADER_ERROR_403);
-        header(self::HEADER_CONTENT_TYPE_JSON);
-        $this->addContext("error", "Forbidden");
-        die(json_encode($this->getContext()));
-    }
-
-    /**
-     *
-     */
     public final function render(): void
     {
         header(self::HEADER_CONTENT_TYPE_JSON);

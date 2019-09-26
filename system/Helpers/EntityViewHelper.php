@@ -9,24 +9,56 @@ use Doctrine\ORM\EntityManager;
 use Exceptions\FileFactoryException;
 use Interfaces\EntityInterfaces\CustomEntityInterface;
 use Traits\EntityTraits\CustomEntityTrait;
+use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class ViewHelper
  * @package Helpers
  */
-class ViewHelper
+class EntityViewHelper
 {
+    use InstantiationStaticsUtilTrait;
+
     /**
-     * @param EntityManager $em
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * ViewHelper constructor.
+     * @param EntityManager $entityManager
+     */
+    private function __construct(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @param EntityManager $entityManager
+     * @return EntityViewHelper|null
+     */
+    public static final function init(EntityManager $entityManager)
+    {
+        if (is_null(self::$instance) || serialize($entityManager->getConnection()->getParams()) !== self::$instanceKey) {
+            self::$instance = new self($entityManager);
+            self::$instanceKey = serialize($entityManager->getConnection()->getParams());
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * @param mixed $entities
      * @param string $className
      * @param string $icon
      * @param bool $checkbox_column
      * @param bool $toolbar
+     * @param array $addModuleControllerAction
      * @param array $editModuleControllerAction
      * @param array $deleteModuleControllerAction
      * @return array
      * @example $this->getResponsiveTableArrayFromEntity(
-     *  $entityManager,
+     *  $users,
      *  Entities\Users::class,
      *  "icon-reorder",
      *  true, true,
@@ -34,7 +66,7 @@ class ViewHelper
      *  ["module", "controller", "deleteAction"]
      * );
      */
-    public static function getResponsiveTableArrayFromEntity(EntityManager $em, string $className, $icon = "icon-reorder", $checkbox_column = true, $toolbar = true, array $editModuleControllerAction = array(), array $deleteModuleControllerAction = array())
+    public final function getResponsiveTableArrayFromEntity(string $className, $entities = null, $icon = "icon-reorder", $checkbox_column = true, $toolbar = true, array $addModuleControllerAction = array(), array $editModuleControllerAction = array(), array $deleteModuleControllerAction = array())
     {
         $thead = array();
         $tbody = array();
@@ -45,7 +77,7 @@ class ViewHelper
             ];
         }
 
-        $meta = $em->getClassMetadata($className);
+        $meta = $this->entityManager->getClassMetadata($className);
 
         /**
          * @internal Here, it is checked whether the entity to be processed also contains or uses the corresponding traits and / or interfaces
@@ -70,8 +102,9 @@ class ViewHelper
             "icon" => $icon
         ];
 
-        $repo = $em->getRepository($className);
-        foreach ($repo->findAll() as $key => $item) {
+        $entities = is_null($entities) ? $this->entityManager->getRepository($className)->findAll() : $entities;
+
+        foreach ($entities as $key => $item) {
             if ($checkbox_column) {
                 $tbody[$key][] = [
                     "checkbox" => method_exists($item, "getId") ? $item->getId() : "checkbox"
@@ -89,6 +122,10 @@ class ViewHelper
                 if ($content instanceof DateTime) {
                     $tbody[$key][] = [
                         "content" => $content->format("d.m.Y")
+                    ];
+                } elseif(is_object($content) && method_exists($content, "getName")) {
+                    $tbody[$key][] = [
+                        "content" => htmlentities($content->getName())
                     ];
                 } else {
                     $tbody[$key][] = [
@@ -129,13 +166,29 @@ class ViewHelper
             }
         }
 
-        return [
+        $result = [
             "heading" => $heading,
-            "toolbar" => $toolbar,
+            "toolbar" => $toolbar ? [
+                "collapse" => true,
+                "refresh" => true,
+                "manage" => $checkbox_column
+            ] : false,
             "thead" => $thead,
             "tbody" => $tbody,
             "buttons" => !empty($editModuleControllerAction)
                 || !empty($deleteModuleControllerAction)
         ];
+
+        /**
+         * If the array for the parameters of the link are not empty, the GET-Url will be created automatically
+         */
+        if (!empty($addModuleControllerAction)) {
+            $module = $addModuleControllerAction[0] ?? null;
+            $controller = $addModuleControllerAction[1] ?? null;
+            $action = $addModuleControllerAction[2] ?? null;
+            $result["toolbar"]["add"] = sprintf("?module=%s&controller=%s&action=%s", $module, $controller, $action);
+        }
+
+        return $result;
     }
 }

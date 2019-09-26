@@ -8,21 +8,49 @@
             <div class="widget box">
                 <div class="widget-header">
                     {% if(table_data.heading is defined) %}
-                    <h4>
-                        {% if(table_data.heading.icon is defined) %}
-                            <i class="{{ table_data.heading.icon }}"></i>
-                        {% endif %}
-                        {% if(table_data.heading.text is defined) %}
-                            {{ table_data.heading.text|trans }}
-                        {% endif %}
-                    </h4>
+                        <h4>
+                            {% if(table_data.heading.icon is defined) %}
+                                <i class="{{ table_data.heading.icon }}"></i>
+                            {% endif %}
+                            {% if(table_data.heading.text is defined) %}
+                                {{ table_data.heading.text|trans }}
+                            {% endif %}
+                        </h4>
                     {% endif %}
                     {% if(table_data.toolbar is defined) %}
-                    <div class="toolbar no-padding">
-                        <div class="btn-group">
-                            <span class="btn btn-xs widget-collapse"><i class="icon-angle-down"></i></span>
-                        </div>
-                    </div>
+                        {% if(table_data.toolbar != false) %}
+                            <div class="toolbar no-padding">
+                                <div class="btn-group">
+                                    {% if(table_data.toolbar.collapse is defined) %}
+                                        {% if(table_data.toolbar.collapse != false) %}
+                                            <span class="btn btn-xs widget-collapse"><i class="icon-angle-down"></i></span>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if(table_data.toolbar.refresh is defined) %}
+                                        {% if(table_data.toolbar.refresh != false) %}
+                                            <span class="btn btn-xs widget-refresh"><i class="icon-refresh"></i></span>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if(table_data.toolbar.add is defined) %}
+                                        {% if(table_data.toolbar.add != false) %}
+                                            <a href="{{ table_data.toolbar.add }}" class="btn btn-xs">
+                                                <i class="icon-plus"></i> {% trans %}Add{% endtrans %}
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if(table_data.toolbar.manage is defined) %}
+                                        {% if(table_data.toolbar.manage != false) %}
+                                            <span class="btn btn-xs dropdown-toggle" data-toggle="dropdown">
+                                                Manage <i class="icon-angle-down"></i>
+                                            </span>
+                                            <ul class="dropdown-menu pull-right">
+                                                <li><a href="#"><i class="icon-trash"></i> {% trans %}Delete{% endtrans %}</a></li>
+                                            </ul>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div class="widget-content no-padding">
@@ -34,7 +62,9 @@
                                     {% if(item.checkbox is defined) %}
                                         {% if(item.checkbox != false) %}
                                             <th class="checkbox-column">
-                                                <input type="checkbox" class="uniform">
+                                                <label>
+                                                    <input class="uniform" type="checkbox">
+                                                </label>
                                             </th>
                                         {% endif %}
                                     {% elseif(item.title != false) %}
@@ -64,7 +94,9 @@
                                             {% if(td.checkbox is defined) %}
                                                 {% if(td.checkbox != false) %}
                                                 <td class="checkbox-column">
-                                                    <input type="checkbox" class="uniform" {% if(td.checkbox != "checkbox") %}value="{{ td.checkbox }}{% endif %}">
+                                                    <label>
+                                                        <input type="checkbox" class="uniform" {% if(td.checkbox != "checkbox") %}value="{{ td.checkbox }}{% endif %}">
+                                                    </label>
                                                 </td>
                                                 {% endif %}
                                             {% elseif(td.label is defined) %}

@@ -18,15 +18,19 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
 use Gettext\GettextTranslator;
 use Gettext\Translator;
+use Handlers\CacheHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
 use Handlers\RequestHandler;
+use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
+use Helpers\EntityViewHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
 use Monolog\Logger;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
+use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
 use ReflectionClass;
 use Services\CacheService;
 use Services\DoctrineService;
@@ -97,6 +101,21 @@ trait AbstractBaseTrait
      * @var MinifyJsHandler
      */
     private $jsHandler;
+
+    /**
+     * @var SessionHandler
+     */
+    private $sessionHandler;
+
+    /**
+     * @var CacheHandler
+     */
+    private $systemCacheHandler;
+
+    /**
+     * @var CacheHandler
+     */
+    private $moduleCacheHandler;
 
     /**
      * @var RequestHandler
@@ -187,6 +206,11 @@ trait AbstractBaseTrait
      * @var AnnotationReader
      */
     private $annotationReader;
+
+    /**
+     * @var EntityViewHelper
+     */
+    private $viewHelper;
 
     /**
      * @return string
@@ -291,21 +315,16 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return ExtendedCacheItemPoolInterface
-     * @example $this->getModuleCacheService()->getItem()
-     */
-    protected final function getModuleCacheService()
-    {
-        return $this->moduleCacheService;
-    }
-
-    /**
-     * @param string $fileOrString
+     * @param string|null $fileOrString
      * @param bool $codeAsString
      * @example $this->addCss("assets/css/custom.css")
      */
-    protected final function addCss(string $fileOrString, bool $codeAsString = false)
+    protected final function addCss(?string $fileOrString, bool $codeAsString = false)
     {
+        if (is_null($fileOrString)) {
+            return;
+        }
+
         $fileOrString = $codeAsString ? $fileOrString
             : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
 
@@ -332,11 +351,16 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @param string $fileOrString
+     * @param string|null $fileOrString
      * @param bool $codeAsString
+     * @example $this->addJs("assets/js/custom.js")
      */
-    protected final function addJs(string $fileOrString, bool $codeAsString = false)
+    protected final function addJs(?string $fileOrString, bool $codeAsString = false): void
     {
+        if (is_null($fileOrString)) {
+            return;
+        }
+
         $fileOrString = $codeAsString ? $fileOrString
             : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
 
@@ -391,6 +415,30 @@ trait AbstractBaseTrait
     }
 
     /**
+     * @return SessionHandler
+     */
+    protected final function getSessionHandler(): SessionHandler
+    {
+        return $this->sessionHandler;
+    }
+
+    /**
+     * @return ReflectionClass
+     */
+    protected function getReflectionHelper(): ReflectionClass
+    {
+        return $this->reflectionHelper;
+    }
+
+    /**
+     * @return CacheHandler
+     */
+    protected function getModuleCacheHandler(): CacheHandler
+    {
+        return $this->moduleCacheHandler;
+    }
+
+    /**
      * PRIVATE AREA
      */
 
@@ -425,7 +473,7 @@ trait AbstractBaseTrait
     private function setView(string $templatePath): void
     {
         $controller = $this->getModuleManager()->getControllerShortName();
-        $this->view .= $controller . '/' . $templatePath . '.tpl.twig';
+        $this->view = $controller . '/' . $templatePath . '.tpl.twig';
     }
 
     /**
@@ -528,6 +576,14 @@ trait AbstractBaseTrait
     }
 
     /**
+     * @return ExtendedCacheItemPoolInterface
+     */
+    private final function getModuleCacheService()
+    {
+        return $this->moduleCacheService;
+    }
+
+    /**
      * @return bool
      */
     private function systemCacheServiceHasFallback(): bool
@@ -552,14 +608,6 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return ReflectionClass
-     */
-    private function getReflectionHelper(): ReflectionClass
-    {
-        return $this->reflectionHelper;
-    }
-
-    /**
      * @return AnnotationReader
      */
     private function getAnnotationReader(): AnnotationReader
@@ -568,21 +616,71 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return array
+     * @return CacheHandler
      */
-    private function getSelfAnnotations()
+    private function getSystemCacheHandler(): CacheHandler
     {
-        $reader = $this->getAnnotationReader();
-        return $reader->getClassAnnotations($this->getReflectionHelper());
+        return $this->systemCacheHandler;
     }
 
     /**
-     * @param string $annotationName
-     * @return object|null
+     * @param $object
+     * @param string $method
+     * @param array $args
+     * @param int $expiration
+     * @return mixed
      */
-    private function getSelfAnnotation(string $annotationName)
+    private function fromSystemCache($object, string $method, array $args = array(), $expiration = 3600)
     {
-        $reader = $this->getAnnotationReader();
-        return $reader->getClassAnnotation($this->getReflectionHelper(), sprintf("Annotations\\%s", $annotationName));
+        try {
+            $itemKey = session_id();
+            $itemKey .= get_class($object);
+            $itemKey .= $method;
+            $itemKey .= serialize($args);
+
+            $systemCache = $this->getSystemCacheHandler();
+            $item = $systemCache->getItem($itemKey);
+
+            if (!$item->isHit()) {
+                $result = call_user_func_array([$object, $method], $args);
+                $item->set($result)->expiresAfter($expiration);
+                $systemCache->save($item);
+
+                return $result;
+            }
+
+            return $item->get();
+        } catch (PhpfastcacheInvalidArgumentException $e) {
+            $this->getLoggerService()->error($e->getMessage(), $e->getTrace());
+        }
+
+        $result = call_user_func_array([$object, $method], $args);
+        return $result;
+    }
+
+    /**
+     * CACHED AREA - PUBLIC
+     */
+
+    //***
+
+    /**
+     * CACHED AREA - PROTECTED
+     */
+
+    //***
+
+    /**
+     * CACHED AREA - PRIVATE
+     */
+
+    /**
+     * @param int $expiration
+     * @return mixed
+     * @see AbstractBaseTrait::fromSystemCache()
+     */
+    private function getNavigationRoutes($expiration = 3600)
+    {
+        return $this->fromSystemCache($this->getNavigationHandler(), "getRoutes", [], $expiration);
     }
 }

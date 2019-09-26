@@ -14,12 +14,19 @@ use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Exceptions\CacheException;
 use Exceptions\DoctrineException;
+use Exceptions\InvalidArgumentException;
+use Exceptions\MinifyCssException;
+use Exceptions\MinifyJsException;
+use Exceptions\SessionException;
+use Handlers\CacheHandler;
 use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
 use Handlers\RequestHandler;
+use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
+use Interfaces\ControllerInterfaces\XmlControllerInterface;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
 use ReflectionClass;
@@ -44,9 +51,10 @@ abstract class AbstractBase
      * @param string $baseDir
      * @throws AnnotationException
      * @throws CacheException
+     * @throws DoctrineException
+     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws DoctrineException
-     * @throws DoctrineException
+     * @throws SessionException
      */
     public function __construct(string $baseDir)
     {
@@ -91,8 +99,13 @@ abstract class AbstractBase
         $this->cacheService = $this->getServiceManager()->getCacheService(); // !Only available for system
         $this->systemCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_SYSTEM); // !Only available for system
         $this->systemCacheServiceHasFallback = $this->cacheService->hasFallback(); // !Only available for system
-        $this->moduleCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_MODULE); // Available in modules
+        //todo! add to system monitoring messages
+        $this->addContext("system_cache_service_has_fallback", $this->systemCacheServiceHasFallback());
+
+        $this->moduleCacheService = $this->getCacheService()->getCacheInstance(CacheService::CACHE_MODULE); // !Only available for system
         $this->moduleCacheServiceHasFallback = $this->cacheService->hasFallback(); // !Only available for system
+        //todo! add to system monitoring messages
+        $this->addContext("module_cache_service_has_fallback", $this->moduleCacheServiceHasFallback());
 
         /**
          * Gettext locale services
@@ -135,6 +148,8 @@ abstract class AbstractBase
     /**
      * @throws AnnotationException
      * @throws ReflectionException
+     * @throws SessionException
+     * @throws InvalidArgumentException
      */
     private function initHandlers(): void
     {
@@ -152,12 +167,25 @@ abstract class AbstractBase
         $this->requestHandler = RequestHandler::init($this);
 
         /**
+         * Session handler
+         */
+        $this->sessionHandler = SessionHandler::init($this->getSystemDbService());
+
+        /**
          * @see RequestHandler::isXml()
          * @see RequestHandler::isXmlRequest()
          */
-        if($this->getRequestHandler()->isXml()){
+        if ($this->getRequestHandler()->isXml()) {
             return;
         }
+
+        /**
+         * Cache handlers
+         * @see AbstractBaseTrait::getSystemCacheHandler() // !Only available for system
+         * @see AbstractBaseTrait::getModuleCacheHandler() // Available in modules
+         */
+        $this->systemCacheHandler = CacheHandler::init($this->getSystemCacheService());
+        $this->moduleCacheHandler = CacheHandler::init($this->getModuleCacheService());
 
         /**
          * Asset handlers
@@ -171,7 +199,7 @@ abstract class AbstractBase
          * Navigation handler
          * @see AbstractBaseTrait::getNavigationHandler() // !Only available for system
          */
-        $this->navigationHandler = NavigationHandler::init($this);
+        $this->navigationHandler = NavigationHandler::init($this, $this->getSessionHandler());
     }
 
     /**
@@ -211,11 +239,34 @@ abstract class AbstractBase
     {
         $this->addContext('action', $action);
 
-        $methodName = $action . 'Action';
+        $methodName = sprintf("%sAction", $action);
 
         if (method_exists($this, $methodName)) {
+
+            /**
+             * @internal Here also the correct view is automatically set
+             */
             $this->setTemplate($methodName);
+
+            /**
+             * @internal Auto-inclusion for Javascript
+             * @see ModuleManager::getJsAssetsPath()
+             * @see ModuleManager::getMethodJsAction()
+             */
+            $this->addJs($this->getModuleManager()->getMethodJsAction($methodName, true));
+
+            /**
+             * @internal Auto-inclusion for CSS
+             * @see ModuleManager::getCssAssetsPath()
+             * @see ModuleManager::getMethodCssAction()
+             */
+            $this->addCss($this->getModuleManager()->getMethodCssAction($methodName, true));
+
+            /**
+             * Run method
+             */
             $this->$methodName();
+
         } else {
             $this->render404();
         }
@@ -228,10 +279,50 @@ abstract class AbstractBase
      */
     public function render404(): void
     {
-        header('HTTP/1.0 404 Not Found');
-        /** @noinspection PhpIncludeInspection */
-        $error = require_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error404.php");
-        exit($error);
+        if($this->getRequestHandler()->isXml())
+        {
+            header(XmlControllerInterface::HEADER_ERROR_404);
+            header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
+            $this->addContext("error", "Not Found");
+            die(json_encode($this->getContext()));
+        }
+        else
+        {
+            header('HTTP/1.0 404 Not Found');
+            /** @noinspection PhpIncludeInspection */
+            $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error404.php");
+            exit($html ?? "Not Found");
+        }
+    }
+
+    /**
+     * @param bool $loginRedirect
+     */
+    public function render403($loginRedirect = false): void
+    {
+        if($this->getRequestHandler()->isXml())
+        {
+            header(XmlControllerInterface::HEADER_ERROR_403);
+            header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
+            $this->addContext("error", "Forbidden");
+            die(json_encode($this->getContext()));
+        }
+        elseif(!$loginRedirect)
+        {
+            header('HTTP/1.0 403 Forbidden');
+            /** @noinspection PhpIncludeInspection */
+            $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error403.php");
+            exit($html ?? "Forbidden");
+        }
+        else
+        {
+            /**
+             * @see PublicController::loginAction()
+             */
+            $this->redirect(null, "public", "login", array(
+                "redirect" => urlencode($this->getRequestHandler()->getRequestUrl())
+            ));
+        }
     }
 
     /**
@@ -267,23 +358,49 @@ abstract class AbstractBase
             $to = '?' . implode('&', $params);
         }
 
-        header('Location: index.php' . $to.$tab);
+        header('Location: index.php' . $to . $tab);
         exit;
     }
 
     /**
-     * @throws Throwable
+     * @throws MinifyCssException
+     * @throws MinifyJsException
      */
     protected function render(): void
     {
-        $this->getCssHandler()->compileAndGet();
-        $this->getJsHandler()->compileAndGet();
-
+        /**
+         * Flash messages
+         */
         $this->addContext("message", $this->getMessage());
-        $this->addContext("minified_css", $this->getCssHandler()->getDefaultMinifyCssFile(true));
-        $this->addContext("minified_js", $this->getJsHandler()->getDefaultMinifyJsFile(true));
-        $this->addContext("navigation_routes", $this->getNavigationHandler()->getRoutes());
 
+        /**
+         * CSS vars
+         * @see AbstractBaseTrait::getCssHandler()
+         */
+        $this->getCssHandler()->compileAndGet();
+        $this->addContext("minified_css", $this->getCssHandler()
+            ->getDefaultMinifyCssFile(true)
+        );
+
+        /**
+         * JS vars
+         * @see AbstractBaseTrait::getJsHandler()
+         */
+        $this->getJsHandler()->compileAndGet();
+        $this->addContext("minified_js", $this->getJsHandler()
+            ->getDefaultMinifyJsFile(true)
+        );
+
+        /**
+         * Navigation vars
+         * @see AbstractBaseTrait::getNavigationHandler()
+         */
+        $this->addContext("navigation_routes", $this->getNavigationRoutes());
+
+        /**
+         * Render Twig
+         * @see AbstractBaseTrait::getTemplateService()
+         */
         echo $this->template->render($this->context);
     }
 }

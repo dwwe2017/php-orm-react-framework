@@ -85,13 +85,9 @@ class RequestHandler
         /**
          * @see RequestHandler::isXml()
          */
-        if ($controllerInstance instanceof RestrictedXmlController) {
-            $this->xml = true;
-        } elseif ($controllerInstance instanceof PublicXmlController) {
-            $this->xml = true;
-        } else {
-            $this->xml = $this->isXmlRequest();
-        }
+        $this->xml = $controllerInstance instanceof RestrictedXmlController
+            || $controllerInstance instanceof PublicXmlController
+            || $this->isXmlRequest();
     }
 
     /**
@@ -100,9 +96,9 @@ class RequestHandler
      */
     public static function init(AbstractBase $controllerInstance)
     {
-        if (is_null(self::$instance) || serialize($controllerInstance) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize(get_class($controllerInstance)) !== self::$instanceKey) {
             self::$instance = new self($controllerInstance);
-            self::$instanceKey = serialize($controllerInstance);
+            self::$instanceKey = serialize(get_class($controllerInstance));
         }
 
         return self::$instance;
@@ -179,5 +175,16 @@ class RequestHandler
     public function isXml(): bool
     {
         return $this->xml;
+    }
+
+    /**
+     * @param null $default
+     */
+    public function doRedirect($default = null): void
+    {
+        if(($target = $this->getRequest()->get("redirect", $default))){
+            header("Location: " . $target);
+            exit();
+        }
     }
 }

@@ -18,6 +18,7 @@ use Configs\TemplateConfig;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
+use Helpers\FileHelper;
 
 /**
  * Class ModuleManager
@@ -189,5 +190,49 @@ class ModuleManager
     public final function getModuleBaseDir(): string
     {
         return $this->moduleBaseDir;
+    }
+
+    /**
+     * @param string $methodAction
+     * @param bool $relative
+     * @return string|null
+     */
+    public final function getMethodJsAction(string $methodAction, $relative = false)
+    {
+        $file = sprintf("%s/%s.js", $this->getJsAssetsPath(false), $methodAction);
+        return !FileHelper::init($file)->fileExists() ? null :
+            sprintf("%s/%s.js", $this->getJsAssetsPath($relative), $methodAction);
+    }
+
+    /**
+     * @param bool $relative
+     * @return string
+     */
+    public final function getJsAssetsPath($relative = false): string
+    {
+        return $relative ? sprintf("assets/js/%s", $this->getControllerShortName())
+            : sprintf("%s/assets/js/%s", $this->getModuleBaseDir(), $this->getControllerShortName());
+    }
+
+    /**
+     * @param string $methodAction
+     * @param bool $relative
+     * @return string|null
+     */
+    public final function getMethodCssAction(string $methodAction, $relative = false)
+    {
+        $file = sprintf("%s/%s.css", $this->getCssAssetsPath(false), $methodAction);
+        return !FileHelper::init($file)->fileExists() ? null :
+            sprintf("%s/%s.css", $this->getCssAssetsPath($relative), $methodAction);
+    }
+
+    /**
+     * @param bool $relative
+     * @return string
+     */
+    public final function getCssAssetsPath($relative = false): string
+    {
+        return $relative ? sprintf("assets/css/%s", $this->getControllerShortName())
+            : sprintf("%s/assets/css/%s", $this->getModuleBaseDir(), $this->getControllerShortName());
     }
 }

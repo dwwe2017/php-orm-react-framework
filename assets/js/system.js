@@ -48,7 +48,7 @@ $(document).ready(function(){
 	//===== Refresh-Button on Widgets =====//
 
 	$('.widget .toolbar .widget-refresh').click(function() {
-		var el = $(this).parents('.widget');
+		const el = $(this).parents('.widget');
 
 		App.blockUI(el);
 		window.setTimeout(function () {

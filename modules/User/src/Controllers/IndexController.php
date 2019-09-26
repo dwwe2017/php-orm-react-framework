@@ -7,18 +7,18 @@ namespace Modules\User\Controllers;
 use Annotations\Access;
 use Annotations\Navigation;
 use Annotations\SubNavigation;
-use Controllers\PublicController;
+use Controllers\RestrictedController;
 use Entities\User;
 use Exceptions\DoctrineException;
-use Helpers\ViewHelper;
+use Helpers\EntityViewHelper;
 
 /**
  * Class IndexController
  * @package Modules\User\Controllers
- * @Access(role="admin")
+ * @Access(role=Entities\Group::ROLE_RESELLER)
  * @Navigation(position="sidebar", icon="icon-group", text="Manage users")
  */
-class IndexController extends PublicController
+class IndexController extends RestrictedController
 {
     /**
      * @throws DoctrineException
@@ -35,11 +35,14 @@ class IndexController extends PublicController
     public function usersAction(): void
     {
         $em = $this->getModuleDbService()->getEntityManager();
-        $data = ViewHelper::getResponsiveTableArrayFromEntity($em,
+        $viewHelper = EntityViewHelper::init($em);
+
+        $data = $viewHelper->getResponsiveTableArrayFromEntity(
             User::class,
+            $this->getSessionHandler()->getUsers(),
             "icon-reorder",
-            true,
-            true,
+            true, true,
+            ["user", "index", "userAdd"],
             ["user", "index", "user"],
             ["user", "index", "userDel"]
         );

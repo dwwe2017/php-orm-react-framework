@@ -33,13 +33,13 @@
 <body class="error">
 
 <div class="title">
-    <h1>404</h1>
+    <h1>403</h1>
 </div>
 
 <div class="actions">
     <div class="list-group">
         <li class="list-group-item list-group-header align-center">
-            Ooops! It looks like you have taken a wrong turn.
+            Forbidden! You do not have the necessary permissions.
         </li>
         <a href="javascript:history.back()" class="list-group-item"><i class="icon-home"></i> Go back <i
                     class="icon-angle-right align-right"></i></a>

@@ -55,7 +55,17 @@ trait CustomEntityTrait
      */
     public function __construct(array $data = array())
     {
+        $this->init();
+
         empty($data) || ArrayHelper::init($data)->mapClass($this);
+    }
+
+    /**
+     *
+     */
+    public function init()
+    {
+
     }
 
     /**

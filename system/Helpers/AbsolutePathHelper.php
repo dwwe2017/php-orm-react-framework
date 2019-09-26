@@ -51,12 +51,13 @@ class AbsolutePathHelper
 
     /**
      * @param string $relativePath
+     * @param bool $throw_e
      * @return string
      */
-    public final function get(string $relativePath)
+    public final function get(string $relativePath, $throw_e = true)
     {
         $absolutePath = sprintf("%s/%s", $this->getBaseDir(), $relativePath);
-        FileHelper::init($absolutePath, FileFactoryException::class)->isReadable();
+        FileHelper::init($absolutePath, $throw_e ? FileFactoryException::class : null)->isReadable();
 
         return sprintf("%s/%s", $this->getBaseDir(), $relativePath);
     }

@@ -93,6 +93,10 @@ class MinifyJsHandler extends Minifier
             sprintf("%s/plugins/datatables/jquery.dataTables.min.js", $this->baseDir),
             sprintf("%s/plugins/datatables/DT_bootstrap.js", $this->baseDir),
             sprintf("%s/plugins/datatables/responsive/datatables.responsive.js", $this->baseDir),
+            //Notifications
+            sprintf("%s/plugins/noty/jquery.noty.js", $this->baseDir),
+            sprintf("%s/plugins/noty/layouts/top.js", $this->baseDir),
+            sprintf("%s/plugins/noty/themes/default.js", $this->baseDir),
             //Application
             sprintf("%s/assets/js/app.js", $this->baseDir),
             sprintf("%s/assets/js/plugins.js", $this->baseDir),
@@ -177,11 +181,15 @@ class MinifyJsHandler extends Minifier
     }
 
     /**
-     * @param string $fileOrString
+     * @param string|null $fileOrString
      * @param bool $codeAsString
      */
-    public final function addJsContent(string $fileOrString, $codeAsString = false)
+    public final function addJsContent(?string $fileOrString, $codeAsString = false): void
     {
+        if(is_null($fileOrString)){
+            return;
+        }
+
         if ($codeAsString) {
             self::$md5checksum .= trim(md5($fileOrString));
         } else {

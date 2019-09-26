@@ -28,7 +28,7 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
  * Class CacheHelper
  * @package Helpers
  */
-class CacheHelper
+class CacheInitHelper
 {
     use InstantiationStaticsUtilTrait;
 
@@ -79,7 +79,7 @@ class CacheHelper
 
             /**
              * Filter invalid options
-             * @see CacheHelper::getInvalidConfigOptions()
+             * @see CacheInitHelper::getInvalidConfigOptions()
              */
             $invalidConfigOptions = $this->getInvalidConfigOptions($e);
             if (!empty($invalidConfigOptions)) {
@@ -137,7 +137,7 @@ class CacheHelper
     /**
      * @param ConfigValues $config
      * @param string|null $instanceId
-     * @return CacheHelper|null
+     * @return CacheInitHelper|null
      * @throws CacheException
      * @throws PhpfastcacheDriverCheckException
      * @throws PhpfastcacheDriverException

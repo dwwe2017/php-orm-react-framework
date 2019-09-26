@@ -159,11 +159,15 @@ class MinifyCssHandler
     }
 
     /**
-     * @param string $fileOrString
+     * @param string|null $fileOrString
      * @param bool $codeAsString
      */
-    public final function addCss(string $fileOrString, $codeAsString = false)
+    public final function addCss(?string $fileOrString, $codeAsString = false): void
     {
+        if(is_null($fileOrString)){
+            return;
+        }
+
         if ($codeAsString) {
             self::$md5checksum .= trim(md5($fileOrString));
         } else {

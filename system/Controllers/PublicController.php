@@ -24,7 +24,9 @@ class PublicController extends AbstractBase implements PublicControllerInterface
      */
     public final function loginOrRegisterAction(): void
     {
-        $this->addCss("assets/css/login.css");
+        if($this->getSessionHandler()->isRegistered()){
+            $this->getRequestHandler()->doRedirect();
+        }
 
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
@@ -35,7 +37,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
             "plugins/nprogress/nprogress.js",
             "plugins/cryptojs/aes.js",
             "plugins/cryptojs/md5.js",
-            "assets/js/login.js"
+            "assets/js/PublicController/loginOrRegisterAction.js"
         ]);
 
         $this->addJs("$(document).ready(function(){ \"use strict\"; Login.init(); });", true);
@@ -46,7 +48,9 @@ class PublicController extends AbstractBase implements PublicControllerInterface
      */
     public final function loginAction(): void
     {
-        $this->addCss("assets/css/login.css");
+        if($this->getSessionHandler()->isRegistered()){
+            $this->getRequestHandler()->doRedirect();
+        }
 
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
@@ -57,7 +61,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
             "plugins/nprogress/nprogress.js",
             "plugins/cryptojs/aes.js",
             "plugins/cryptojs/md5.js",
-            "assets/js/login.js"
+            "assets/js/PublicController/loginAction.js"
         ]);
 
         $this->addJs("$(document).ready(function(){ \"use strict\"; Login.init(); });", true);
@@ -68,7 +72,9 @@ class PublicController extends AbstractBase implements PublicControllerInterface
      */
     public final function registerAction(): void
     {
-        $this->addCss("assets/css/login.css");
+        if($this->getSessionHandler()->isRegistered()){
+            $this->getRequestHandler()->doRedirect();
+        }
 
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
@@ -79,7 +85,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
             "plugins/nprogress/nprogress.js",
             "plugins/cryptojs/aes.js",
             "plugins/cryptojs/md5.js",
-            "assets/js/login.js"
+            "assets/js/PublicController/registerAction.js"
         ]);
 
         $this->addJs("$(document).ready(function(){ \"use strict\"; Login.init(); });", true);

@@ -20,25 +20,27 @@
                                 {{ item.options.text|trans }}
                             {% endif %}
                         </a>
-                        {% if(item.routes != false) %}
-                            <ul class="sub-menu">
-                                {% for route in item.routes %}
-                                    <li {% if(route.active != false) %}class="current"{% endif %}
-                                        {% if(route.options.hidden != false) %}style="display: none;"{% endif %}
-                                    >
-                                        <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
-                                           title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
+                        {% if(item.routes is defined) %}
+                            {% if(item.routes != false) %}
+                                <ul class="sub-menu">
+                                    {% for route in item.routes %}
+                                        <li {% if(route.active != false) %}class="current"{% endif %}
+                                            {% if(route.options.hidden != false) %}style="display: none;"{% endif %}
                                         >
-                                            {% if(route.options.icon != false) %}
-                                                <i class="{{ route.options.icon }}"></i>
-                                            {% endif %}
-                                            {% if(route.options.text != false) %}
-                                                {{ route.options.text|trans }}
-                                            {% endif %}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                                            <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
+                                               title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
+                                            >
+                                                {% if(route.options.icon != false) %}
+                                                    <i class="{{ route.options.icon }}"></i>
+                                                {% endif %}
+                                                {% if(route.options.text != false) %}
+                                                    {{ route.options.text|trans }}
+                                                {% endif %}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         {% endif %}
                     </li>
                 {% endfor %}

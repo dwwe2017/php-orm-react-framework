@@ -123,7 +123,7 @@ if (typeof Object.create !== 'function') {
                     self.close();
                 });
 
-            if ($.inArray('button', self.options.closeWith) == -1)
+            if ($.inArray('button', self.options.closeWith) === -1)
                 self.$closeButton.remove();
 
             if (self.options.callback.onShow)
@@ -158,7 +158,7 @@ if (typeof Object.create !== 'function') {
             if (!this.shown) { // If we are still waiting in the queue just delete from queue
                 var queue = [];
                 $.each($.noty.queue, function (i, n) {
-                    if (n.options.id != self.options.id) {
+                    if (n.options.id !== self.options.id) {
                         queue.push(n);
                     }
                 });
@@ -184,14 +184,14 @@ if (typeof Object.create !== 'function') {
                     // Modal Cleaning
                     if (self.options.modal) {
                         $.notyRenderer.setModalCount(-1);
-                        if ($.notyRenderer.getModalCount() == 0) $('.noty_modal').fadeOut('fast', function () {
+                        if ($.notyRenderer.getModalCount() === 0) $('.noty_modal').fadeOut('fast', function () {
                             $(this).remove();
                         });
                     }
 
                     // Layout Cleaning
                     $.notyRenderer.setLayoutCountFor(self, -1);
-                    if ($.notyRenderer.getLayoutCountFor(self) == 0) $(self.options.layout.container.selector).remove();
+                    if ($.notyRenderer.getLayoutCountFor(self) === 0) $(self.options.layout.container.selector).remove();
 
                     // Make sure self.$bar has not been removed before attempting to remove it
                     if (typeof self.$bar !== 'undefined' && self.$bar !== null ) {
@@ -271,7 +271,7 @@ if (typeof Object.create !== 'function') {
 
         $.notyRenderer.render();
 
-        return ($.noty.returns == 'object') ? notification : notification.options.id;
+        return ($.noty.returns === 'object') ? notification : notification.options.id;
     };
 
     $.notyRenderer.render = function () {
@@ -309,7 +309,7 @@ if (typeof Object.create !== 'function') {
         }
 
         // Where is the container?
-        if ($(notification.options.layout.container.selector).length == 0) {
+        if ($(notification.options.layout.container.selector).length === 0) {
             if (notification.options.custom) {
                 notification.options.custom.append($(notification.options.layout.container.object).addClass('i-am-new'));
             } else {
@@ -325,7 +325,7 @@ if (typeof Object.create !== 'function') {
     };
 
     $.notyRenderer.createModalFor = function (notification) {
-        if ($('.noty_modal').length == 0)
+        if ($('.noty_modal').length === 0)
             $('<div/>').addClass('noty_modal').data('noty_modal_count', 0).css(notification.options.theme.modal.css).prependTo($('body')).fadeIn('fast');
     };
 
@@ -498,7 +498,7 @@ window.noty = function noty(options) {
 
     if (options.hasOwnProperty('custom')) {
         using_old++;
-        if (options.custom.container != 'null') options.custom = options.custom.container;
+        if (options.custom.container !== 'null') options.custom = options.custom.container;
     }
 
     if (options.hasOwnProperty('cssPrefix')) {
@@ -506,7 +506,7 @@ window.noty = function noty(options) {
         delete options.cssPrefix;
     }
 
-    if (options.theme == 'noty_theme_default') {
+    if (options.theme === 'noty_theme_default') {
         using_old++;
         options.theme = 'defaultTheme';
     }

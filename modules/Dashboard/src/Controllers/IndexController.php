@@ -11,7 +11,6 @@ namespace Modules\Dashboard\Controllers;
 
 
 use Annotations\Access;
-use Annotations\Info;
 use Annotations\Navigation;
 use Annotations\SubNavigation;
 use Controllers\RestrictedController;
@@ -19,14 +18,12 @@ use Controllers\RestrictedController;
 /**
  * Class PublicController
  * @package Modules\Dashboard\Controllers
- * @Access(role="user")
+ * @Access(role=Entities\Group::ROLE_USER)
  * @Navigation(position="sidebar", icon="icon-dashboard")
- * @Info(author="DW </> Web-Engineering", website="https://dwwe.de", email="daniel@dwwe.de")
  */
 class IndexController extends RestrictedController
 {
     /**
-     * @Access(role="admin")
      * @SubNavigation(text="Overview")
      */
     public function indexAction(): void

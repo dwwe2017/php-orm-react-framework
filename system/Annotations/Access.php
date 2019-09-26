@@ -5,6 +5,7 @@ namespace Annotations;
 
 
 use Doctrine\Common\Annotations\Annotation\Enum;
+use Entities\Group;
 
 /**
  * Class Access
@@ -15,32 +16,7 @@ use Doctrine\Common\Annotations\Annotation\Enum;
 class Access
 {
     /**
-     *
-     */
-    const ROOT = 4;
-
-    /**
-     *
-     */
-    const ADMIN = 3;
-
-    /**
-     *
-     */
-    const RESELLER = 2;
-
-    /**
-     *
-     */
-    const USER = 1;
-
-    /**
-     *
-     */
-    const ANY = -1;
-
-    /**
-     * @Enum({"root", "admin", "reseller", "user"})
+     * @Enum({Entities\Group::ROLE_ROOT, Entities\Group::ROLE_ADMIN, Entities\Group::ROLE_RESELLER, Entities\Group::ROLE_USER})
      */
     public $role;
 }
