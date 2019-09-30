@@ -28,17 +28,17 @@ class NavigationHandler
     /**
      * @var string
      */
-    const RESTRICTED_NAV = "restricted";
+    const RESTRICTED_NAV = "restrictedFront";
 
     /**
      * @var string
      */
-    const PUBLIC_NAV = "public";
+    const PUBLIC_NAV = "publicFront";
 
     /**
      * @var string
      */
-    const SETTINGS_NAV = "settings";
+    const SETTINGS_NAV = "settingsFront";
 
     /**
      * @var SessionHandler
@@ -87,6 +87,8 @@ class NavigationHandler
         $haystack = DirHelper::init($modulesBaseDir,
             NavigationException::class)->getScan();
 
+        $this->currentAction = htmlentities($_GET["action"] ?? "index");
+
         foreach ($haystack as $item) {
             $itemPath = sprintf("%s/%s", $modulesBaseDir, $item);
             $modulePath = DirHelper::init(sprintf("%s/src/Controllers", $itemPath))->getScan();
@@ -96,8 +98,7 @@ class NavigationHandler
             }
         }
 
-        $this->currentAction = htmlentities($_GET["action"] ?? "index");
-        $this->setRoutes($controllerInstance);
+        $this->initRoutes($controllerInstance);
     }
 
     /**
@@ -124,7 +125,7 @@ class NavigationHandler
      */
     private function getNavTypeFromReflection(ReflectionClass $class)
     {
-        $parentClassName = strtolower($class->getParentClass()->getShortName());
+        $parentClassName = lcfirst($class->getParentClass()->getShortName());
         if (StringHelper::init($parentClassName)->hasFilter(self::PUBLIC_NAV)) {
             return self::PUBLIC_NAV;
         } elseif (StringHelper::init($parentClassName)->hasFilter(self::SETTINGS_NAV)) {
@@ -140,7 +141,7 @@ class NavigationHandler
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    private function setRoutes(AbstractBase $controllerInstance): void
+    private function initRoutes(AbstractBase $controllerInstance): void
     {
         foreach ($this->modulesNamespaces as $key => $modulesNamespace) {
             if (is_array($modulesNamespace)) {
@@ -159,13 +160,13 @@ class NavigationHandler
                     /**
                      * Get access level properties from annotations
                      */
-                    $reflectionClassSiteAccessLevel = $this->getNavTypeFromReflection($reflectionClass);
+                    $classSiteAccessLevel = $this->getNavTypeFromReflection($reflectionClass);
                     $classAccessAnnotation = AnnotationHelper::init($reflectionClass, "Access");
 
                     /**
                      * Setting the minimum access level depending on the parent class if no "@Access" annotation has been set
                      */
-                    $minAccessRole = $this->getMinimalAccessRole($reflectionClassSiteAccessLevel);
+                    $minAccessRole = $this->getMinimalAccessRole($classSiteAccessLevel);
                     $reflectionClassAccessRole = $classAccessAnnotation->get("role", $minAccessRole);
 
                     /**
@@ -197,12 +198,14 @@ class NavigationHandler
                          */
                         $reflectionClassPropertyIsActive = get_class($controllerInstance) === $reflectionClassName;
 
-                        $this->routes[$position][$key]["controller_access"] = $reflectionClassSiteAccessLevel;
-                        $this->routes[$position][$key]["required_user_group_role_name"] = $this->getRolesConvertedIntoReadableTerms($reflectionClassAccessRole);
-                        $this->routes[$position][$key]["required_user_group_role_level"] = $reflectionClassAccessRole;
-                        $this->routes[$position][$key]["active"] = $reflectionClassPropertyIsActive;
-                        $this->routes[$position][$key]["options"] = $classNavigationAnnotation->toArray();
-                        $this->routes[$position][$key]["info"] = $classInfoAnnotation->toArray();
+                        $this->routes[$classSiteAccessLevel][$position][$key] = [
+                            "controller_access" => $classSiteAccessLevel,
+                            "required_user_group_role_name" => $this->getRolesConvertedIntoReadableTerms($reflectionClassAccessRole),
+                            "required_user_group_role_level" => $reflectionClassAccessRole,
+                            "active" => $reflectionClassPropertyIsActive,
+                            "options" => $classNavigationAnnotation->toArray(),
+                            "info" => $classInfoAnnotation->toArray()
+                        ];
 
                         $reflectionClassMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
                         foreach ($reflectionClassMethods as $method) {
@@ -245,7 +248,7 @@ class NavigationHandler
 
                             $methodInfoAnnotation = AnnotationHelper::init($method, "Info");
 
-                            $this->addRoute($position, $key, [
+                            $this->addRoute($classSiteAccessLevel, $position, $key, [
                                 "required_user_group_role_name" => $this->getRolesConvertedIntoReadableTerms($accessRoleChild),
                                 "required_user_group_role_level" => $accessRoleChild,
                                 "active" => $this->getCurrentAction() === lcfirst($actionShortNameFromMethod),
@@ -263,21 +266,29 @@ class NavigationHandler
     }
 
     /**
+     * @param $classSiteAccessLevel
      * @param $position
      * @param $key
      * @param array $navigationRoutes
      */
-    public final function addRoute($position, $key, array $navigationRoutes)
+    public final function addRoute($classSiteAccessLevel, $position, $key, array $navigationRoutes)
     {
-        $this->routes[$position][$key]["routes"][] = $navigationRoutes;
+        $this->routes[$classSiteAccessLevel][$position][$key]["routes"][] = $navigationRoutes;
     }
 
     /**
+     * @param string $classSiteAccessLevel
      * @return array
      */
-    public final function getRoutes(): array
+    public final function getRoutes($classSiteAccessLevel = self::PUBLIC_NAV): array
     {
-        return $this->routes;
+        $result = array();
+
+        if(key_exists($classSiteAccessLevel, $this->routes)){
+            $result = $this->routes[$classSiteAccessLevel];
+        }
+
+        return $result;
     }
 
     /**

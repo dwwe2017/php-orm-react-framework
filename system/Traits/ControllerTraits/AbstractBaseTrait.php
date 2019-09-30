@@ -213,6 +213,11 @@ trait AbstractBaseTrait
     private $viewHelper;
 
     /**
+     * @var string
+     */
+    private $navigationRoute = NavigationHandler::PUBLIC_NAV;
+
+    /**
      * @return string
      */
     public final function getBaseDir(): string
@@ -439,6 +444,22 @@ trait AbstractBaseTrait
     }
 
     /**
+     * @param string $navigationRoute
+     */
+    protected function setNavigationRoute(string $navigationRoute): void
+    {
+        $this->navigationRoute = $navigationRoute;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getNavigationRoute(): string
+    {
+        return $this->navigationRoute;
+    }
+
+    /**
      * PRIVATE AREA
      */
 
@@ -621,6 +642,14 @@ trait AbstractBaseTrait
     private function getSystemCacheHandler(): CacheHandler
     {
         return $this->systemCacheHandler;
+    }
+
+    /**
+     * @return array
+     */
+    private function getNavigationRoutes(): array
+    {
+        return $this->getNavigationHandler()->getRoutes($this->getNavigationRoute());
     }
 
     /**

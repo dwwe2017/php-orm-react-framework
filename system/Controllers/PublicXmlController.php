@@ -19,19 +19,11 @@ use Interfaces\ControllerInterfaces\XmlControllerInterface;
 class PublicXmlController extends PublicController implements XmlControllerInterface
 {
     /**
-     *
-     */
-    public function indexAction(): void
-    {
-
-    }
-
-    /**
      * @param string $action
      */
     public final function run(string $action)
     {
-        $methodName = $action . 'Action';
+        $methodName = sprintf("%sAction", $action);
 
         if (method_exists($this, $methodName)) {
             $this->$methodName();
@@ -40,6 +32,17 @@ class PublicXmlController extends PublicController implements XmlControllerInter
         }
 
         $this->render();
+    }
+
+    /**
+     *
+     */
+    public final function render404(): void
+    {
+        header(self::HEADER_ERROR_404);
+        header(self::HEADER_CONTENT_TYPE_JSON);
+        $this->addContext("error", "Not Found");
+        die(json_encode($this->getContext()));
     }
 
     /**

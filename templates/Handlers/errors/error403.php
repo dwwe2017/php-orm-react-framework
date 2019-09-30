@@ -48,7 +48,7 @@
 
 <!-- Footer -->
 <div class="footer">
-    TSI - Tea(m)speak Interface<br>&copy; 2019 by DW <\> Web-Engineering
+    TSI2 - Tea(m)speak Interface 2<br>&copy; 2019 by DW <\> Web-Engineering
 </div>
 <script type="text/javascript" src="assets/js/libs/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>

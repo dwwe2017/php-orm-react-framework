@@ -16,10 +16,15 @@ use Exceptions\CacheException;
 use Exceptions\DoctrineException;
 use Exceptions\InvalidArgumentException;
 use Exceptions\SessionException;
+use Handlers\NavigationHandler;
 use Helpers\AnnotationHelper;
 use Interfaces\ControllerInterfaces\RestrictedControllerInterface;
 use ReflectionException;
+use Throwable;
 use Traits\ControllerTraits\RestrictedControllerTrait;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * Class RestrictedController
@@ -47,6 +52,8 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
 
         if (!$this->registered) {
             $this->render403(true);
+        } else {
+            $this->setNavigationRoute(NavigationHandler::RESTRICTED_NAV);
         }
     }
 
@@ -55,26 +62,29 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
      * @throws AnnotationException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \Throwable
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws Throwable
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function run(string $action)
     {
-        $methodName = sprintf("%sAction", $action);
-
+        /**
+         * Access requirement at least user
+         */
         $selfReflection = $this->getReflectionHelper();
         $classAccess = AnnotationHelper::init($selfReflection, "Access");
         $classAccessLevel = $classAccess->get("role", Group::ROLE_USER);
-        if(!$this->getSessionHandler()->hasRequiredRole($classAccessLevel)){
+        $classAccessLevel = $classAccessLevel >= Group::ROLE_USER ? $classAccessLevel : Group::ROLE_USER;
+        if (!$this->getSessionHandler()->hasRequiredRole($classAccessLevel)) {
             $this->render403();
         }
 
+        $methodName = sprintf("%sAction", $action);
         $methodAccess = AnnotationHelper::init($selfReflection->getMethod($methodName), "Access");
         $methodAccessLevel = $methodAccess->get("role", $classAccessLevel);
         $methodAccessLevel = $methodAccessLevel >= $classAccessLevel ? $methodAccessLevel : $classAccessLevel;
-        if(!$this->getSessionHandler()->hasRequiredRole($methodAccessLevel)){
+        if (!$this->getSessionHandler()->hasRequiredRole($methodAccessLevel)) {
             $this->render403();
         }
 

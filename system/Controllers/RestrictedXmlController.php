@@ -23,7 +23,7 @@ class RestrictedXmlController extends RestrictedController implements XmlControl
      */
     public final function run(string $action)
     {
-        $methodName = $action . 'Action';
+        $methodName = sprintf("%sAction", $action);
 
         if (method_exists($this, $methodName)) {
             $this->$methodName();

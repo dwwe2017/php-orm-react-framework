@@ -13,7 +13,7 @@ namespace Modules\Dashboard\Controllers;
 use Annotations\Access;
 use Annotations\Navigation;
 use Annotations\SubNavigation;
-use Controllers\RestrictedController;
+use Controllers\RestrictedFrontController;
 
 /**
  * Class PublicController
@@ -21,7 +21,7 @@ use Controllers\RestrictedController;
  * @Access(role=Entities\Group::ROLE_USER)
  * @Navigation(position="sidebar", icon="icon-dashboard")
  */
-class IndexController extends RestrictedController
+class IndexController extends RestrictedFrontController
 {
     /**
      * @SubNavigation(text="Overview")

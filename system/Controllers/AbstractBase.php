@@ -396,7 +396,7 @@ abstract class AbstractBase
          * @see AbstractBaseTrait::getNavigationHandler()
          */
         $this->addContext("navigation_routes",
-            $this->getNavigationHandler()->getRoutes()
+            $this->getNavigationRoutes()
         );
 
         /**
