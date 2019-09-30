@@ -103,13 +103,23 @@
         {% if navigation_routes.top_right is defined %}
             {% if navigation_routes.top_right != false %}
                 {% for item in navigation_routes.top_right %}
-                    <li class="dropdown">
+                    <li class="dropdown {% if(item.options.class != false) %}{{ item.options.class }}{% endif %}">
                         <a href="{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}"
                            title="{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
                            class="dropdown-toggle" data-toggle="dropdown"
                         >
+                            {% if(item.options.class is defined) %}
+                                {% if(item.options.class == "user") %}
+                                    <span class="username">
+                                {% endif %}
+                            {% endif %}
                             {% if(item.options.text != false) %}
                                 {{ item.options.text|trans }}
+                            {% endif %}
+                            {% if(item.options.class is defined) %}
+                                {% if(item.options.class == "user") %}
+                                    </span>
+                                {% endif %}
                             {% endif %}
                             <i class="icon-caret-down small"></i>
                         </a>

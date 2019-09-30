@@ -14,7 +14,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
     /**
      *
      */
-    public function indexAction(): void
+    public function indexAction()
     {
         // TODO: Implement indexAction() method.
     }
@@ -25,7 +25,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
     public final function loginOrRegisterAction(): void
     {
         if($this->getSessionHandler()->isRegistered()){
-            $this->getRequestHandler()->doRedirect();
+            $this->getRequestHandler()->doRedirect("?module=dashboard");
         }
 
         $this->setJs([
@@ -49,7 +49,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
     public final function loginAction(): void
     {
         if($this->getSessionHandler()->isRegistered()){
-            $this->getRequestHandler()->doRedirect();
+            $this->getRequestHandler()->doRedirect("?module=dashboard");
         }
 
         $this->setJs([
@@ -73,7 +73,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
     public final function registerAction(): void
     {
         if($this->getSessionHandler()->isRegistered()){
-            $this->getRequestHandler()->doRedirect();
+            $this->getRequestHandler()->doRedirect("?module=dashboard");
         }
 
         $this->setJs([

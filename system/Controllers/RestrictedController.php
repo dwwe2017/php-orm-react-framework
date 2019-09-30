@@ -30,7 +30,7 @@ use Twig\Error\SyntaxError;
  * Class RestrictedController
  * @package Controllers
  */
-class RestrictedController extends AbstractBase implements RestrictedControllerInterface
+class RestrictedController extends AbstractBase
 {
     use RestrictedControllerTrait;
 
@@ -94,8 +94,16 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
     /**
      *
      */
-    public function indexAction(): void
+    public function indexAction()
     {
         // TODO: Implement indexAction() method.
+    }
+
+    /**
+     *
+     */
+    public final function profileAction(): void
+    {
+
     }
 }

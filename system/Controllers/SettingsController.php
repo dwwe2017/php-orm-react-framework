@@ -58,7 +58,7 @@ class SettingsController extends RestrictedController implements SettingsControl
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function run(string $action)
+    public final function run(string $action)
     {
         /**
          * Access requirement at least admin

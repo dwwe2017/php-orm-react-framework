@@ -99,6 +99,41 @@ class NavigationHandler
         }
 
         $this->initRoutes($controllerInstance);
+
+        if ($this->getSessionInstance()->isRegistered()) {
+
+            $user = $this->getSessionInstance()->getUser();
+
+            $this->routes[self::RESTRICTED_NAV]["top_right"] = [
+                [
+                    "options" => [
+                        "class" => "user",
+                        "title" => $user->getName(),
+                        "text" => $user->getName(),
+                        "href" => "javascript:void(0)",
+                        "icon" => "icon-user"
+                    ],
+                    "routes" => [
+                        [
+                            "options" => [
+                                "title" => "My Profile",
+                                "text" => "My Profile",
+                                "href" => sprintf("index.php?controller=restricted&action=profile"),
+                                "icon" => "icon-user"
+                            ]
+                        ],
+                        [
+                            "options" => [
+                                "title" => "Logout",
+                                "text" => "Logout",
+                                "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
+                                "icon" => "icon-user"
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+        }
     }
 
     /**
@@ -111,9 +146,9 @@ class NavigationHandler
      */
     public static function init(AbstractBase $controllerInstance, SessionHandler $sessionInstance)
     {
-        if (is_null(self::$instance) || serialize(get_class($controllerInstance).get_class($sessionInstance)) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize(get_class($controllerInstance) . get_class($sessionInstance)) !== self::$instanceKey) {
             self::$instance = new self($controllerInstance, $sessionInstance);
-            self::$instanceKey = serialize(get_class($controllerInstance).get_class($sessionInstance));
+            self::$instanceKey = serialize(get_class($controllerInstance) . get_class($sessionInstance));
         }
 
         return self::$instance;
@@ -172,11 +207,11 @@ class NavigationHandler
                     /**
                      * @internal Check access !Root always has access to everything and everywhere
                      */
-                    if(!$this->getSessionInstance()->hasRequiredRole($reflectionClassAccessRole)){
+                    if (!$this->getSessionInstance()->hasRequiredRole($reflectionClassAccessRole)) {
                         continue;
                     }
 
-                    if(!$classNavigationAnnotation->get("text")){
+                    if (!$classNavigationAnnotation->get("text")) {
                         $classNavigationAnnotation->set("text", ucfirst($key));
                     }
 
@@ -224,7 +259,7 @@ class NavigationHandler
                              */
                             $accessAnnotationsChild = AnnotationHelper::init($method, "Access");
                             $accessRoleChild = $this->getAtLeastParentRole($reflectionClassAccessRole, $accessAnnotationsChild->getAnnotationInstance());
-                            if(!$this->getSessionInstance()->hasRequiredRole($accessRoleChild)){
+                            if (!$this->getSessionInstance()->hasRequiredRole($accessRoleChild)) {
                                 continue;
                             }
 
@@ -237,13 +272,13 @@ class NavigationHandler
                             $actionShortNameFromMethod = StringHelper::init($method->getName())
                                 ->replace("Action", "")->lcFirst()->getString();
 
-                            if(!$methodSubNavigationAnnotation->get("text")){
+                            if (!$methodSubNavigationAnnotation->get("text")) {
                                 $methodSubNavigationAnnotation->set("text", ucfirst($actionShortNameFromMethod));
                             }
 
-                            if(!$methodSubNavigationAnnotation->get("href")){
+                            if (!$methodSubNavigationAnnotation->get("href")) {
                                 $methodSubNavigationAnnotation->set("href", sprintf("index.php?module=%s&controller=%s&action=%s",
-                                $moduleShortNameFromMethod, $controllerShortNameFromMethod, $actionShortNameFromMethod));
+                                    $moduleShortNameFromMethod, $controllerShortNameFromMethod, $actionShortNameFromMethod));
                             }
 
                             $methodInfoAnnotation = AnnotationHelper::init($method, "Info");
@@ -284,7 +319,7 @@ class NavigationHandler
     {
         $result = array();
 
-        if(key_exists($classSiteAccessLevel, $this->routes)){
+        if (key_exists($classSiteAccessLevel, $this->routes)) {
             $result = $this->routes[$classSiteAccessLevel];
         }
 
@@ -297,11 +332,10 @@ class NavigationHandler
      */
     private final function getRolesConvertedIntoReadableTerms($accessRoleConstant)
     {
-        if(is_array($accessRoleConstant))
-        {
+        if (is_array($accessRoleConstant)) {
             $result = [];
 
-            foreach ($accessRoleConstant as $key => $item){
+            foreach ($accessRoleConstant as $key => $item) {
                 switch ($item) {
                     case Group::ROLE_ROOT:
                         $result[$key] = "ROOT";
@@ -322,9 +356,7 @@ class NavigationHandler
             }
 
             return $result;
-        }
-        else
-        {
+        } else {
             switch ($accessRoleConstant) {
                 case Group::ROLE_ROOT:
                     return "ROOT";
@@ -363,7 +395,7 @@ class NavigationHandler
     {
         $result = Group::ROLE_ANY;
 
-        switch ($reflectionClassSiteAccessLevel){
+        switch ($reflectionClassSiteAccessLevel) {
             case self::RESTRICTED_NAV:
                 $result = Group::ROLE_USER;
                 break;
