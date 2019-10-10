@@ -17,6 +17,7 @@ use Exceptions\DoctrineException;
 use Exceptions\InvalidArgumentException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
+use Exceptions\NavigationException;
 use Exceptions\SessionException;
 use Handlers\CacheHandler;
 use Handlers\ErrorHandler;
@@ -75,6 +76,7 @@ abstract class AbstractBase
         $this->moduleManager = ModuleManager::init($this);
         $this->moduleBaseDir = $this->getModuleManager()->getModuleBaseDir();
         $this->config = $this->getModuleManager()->getConfig();
+        $this->debugMode = $this->getConfig()->get("debug_mode", false) === true;
     }
 
     /**
@@ -323,6 +325,14 @@ abstract class AbstractBase
                 "redirect" => urlencode($this->getRequestHandler()->getRequestUrl())
             ));
         }
+    }
+
+    /**
+     *
+     */
+    protected final function renderEntry()
+    {
+        $this->redirect($this->getModuleManager()->getEntryModule(), "index", "index");
     }
 
     /**

@@ -13,6 +13,7 @@ namespace Configs;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exceptions\ConfigException;
+use Handlers\NavigationHandler;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\ApplicationConfigInterface;
 use Managers\ModuleManager;
@@ -130,6 +131,7 @@ class DefaultConfig implements ApplicationConfigInterface
             "debug_mode" => false,
             "base_dir" => $this->baseDir,
             "language" => "en_US",
+            "entry_module" => "Dashboard",
             //Database configuration
             "connection_options" => [],
             //Doctrine configuration

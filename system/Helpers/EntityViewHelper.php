@@ -170,7 +170,7 @@ class EntityViewHelper
             "heading" => $heading,
             "toolbar" => $toolbar ? [
                 "collapse" => true,
-                "refresh" => true,
+                "refresh" => false,
                 "manage" => $checkbox_column
             ] : false,
             "thead" => $thead,

@@ -21,18 +21,10 @@ use Helpers\EntityViewHelper;
 class IndexController extends RestrictedController
 {
     /**
-     * @throws DoctrineException
-     */
-    public function indexAction(): void
-    {
-        $this->usersAction();
-    }
-
-    /**
      * @SubNavigation(text="All users")
      * @throws DoctrineException
      */
-    public function usersAction(): void
+    public function indexAction(): void
     {
         $em = $this->getModuleDbService()->getEntityManager();
         $viewHelper = EntityViewHelper::init($em);

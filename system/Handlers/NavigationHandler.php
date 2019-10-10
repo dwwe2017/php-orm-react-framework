@@ -108,15 +108,13 @@ class NavigationHandler
                 [
                     "options" => [
                         "class" => "user",
-                        "title" => $user->getName(),
                         "text" => $user->getName(),
                         "href" => "javascript:void(0)",
-                        "icon" => "icon-user"
+                        "icon" => "icon-male"
                     ],
                     "routes" => [
                         [
                             "options" => [
-                                "title" => "My Profile",
                                 "text" => "My Profile",
                                 "href" => sprintf("index.php?controller=restricted&action=profile"),
                                 "icon" => "icon-user"
@@ -124,10 +122,9 @@ class NavigationHandler
                         ],
                         [
                             "options" => [
-                                "title" => "Logout",
                                 "text" => "Logout",
                                 "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
-                                "icon" => "icon-user"
+                                "icon" => "icon-key"
                             ]
                         ]
                     ]

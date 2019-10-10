@@ -58,6 +58,11 @@ trait AbstractBaseTrait
     private $config;
 
     /**
+     * @var bool
+     */
+    private $debugMode = false;
+
+    /**
      * @var ModuleManager
      */
     private $moduleManager;
@@ -499,15 +504,29 @@ trait AbstractBaseTrait
 
     /**
      * @param string|null $templatePath
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws LoaderError !Silent if debug mode is inactive
+     * @throws RuntimeError !Silent if debug mode is inactive
+     * @throws SyntaxError !Silent if debug mode is inactive
      * @example $this->setTemplate($methodName)
      */
     private function setTemplate(?string $templatePath = null): void
     {
         if (!is_null($templatePath)) {
             $this->setView($templatePath);
+        }
+
+        /**
+         * @internal Silent exceptions if debug mode is inactive
+         */
+        if (!$this->isDebugMode()) {
+            try {
+                $this->template = $this->templateService->getEnvironment()->load($this->getView());
+            } catch (LoaderError|RuntimeError|SyntaxError $e) {
+                $this->getLoggerService()->error($e->getMessage(), $e->getTrace());
+                $this->render404();
+            }
+
+            return;
         }
 
         $this->template = $this->templateService->getEnvironment()->load($this->getView());
@@ -650,6 +669,14 @@ trait AbstractBaseTrait
     private function getNavigationRoutes(): array
     {
         return $this->getNavigationHandler()->getRoutes($this->getNavigationRoute());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDebugMode(): bool
+    {
+        return $this->debugMode;
     }
 
     /**

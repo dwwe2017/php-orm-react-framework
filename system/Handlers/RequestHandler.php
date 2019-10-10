@@ -180,7 +180,7 @@ class RequestHandler
     /**
      * @param null $default
      */
-    public function doRedirect($default = null): void
+    public function doRedirect($default = "?module=dashboard"): void
     {
         if(($target = $this->getRequest()->get("redirect", $default))){
             header("Location: " . $target);

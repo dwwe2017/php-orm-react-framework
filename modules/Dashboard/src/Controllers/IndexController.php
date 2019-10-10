@@ -19,12 +19,12 @@ use Controllers\RestrictedFrontController;
  * Class PublicController
  * @package Modules\Dashboard\Controllers
  * @Access(role=Entities\Group::ROLE_USER)
- * @Navigation(position="sidebar", icon="icon-dashboard")
+ * @Navigation(position="sidebar", icon="icon-dashboard", href="index.php?module=dashboard")
  */
 class IndexController extends RestrictedFrontController
 {
     /**
-     * @SubNavigation(text="Overview")
+     *
      */
     public function indexAction(): void
     {

@@ -18,6 +18,7 @@ use Configs\TemplateConfig;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 
 /**
@@ -44,7 +45,17 @@ class ModuleManager
     /**
      * @var string
      */
+    private $modulesDir = "";
+
+    /**
+     * @var string
+     */
     private $moduleName = "";
+
+    /**
+     * @var string
+     */
+    private $entryModule = "";
 
     /**
      * @var string
@@ -96,9 +107,10 @@ class ModuleManager
         $this->moduleName = get_class($controllerInstance);
         $this->moduleConfig = new ConfigValues([]);
         $this->moduleBaseDir = $this->getBaseDir();
+        $this->modulesDir = sprintf("%s/modules", $this->getBaseDir());
 
         if ($this->isModule()) {
-            $this->moduleBaseDir = sprintf("%s/modules/%s", $this->getBaseDir(), $this->getModuleShortName());
+            $this->moduleBaseDir = sprintf("%s/%s", $this->getModulesDir(), $this->getModuleShortName());
             $moduleConfigPath = sprintf("%s/config", $this->moduleBaseDir);
 
             if (file_exists($moduleConfigPath) && is_readable($moduleConfigPath)) {
@@ -119,6 +131,21 @@ class ModuleManager
             ->merge($this->doctrineConfig)
             ->merge($this->loggerConfig)
             ->merge($this->cacheConfig);
+
+        /**
+         * @internal Set default modules whose index controller and index action are called when no parameters are called
+         * @example The field "entry_module" => "Dashboard" in the configuration file causes the
+         * link "index.php?module=dashboard&controller=index&action=index" to be called if there are no parameters
+         */
+        $this->entryModule = $this->getConfig()->get("entry_module", "Dashboard");
+
+        /**
+         * Correct entry point if specified module does not exist or an error exists
+         */
+        if(strcasecmp($this->getEntryModule(), "Dashboard") !== 0
+        && !class_exists(sprintf("Modules\\%s\\Controllers\\IndexController", ucfirst($this->getEntryModule())))){
+            $this->entryModule = "Dashboard";
+        }
     }
 
     /**
@@ -234,5 +261,21 @@ class ModuleManager
     {
         return $relative ? sprintf("assets/css/%s", $this->getControllerShortName())
             : sprintf("%s/assets/css/%s", $this->getModuleBaseDir(), $this->getControllerShortName());
+    }
+
+    /**
+     * @return string
+     */
+    public function getModulesDir(): string
+    {
+        return $this->modulesDir;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntryModule(): string
+    {
+        return lcfirst($this->entryModule);
     }
 }

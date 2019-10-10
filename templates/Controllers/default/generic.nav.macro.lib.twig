@@ -59,33 +59,49 @@
             {% if navigation_routes.top_left != false %}
                 {% for item in navigation_routes.top_left %}
                     <li class="dropdown">
-                        <a href="{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}"
-                           title="{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                        <a href="{% if(item.options.href is defined) %}{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}"
+                           title="{% if(item.options.title is defined) %}{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}{% endif %}"
                            class="dropdown-toggle" data-toggle="dropdown"
                         >
-                            {% if(item.options.text != false) %}
-                                {{ item.options.text|trans }}
+                            {% if(item.options.text is defined) %}
+                                {% if(item.options.text != false) %}
+                                    {{ item.options.text|trans }}
+                                {% endif %}
                             {% endif %}
-                             <i class="icon-caret-down small"></i>
+                            {% if(item.routes is defined) %}
+                                {% if(item.routes != false) %}
+                                    <i class="icon-caret-down small"></i>
+                                {% else %}
+                                    <i class="arrow icon-angle-left"></i>
+                                {% endif %}
+                            {% else %}
+                                <i class="arrow icon-angle-left"></i>
+                            {% endif %}
                         </a>
-                        {% if(item.routes != false) %}
-                            <ul class="dropdown-menu">
-                                {% for route in item.routes %}
-                                    <li>
-                                        <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
-                                           title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
-                                        >
-                                            {% if(route.options.icon != false) %}
-                                                <i class="{{ route.options.icon }}"></i>
-                                            {% endif %}
-                                            {% if(route.options.text != false) %}
-                                                {{ route.options.text|trans }}
-                                            {% endif %}
-                                        </a>
-                                    </li>
-                                    <!--<li class="divider"></li>-->
-                                {% endfor %}
-                            </ul>
+                        {% if(item.routes is defined) %}
+                            {% if(item.routes != false) %}
+                                <ul class="dropdown-menu">
+                                    {% for route in item.routes %}
+                                        <li>
+                                            <a href="{% if(route.options.href is defined) %}{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}{% endif %}"
+                                               title="{% if(route.options.title is defined) %}{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}{% endif %}"
+                                            >
+                                                {% if(route.options.icon is defined) %}
+                                                    {% if(route.options.icon != false) %}
+                                                        <i class="{{ route.options.icon }}"></i>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if(route.options.text is defined) %}
+                                                    {% if(route.options.text != false) %}
+                                                        {{ route.options.text|trans }}
+                                                    {% endif %}
+                                                {% endif %}
+                                            </a>
+                                        </li>
+                                        <!--<li class="divider"></li>-->
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         {% endif %}
                     </li>
                 {% endfor %}
@@ -103,44 +119,61 @@
         {% if navigation_routes.top_right is defined %}
             {% if navigation_routes.top_right != false %}
                 {% for item in navigation_routes.top_right %}
-                    <li class="dropdown {% if(item.options.class != false) %}{{ item.options.class }}{% endif %}">
-                        <a href="{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}"
-                           title="{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                    <li class="dropdown {% if(item.options.class is defined) %}{% if(item.options.class != false) %}{{ item.options.class }}{% endif %}{% endif %}">
+                        <a href="{% if(item.options.href is defined) %}{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}"
+                           title="{% if(item.options.title is defined) %}{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}{% endif %}"
                            class="dropdown-toggle" data-toggle="dropdown"
                         >
+                            {% if(item.options.icon is defined) %}
+                                {% if(item.options.icon != false) %}
+                                    <i class="{{ item.options.icon }}"></i>
+                                {% endif %}
+                            {% endif %}
                             {% if(item.options.class is defined) %}
                                 {% if(item.options.class == "user") %}
                                     <span class="username">
                                 {% endif %}
                             {% endif %}
-                            {% if(item.options.text != false) %}
-                                {{ item.options.text|trans }}
+                            {% if(item.options.text is defined) %}
+                                {% if(item.options.text != false) %}
+                                    {{ item.options.text|trans }}
+                                {% endif %}
                             {% endif %}
                             {% if(item.options.class is defined) %}
                                 {% if(item.options.class == "user") %}
                                     </span>
                                 {% endif %}
                             {% endif %}
-                            <i class="icon-caret-down small"></i>
+                            {% if(item.routes is defined) %}
+                                {% if(item.routes != false) %}
+                                    <i class="icon-caret-down small"></i>
+                                {% endif %}
+                            {% endif %}
                         </a>
-                        {% if(item.routes != false) %}
-                            <ul class="dropdown-menu">
-                                {% for route in item.routes %}
-                                    <li>
-                                        <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
-                                           title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
-                                        >
-                                            {% if(route.options.icon != false) %}
-                                                <i class="{{ route.options.icon }}"></i>
-                                            {% endif %}
-                                            {% if(route.options.text != false) %}
-                                                {{ route.options.text|trans }}
-                                            {% endif %}
-                                        </a>
-                                    </li>
-                                    <!--<li class="divider"></li>-->
-                                {% endfor %}
-                            </ul>
+                        {% if(item.routes is defined) %}
+                            {% if(item.routes != false) %}
+                                <ul class="dropdown-menu">
+                                    {% for route in item.routes %}
+                                        <li>
+                                            <a href="{% if(route.options.href is defined) %}{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}{% endif %}"
+                                               title="{% if(route.options.title is defined) %}{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}{% endif %}"
+                                            >
+                                                {% if(route.options.icon is defined) %}
+                                                    {% if(route.options.icon != false) %}
+                                                        <i class="{{ route.options.icon }}"></i>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if(route.options.text is defined) %}
+                                                    {% if(route.options.text != false) %}
+                                                        {{ route.options.text|trans }}
+                                                    {% endif %}
+                                                {% endif %}
+                                            </a>
+                                        </li>
+                                        <!--<li class="divider"></li>-->
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         {% endif %}
                     </li>
                 {% endfor %}
