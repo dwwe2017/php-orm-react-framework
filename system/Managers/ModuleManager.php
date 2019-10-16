@@ -18,7 +18,6 @@ use Configs\TemplateConfig;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
-use Helpers\DirHelper;
 use Helpers\FileHelper;
 
 /**
@@ -217,6 +216,15 @@ class ModuleManager
     public final function getModuleBaseDir(): string
     {
         return $this->moduleBaseDir;
+    }
+
+    /**
+     * @param bool $relative
+     * @return string
+     */
+    public final function getBaseUrl($relative = true): string
+    {
+        return $relative ? substr(str_replace($this->getBaseDir(), "", $this->getModuleBaseDir()), 1) : $this->getModuleBaseDir();
     }
 
     /**

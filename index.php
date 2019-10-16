@@ -32,4 +32,3 @@ if (class_exists($controllerName)) {
     $requestController = new Controllers\PublicController($baseDir);
     $requestController->render404();
 }
-

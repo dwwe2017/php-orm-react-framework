@@ -7,6 +7,10 @@
 /docs
 /log/*
 !/log/.htaccess
-/system/db.sqlite
+**/*.sqlite
 /vendor
 /meta
+**/node_modules
+**/fronted
+**/package.json
+**/package-lock.json

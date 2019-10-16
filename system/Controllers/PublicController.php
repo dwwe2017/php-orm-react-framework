@@ -30,7 +30,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
 
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
-            "bootstrap/js/bootstrap.min.js",
+            "assets/js/bootstrap.min.js",
             "assets/js/libs/lodash.compat.min.js",
             "plugins/uniform/jquery.uniform.min.js",
             "plugins/validation/jquery.validate.min.js",
@@ -54,7 +54,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
 
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
-            "bootstrap/js/bootstrap.min.js",
+            "assets/js/bootstrap.min.js",
             "assets/js/libs/lodash.compat.min.js",
             "plugins/uniform/jquery.uniform.min.js",
             "plugins/validation/jquery.validate.min.js",
@@ -78,7 +78,7 @@ class PublicController extends AbstractBase implements PublicControllerInterface
 
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
-            "bootstrap/js/bootstrap.min.js",
+            "assets/js/bootstrap.min.js",
             "assets/js/libs/lodash.compat.min.js",
             "plugins/uniform/jquery.uniform.min.js",
             "plugins/validation/jquery.validate.min.js",

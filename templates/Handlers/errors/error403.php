@@ -14,7 +14,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
     <title>404 | Tea(m)speak Interface</title>
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="assets/css/main.css" rel="stylesheet" type="text/css"/>
     <link href="assets/css/plugins.css" rel="stylesheet" type="text/css"/>
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css"/>
@@ -51,7 +51,7 @@
     TSI2 - Tea(m)speak Interface 2<br>&copy; 2019 by DW <\> Web-Engineering
 </div>
 <script type="text/javascript" src="assets/js/libs/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="assets/js/libs/lodash.compat.min.js"></script>
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>

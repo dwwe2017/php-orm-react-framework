@@ -66,7 +66,7 @@ class MinifyCssHandler
     {
         $defaultCssPaths = array(
             //Bootstrap
-            sprintf("%s/bootstrap/css/bootstrap.min.css", $this->baseDir),
+            sprintf("%s/assets/css/bootstrap.min.css", $this->baseDir),
             sprintf("%s/assets/css/main.css", $this->baseDir),
             //Plugins
             sprintf("%s/assets/css/plugins/bootstrap-colorpicker.css", $this->baseDir),

@@ -12,7 +12,6 @@ namespace Modules\Dashboard\Controllers;
 
 use Annotations\Access;
 use Annotations\Navigation;
-use Annotations\SubNavigation;
 use Controllers\RestrictedFrontController;
 
 /**
@@ -24,7 +23,8 @@ use Controllers\RestrictedFrontController;
 class IndexController extends RestrictedFrontController
 {
     /**
-     *
+     * @internal ReactJS
+     * @see views/IndexController/indexAction.tpl.js
      */
     public function indexAction(): void
     {

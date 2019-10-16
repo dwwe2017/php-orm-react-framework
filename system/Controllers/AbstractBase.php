@@ -17,7 +17,6 @@ use Exceptions\DoctrineException;
 use Exceptions\InvalidArgumentException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
-use Exceptions\NavigationException;
 use Exceptions\SessionException;
 use Handlers\CacheHandler;
 use Handlers\ErrorHandler;
@@ -27,6 +26,7 @@ use Handlers\NavigationHandler;
 use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
+use Helpers\FileHelper;
 use Interfaces\ControllerInterfaces\XmlControllerInterface;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
@@ -243,36 +243,44 @@ abstract class AbstractBase
 
         $methodName = sprintf("%sAction", $action);
 
-        if (method_exists($this, $methodName)) {
+        $reactJs = sprintf("%s.tpl.js", sprintf("%s/views/%s/%s",
+            $this->getModuleBaseDir(),
+            $this->getModuleManager()->getControllerShortName(),
+            $methodName));
 
-            /**
-             * @internal Here also the correct view is automatically set
-             */
-            $this->setTemplate($methodName);
-
-            /**
-             * @internal Auto-inclusion for Javascript
-             * @see ModuleManager::getJsAssetsPath()
-             * @see ModuleManager::getMethodJsAction()
-             */
-            $this->addJs($this->getModuleManager()->getMethodJsAction($methodName, true));
-
-            /**
-             * @internal Auto-inclusion for CSS
-             * @see ModuleManager::getCssAssetsPath()
-             * @see ModuleManager::getMethodCssAction()
-             */
-            $this->addCss($this->getModuleManager()->getMethodCssAction($methodName, true));
-
-            /**
-             * Run method
-             */
-            $this->$methodName();
-
-        } else {
+        if (FileHelper::init($reactJs)->isReadable()) {
+            $this->reactJs = substr(str_replace($this->getBaseDir(), "", $reactJs),1);
+        } elseif(!method_exists($this, $methodName)){
             $this->render404();
         }
 
+        /**
+         * @internal Here also the correct view is automatically set
+         */
+        $this->setTemplate($methodName);
+
+        /**
+         * @internal Auto-inclusion for Javascript
+         * @see ModuleManager::getJsAssetsPath()
+         * @see ModuleManager::getMethodJsAction()
+         */
+        $this->addJs($this->getModuleManager()->getMethodJsAction($methodName, true));
+
+        /**
+         * @internal Auto-inclusion for CSS
+         * @see ModuleManager::getCssAssetsPath()
+         * @see ModuleManager::getMethodCssAction()
+         */
+        $this->addCss($this->getModuleManager()->getMethodCssAction($methodName, true));
+
+        /**
+         * Run method
+         */
+        $this->$methodName();
+
+        /**
+         * Render template and views
+         */
         $this->render();
     }
 
@@ -378,6 +386,12 @@ abstract class AbstractBase
      */
     protected function render(): void
     {
+        /**
+         * Necessary Environment vars
+         */
+        $this->addContext("base_url", $this->getModuleManager()->getBaseUrl(true));
+        $this->addContext("module_id", $this->getModuleManager()->getModuleShortName());
+
         /**
          * Flash messages
          */

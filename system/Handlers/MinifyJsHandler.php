@@ -69,7 +69,7 @@ class MinifyJsHandler extends Minifier
             sprintf("%s/assets/js/libs/jquery-3.4.1.min.js", $this->baseDir),
             sprintf("%s/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js", $this->baseDir),
             //Bootstrap
-            sprintf("%s/bootstrap/js/bootstrap.js", $this->baseDir),
+            sprintf("%s/assets/js/bootstrap.js", $this->baseDir),
             sprintf("%s/assets/js/libs/lodash.compat.min.js", $this->baseDir),
             //Smartphone Touch Events
             sprintf("%s/plugins/touchpunch/jquery.ui.touch-punch.min.js", $this->baseDir),
