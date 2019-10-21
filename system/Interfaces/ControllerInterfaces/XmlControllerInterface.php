@@ -19,5 +19,7 @@ interface XmlControllerInterface
 
     const HEADER_ERROR_404 = "HTTP/1.0 404 Not Found";
 
+    const HEADER_ERROR_403 = "HTTP/1.0 403 Forbidden";
+
     public function indexAction(): void;
 }

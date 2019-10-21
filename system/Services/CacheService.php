@@ -12,7 +12,7 @@ namespace Services;
 
 use Exception;
 use Exceptions\CacheException;
-use Helpers\CacheHelper;
+use Helpers\CacheInitHelper;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
@@ -68,9 +68,9 @@ class CacheService implements VendorExtensionServiceInterface
         try {
             /**
              * Init cache instance
-             * @see CacheHelper::init()
+             * @see CacheInitHelper::init()
              */
-            $cache = CacheHelper::init(
+            $cache = CacheInitHelper::init(
                 $this->moduleManager->getConfig(),
                 $instance_id == self::CACHE_SYSTEM
                     ? $instance_id : self::CACHE_MODULE
@@ -86,7 +86,7 @@ class CacheService implements VendorExtensionServiceInterface
 
     /**
      * @return bool
-     * @see CacheHelper::hasFallback()
+     * @see CacheInitHelper::hasFallback()
      */
     public final function hasFallback()
     {

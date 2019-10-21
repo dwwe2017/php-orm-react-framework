@@ -1,7 +1,5 @@
 <?php
 
-use Handlers\ErrorHandler;
-
 require_once 'inc/functions.inc.php';
 require_once 'inc/helper.inc.php';
 require_once 'inc/bootstrap.inc.php';
@@ -11,7 +9,7 @@ session_start();
 $module = $_GET['module'] ?? null;
 $module = is_null($module) ? $module : htmlentities(lcfirst($module));
 
-$controller = $_GET['controller'] ?? (!is_null($module) ? 'index' : 'public');
+$controller = $_GET['controller'] ?? (!is_null($module) ? 'index' : 'dispatch');
 $controller = htmlentities(lcfirst($controller));
 
 $action = $_GET['action'] ?? 'index';
@@ -34,4 +32,3 @@ if (class_exists($controllerName)) {
     $requestController = new Controllers\PublicController($baseDir);
     $requestController->render404();
 }
-

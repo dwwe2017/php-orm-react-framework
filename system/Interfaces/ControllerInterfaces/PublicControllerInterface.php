@@ -16,5 +16,11 @@ namespace Interfaces\ControllerInterfaces;
  */
 interface PublicControllerInterface
 {
-    public function indexAction(): void;
+    public function indexAction();
+
+    public function loginOrRegisterAction(): void;
+
+    public function loginAction(): void;
+
+    public function registerAction(): void;
 }

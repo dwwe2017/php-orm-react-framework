@@ -10,19 +10,24 @@
 namespace Modules\Dashboard\Controllers;
 
 
-use Controllers\PublicController;
+use Annotations\Access;
+use Annotations\Navigation;
+use Controllers\RestrictedFrontController;
 
 /**
  * Class PublicController
  * @package Modules\Dashboard\Controllers
+ * @Access(role=Entities\Group::ROLE_USER)
+ * @Navigation(position="sidebar", icon="icon-dashboard", href="index.php?module=dashboard")
  */
-class IndexController extends PublicController
+class IndexController extends RestrictedFrontController
 {
     /**
-     *
+     * @internal ReactJS
+     * @see views/IndexController/indexAction.tpl.js
      */
     public function indexAction(): void
     {
-        $em = $this->getModuleDbService()->getEntityManager();
+
     }
 }

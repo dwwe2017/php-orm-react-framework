@@ -118,4 +118,33 @@ class StringHelper
     {
         return $this->string;
     }
+
+    /**
+     * @param string $filter
+     * @return bool
+     */
+    public function hasFilter(string $filter)
+    {
+        return strpos($this->string, $filter) !== false;
+    }
+
+    /**
+     * @return $this
+     */
+    public function lcFirst()
+    {
+        $this->string = lcfirst($this->string);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function rmNamespace()
+    {
+        $lastSeparator = strripos($this->string, "\\")+1;
+        $this->string = substr($this->string, $lastSeparator);
+
+        return $this;
+    }
 }

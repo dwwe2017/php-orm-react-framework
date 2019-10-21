@@ -9,7 +9,10 @@
 
 namespace Entities;
 
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Exceptions\InvalidArgumentException;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Interfaces\EntityInterfaces\CustomEntityInterface;
 use Traits\EntityTraits\CustomEntityTrait;
@@ -25,78 +28,55 @@ class Group implements CustomEntityInterface
 {
     use CustomEntityTrait;
 
+    const ROLE_ROOT = 4;
+
+    const ROLE_ADMIN = 3;
+
+    const ROLE_RESELLER = 2;
+
+    const ROLE_USER = 1;
+
+    const ROLE_ANY = -1;
+
     /**
      * @var int
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer", length=11, nullable=false)
+     * @ORM\Column(type="integer", length=2, nullable=false, options={"default"=-1})
      */
-    protected $id;
+    protected $role = self::ROLE_ANY;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", length=55, nullable=false, options={"default": ""})
+     * @var ArrayCollection|null
+     * @ORM\OneToMany(targetEntity="User", mappedBy="group")
+     * @ORM\JoinColumn(name="group_id", referencedColumnName="id")
      */
-    protected $name = "";
+    protected $users;
 
     /**
-     * @var \DateTime|null
-     * @Gedmo\Timestampable(on="change", field={"name"})
-     * @ORM\Column(type="datetime", nullable=true)
+     *
      */
-    protected $changed;
-
-    /**
-     * @var \DateTime|null
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    protected $updated;
-
-    /**
-     * @var \DateTime|null
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    protected $created;
-
-    /**
-     * @param string $name
-     */
-    public function setName(string $name): void
+    public function init(): void
     {
-        $this->name = $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
+        $this->users = new ArrayCollection();
     }
 
     /**
      * @return int
      */
-    public function getId(): int
+    public function getRole(): int
     {
-        return $this->id;
+        return $this->role;
     }
 
     /**
-     * @return \DateTime|null
+     * @param int $role
+     * @throws InvalidArgumentException
      */
-    public function getCreated(): ?\DateTime
+    public function setRole(int $role): void
     {
-        return $this->created;
-    }
+        if (!in_array($role, [self::ROLE_ROOT, self::ROLE_ADMIN, self::ROLE_RESELLER, self::ROLE_USER, self::ROLE_ANY])) {
+            throw new InvalidArgumentException("Invalid role");
+        }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getUpdated(): ?\DateTime
-    {
-        return $this->updated;
+        $this->role = $role;
     }
 }

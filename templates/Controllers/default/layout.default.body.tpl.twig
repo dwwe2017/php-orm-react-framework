@@ -16,7 +16,6 @@
         {% endblock layout_sidebar %}
 
         <div id="content">
-
             <div class="container">
 
                 {% block layout_breadcrumb %}
@@ -29,17 +28,12 @@
                     {% include "layout.default.page.header.tpl.twig" %}
                 {% endblock layout_page_header %}
 
-                <div class="row">
-
-                    {% block page_content %}
-                    {% endblock page_content %}
-
-                </div>
+                {% block page_content %}
+                    <div class="row"></div>
+                {% endblock page_content %}
 
             </div>
-
         </div>
-
     </div>
 
     {% block layout_js %}

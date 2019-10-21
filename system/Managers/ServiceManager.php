@@ -10,6 +10,7 @@
 namespace Managers;
 
 
+use Exceptions\DoctrineException;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Services\CacheService;
 use Services\DoctrineService;
@@ -54,6 +55,7 @@ class ServiceManager
     /**
      * ServiceManager constructor.
      * @param ModuleManager $moduleManager
+     * @throws DoctrineException
      */
     private final function __construct(ModuleManager $moduleManager)
     {
@@ -67,6 +69,7 @@ class ServiceManager
     /**
      * @param ModuleManager $moduleManager
      * @return ServiceManager|null
+     * @throws DoctrineException
      */
     public static final function init(ModuleManager $moduleManager)
     {

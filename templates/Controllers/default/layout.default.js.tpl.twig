@@ -44,4 +44,47 @@
         {% endautoescape %}
     {% endif %}
 
+    {% if reactJs != false %}
+        <script src="assets/js/libs/react.production.min.js"></script>
+        <script src="assets/js/libs/react-dom.production.min.js"></script>
+        <script src="assets/js/libs/babel.min.js"></script>
+        <script src="{{ reactJs }}" type="text/babel"></script>
+        {% autoescape "js" %}
+
+            {#
+            Here, a component is switched between, so if necessary, a corresponding layout can be created
+            @see https://de.reactjs.org/docs/add-react-to-a-website.html
+             #}
+            <script type="text/babel">
+                class ReactView extends React.Component {
+                    constructor(props) {
+                        super(props);
+                    }
+
+                    render() {
+                        return (
+                            <{{ action|capitalize }}Action
+                                domId={this.props.domId}
+                                baseUrl={this.props.baseUrl}
+                                moduleId={this.props.moduleId}
+                            />
+                        );
+                    }
+                }
+
+                let domContainer = document.querySelector('#_{{ md5(reactJs) }}');
+                let domId = "_{{ md5(reactJs) }}";
+                let baseUrl = "{{ base_url }}";
+                let moduleId = "{{ module_id }}";
+
+                ReactDOM.render(<ReactView
+                    domId={domId}
+                    baseUrl={baseUrl}
+                    moduleId={moduleId}
+                    />
+                    , domContainer);
+            </script>
+        {% endautoescape %}
+    {% endif %}
+
 {% endblock layout_js %}

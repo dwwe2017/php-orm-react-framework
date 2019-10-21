@@ -41,14 +41,14 @@
         <li class="list-group-item list-group-header align-center">
             Ooops! It looks like you have taken a wrong turn.
         </li>
-        <a href="index.php" class="list-group-item"><i class="icon-home"></i> Go to Dashboard <i
+        <a href="javascript:history.back()" class="list-group-item"><i class="icon-home"></i> Go back <i
                     class="icon-angle-right align-right"></i></a>
     </div>
 </div>
 
 <!-- Footer -->
 <div class="footer">
-    TSI - Tea(m)speak Interface<br>&copy; 2019 by DW <\> Web-Engineering
+    TSI2 - Tea(m)speak Interface 2<br>&copy; 2019 by DW <\> Web-Engineering
 </div>
 <script type="text/javascript" src="assets/js/libs/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>

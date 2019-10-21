@@ -11,8 +11,10 @@ namespace Services;
 
 
 use Doctrine\DBAL\Event\Listeners\MysqlSessionInit;
-use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Events;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Exception;
 use Exceptions\DoctrineException;
@@ -22,7 +24,6 @@ use Helpers\FileHelper;
 use Helpers\StringHelper;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
-use PDO;
 use Traits\ControllerTraits\AbstractBaseTrait;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -129,10 +130,23 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     }
 
     /**
+     * @param $repositoryName
+     * @param null $connectionOption
+     * @return EntityRepository
+     * @throws DoctrineException
+     */
+    public final function getRepository($repositoryName, $connectionOption = null)
+    {
+        $entity_namespace = $this->getOption("entity_namespace");
+        return $this->getEntityManager($connectionOption)->getRepository(
+            sprintf("%s\\%s", $entity_namespace, $repositoryName)
+        );
+    }
+
+    /**
      * @param null $connectionOption
      * @return EntityManager
      * @throws DoctrineException
-     * @example $this->getModuleDbService()->getEntityManager("module");
      */
     public final function getEntityManager($connectionOption = null)
     {
@@ -159,6 +173,9 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
             $this->removeEventListener($em, Events::postConnect, MysqlSessionInit::class);
         }
 
+        $tool = new SchemaTool($em);
+
+
         return $em;
     }
 
@@ -171,6 +188,19 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     public final function getSystemDoctrineService(): DoctrineService
     {
         return $this->systemDoctrineService;
+    }
+
+    /**
+     * @param $entity
+     * @param null $connectionOption
+     * @throws DoctrineException
+     * @throws OptimisticLockException
+     */
+    public final function persistAndFlush($entity, $connectionOption = null)
+    {
+        $em = $this->getEntityManager($connectionOption);
+        $em->persist($entity);
+        $em->flush($entity);
     }
 
     /**
@@ -205,15 +235,8 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
                         return;
                     }
 
-                    /**
-                     * @internal SQLite connection is always UTF-8
-                     * @see http://www.alberton.info/dbms_charset_settings_explained.html
-                     */
-                    $pdo = new PDO(sprintf("sqlite:%s", $sqLitePath));
-                    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    foreach ($tool->getCreateSchemaSql($schemas) as $query) {
-                        $pdo->exec($query);
-                    }
+                    $tool->createSchema($schemas);
+
                 } catch (Exception $e) {
                     throw new DoctrineException($e->getMessage(), $e->getCode(), $e);
                 }

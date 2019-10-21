@@ -9,8 +9,8 @@
 
 namespace Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Interfaces\EntityInterfaces\CustomEntityInterface;
 use Traits\EntityTraits\CustomEntityTrait;
 
@@ -26,12 +26,10 @@ class User implements CustomEntityInterface
     use CustomEntityTrait;
 
     /**
-     * @var int
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer", length=11, nullable=false)
+     * @var int|null
+     * @ORM\Column(type="integer", length=11, nullable=true)
      */
-    protected $id;
+    protected $by_id;
 
     /**
      * @var int|null
@@ -40,55 +38,94 @@ class User implements CustomEntityInterface
     protected $group_id;
 
     /**
-     * @var \DateTime|null
-     * @Gedmo\Timestampable(on="change", field={"group_id"})
-     * @ORM\Column(type="datetime", nullable=true)
+     * @var string
+     * @ORM\Column(type="string", length=55, nullable=false, options={"default"=""})
      */
-    protected $changed;
+    protected $password = "";
 
     /**
-     * @var \DateTime|null
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime", nullable=true)
+     * @var Group|null
+     * @ORM\ManyToOne(targetEntity="Group", inversedBy="users")
+     * @ORM\JoinColumn(name="group_id", referencedColumnName="id")
      */
-    protected $updated;
+    protected $group;
 
     /**
-     * @var \DateTime|null
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime", nullable=true)
+     * @var User|null
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="users")
+     * @ORM\JoinColumn(name="by_id", referencedColumnName="id")
      */
-    protected $created;
+    protected $by;
 
     /**
-     * @return int|null
+     * @var
+     * @ORM\OneToMany(targetEntity="User", mappedBy="by")
+     * @ORM\JoinColumn(name="id", referencedColumnName="by_id")
      */
-    public function getGroupId(): ?int
+    protected $users;
+
+    /**
+     *
+     */
+    protected function init()
     {
-        return $this->group_id;
+        $this->users = new ArrayCollection();
     }
 
     /**
-     * @return int
+     * @param string $password
      */
-    public function getId(): int
+    public function setPassword(string $password): void
     {
-        return $this->id;
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
     /**
-     * @return \DateTime|null
+     * @param string $password
+     * @return bool
      */
-    public function getCreated(): ?\DateTime
+    public function isValidPassword(string $password)
     {
-        return $this->created;
+        return password_verify($password, $this->password);
     }
 
     /**
-     * @return \DateTime|null
+     * @param Group|null $group
      */
-    public function getUpdated(): ?\DateTime
+    public function setGroup(?Group $group = null): void
     {
-        return $this->updated;
+        $this->group = $group;
+    }
+
+    /**
+     * @return Group|null
+     */
+    public function getGroup(): ?Group
+    {
+        return $this->group;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getBy(): ?User
+    {
+        return $this->by;
+    }
+
+    /**
+     * @param User|null $by
+     */
+    public function setBy(?User $by = null): void
+    {
+        $this->by = $by;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUsers()
+    {
+        return $this->users;
     }
 }

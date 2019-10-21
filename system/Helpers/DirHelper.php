@@ -42,9 +42,9 @@ class DirHelper
      */
     public static final function init(string $dir, ?string $exceptionClass = null)
     {
-        if (is_null(self::$instance) || serialize($dir.$exceptionClass) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($dir . $exceptionClass) !== self::$instanceKey) {
             self::$instance = new self($dir, $exceptionClass);
-            self::$instanceKey = serialize($dir.$exceptionClass);
+            self::$instanceKey = serialize($dir . $exceptionClass);
         }
 
         return self::$instance;
@@ -57,15 +57,19 @@ class DirHelper
      */
     public function getScan(array $filter = [], array $withOut = [".", ".."])
     {
+        if ($this->exceptionClass) {
+            FileHelper::init($this->dir, $this->exceptionClass)->isReadable();
+        }
+
         $result = [];
-        foreach (scandir($this->dir) as $item){
-            if(in_array($item, $withOut)){
+        foreach (scandir($this->dir) as $item) {
+            if (in_array($item, $withOut)) {
                 continue;
             } elseif (empty($filter)) {
                 $result[] = $item;
             } else {
-                foreach ($filter as $value){
-                    if(strpos($item, $value) !== false){
+                foreach ($filter as $value) {
+                    if (strpos($item, $value) !== false) {
                         $result[] = $item;
                     }
                 }

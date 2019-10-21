@@ -1,7 +1,11 @@
-{# macro:alert_fade_in_danger #}
-{% macro alert_fade_in_danger(message="", display="none") %}
-    <div class="alert fade in alert-danger" style="display: {{ display }};">
+{#
+@macro alert_fade_in_danger
+@example
+{{ macro.alert_fade_in_danger("Error message", "true") }}
+#}
+{% macro alert_fade_in_danger(message="", hidden="") %}
+    <div class="alert fade in alert-danger" {% if(hidden != false) %}style="display: none;"{% endif %}>
         <i class="icon-remove close" data-dismiss="alert"></i>
-        {% trans message %}
+        {{ message|trans }}
     </div>
 {% endmacro %}
