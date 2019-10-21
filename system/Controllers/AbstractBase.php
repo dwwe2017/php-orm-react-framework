@@ -14,6 +14,7 @@ use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Exceptions\CacheException;
 use Exceptions\DoctrineException;
+use Exceptions\FileFactoryException;
 use Exceptions\InvalidArgumentException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
@@ -27,6 +28,7 @@ use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
 use Helpers\FileHelper;
+use Helpers\ReactHelper;
 use Interfaces\ControllerInterfaces\XmlControllerInterface;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
@@ -66,6 +68,7 @@ abstract class AbstractBase
         $this->initServices();
         $this->initHelpers();
         $this->initHandlers();
+        $this->initSettings();
     }
 
     /**
@@ -205,6 +208,19 @@ abstract class AbstractBase
     }
 
     /**
+     * Make final settings after the system has been initialized
+     */
+    private function initSettings()
+    {
+        $userSession = $this->getSessionHandler()->getUser();
+
+        if ($userSession) {
+            $this->getLocaleService()->setLanguage($userSession->getLocale());
+            $this->getModuleLocaleService()->setLanguage($userSession->getLocale());
+        }
+    }
+
+    /**
      * @throws AnnotationException
      * @throws ReflectionException
      */
@@ -215,6 +231,13 @@ abstract class AbstractBase
          * @see AbstractBaseTrait::getAbsolutePathHelper() // Available in modules
          */
         $this->absolutePathHelper = AbsolutePathHelper::init($this->getBaseDir()); // Available in modules
+
+        /**
+         * ReactHelper
+         * @see AbstractBase::run()
+         * @see https://github.com/dwwe2017/tsi2-module-skeletton
+         */
+        $this->reactHelper = ReactHelper::init($this->getModuleBaseDir(), $this->getModuleManager()->getBaseUrl());
 
         /**
          * Reflection Helper
@@ -236,23 +259,65 @@ abstract class AbstractBase
      * @throws SyntaxError
      * @throws Throwable
      * @throws LoaderError
+     * @internal Divided for better inheritance possibilities
      */
     public function run(string $action)
     {
-        $this->addContext('action', $action);
+        $this->preRun($action);
+    }
 
+    /**
+     * @param string $action
+     * @throws LoaderError
+     * @throws MinifyCssException
+     * @throws MinifyJsException
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function preRun(string $action): void
+    {
         $methodName = sprintf("%sAction", $action);
 
-        $reactJs = sprintf("%s.tpl.js", sprintf("%s/views/%s/%s",
-            $this->getModuleBaseDir(),
-            $this->getModuleManager()->getControllerShortName(),
-            $methodName));
-
-        if (FileHelper::init($reactJs)->isReadable()) {
-            $this->reactJs = substr(str_replace($this->getBaseDir(), "", $reactJs),1);
-        } elseif(!method_exists($this, $methodName)){
+        if ($this->getReactHelper()->usesReactJs()) {
+            $this->reactJs = $this->getReactHelper()->getEntryScriptTags();
+            $action = "index";
+        } elseif (!method_exists($this, $methodName)) {
             $this->render404();
         }
+
+        $this->addContext('action', $action);
+
+        $this->betRun($action);
+    }
+
+    /**
+     * @param string $action
+     * @throws LoaderError
+     * @throws MinifyCssException
+     * @throws MinifyJsException
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function betRun(string $action)
+    {
+        /**
+         * For any functions that can be performed between the process
+         * @see RestrictedController::betRun()
+         */
+        $this->postRun($action);
+    }
+
+    /**
+     * @param string $action
+     * @throws LoaderError
+     * @throws MinifyCssException
+     * @throws MinifyJsException
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function postRun(string $action): void
+    {
+        $methodName = sprintf("%sAction", $action);
 
         /**
          * @internal Here also the correct view is automatically set
@@ -289,15 +354,12 @@ abstract class AbstractBase
      */
     public function render404(): void
     {
-        if($this->getRequestHandler()->isXml())
-        {
+        if ($this->getRequestHandler()->isXml()) {
             header(XmlControllerInterface::HEADER_ERROR_404);
             header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
             $this->addContext("error", "Not Found");
             die(json_encode($this->getContext()));
-        }
-        else
-        {
+        } else {
             header('HTTP/1.0 404 Not Found');
             /** @noinspection PhpIncludeInspection */
             $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error404.php");
@@ -310,22 +372,17 @@ abstract class AbstractBase
      */
     public function render403($loginRedirect = false): void
     {
-        if($this->getRequestHandler()->isXml())
-        {
+        if ($this->getRequestHandler()->isXml()) {
             header(XmlControllerInterface::HEADER_ERROR_403);
             header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
             $this->addContext("error", "Forbidden");
             die(json_encode($this->getContext()));
-        }
-        elseif(!$loginRedirect)
-        {
+        } elseif (!$loginRedirect) {
             header('HTTP/1.0 403 Forbidden');
             /** @noinspection PhpIncludeInspection */
             $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error403.php");
             exit($html ?? "Forbidden");
-        }
-        else
-        {
+        } else {
             /**
              * @see PublicController::loginAction()
              */
@@ -391,6 +448,7 @@ abstract class AbstractBase
          */
         $this->addContext("base_url", $this->getModuleManager()->getBaseUrl(true));
         $this->addContext("module_id", $this->getModuleManager()->getModuleShortName());
+        $this->addContext("lang_code", $this->getLocaleService()->getLanguageCode());
 
         /**
          * Flash messages

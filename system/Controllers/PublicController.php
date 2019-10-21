@@ -30,13 +30,13 @@ class PublicController extends AbstractBase implements PublicControllerInterface
 
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
-            "assets/js/bootstrap.min.js",
+            "assets/js/libs/bootstrap.min.js",
             "assets/js/libs/lodash.compat.min.js",
-            "plugins/uniform/jquery.uniform.min.js",
-            "plugins/validation/jquery.validate.min.js",
-            "plugins/nprogress/nprogress.js",
-            "plugins/cryptojs/aes.js",
-            "plugins/cryptojs/md5.js",
+            "assets/js/plugins/uniform/jquery.uniform.min.js",
+            "assets/js/plugins/validation/jquery.validate.min.js",
+            "assets/js/plugins/nprogress/nprogress.js",
+            "assets/js/plugins/cryptojs/aes.js",
+            "assets/js/plugins/cryptojs/md5.js",
             "assets/js/PublicController/loginOrRegisterAction.js"
         ]);
 
@@ -54,13 +54,13 @@ class PublicController extends AbstractBase implements PublicControllerInterface
 
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
-            "assets/js/bootstrap.min.js",
+            "assets/js/libs/bootstrap.min.js",
             "assets/js/libs/lodash.compat.min.js",
-            "plugins/uniform/jquery.uniform.min.js",
-            "plugins/validation/jquery.validate.min.js",
-            "plugins/nprogress/nprogress.js",
-            "plugins/cryptojs/aes.js",
-            "plugins/cryptojs/md5.js",
+            "assets/js/plugins/uniform/jquery.uniform.min.js",
+            "assets/js/plugins/validation/jquery.validate.min.js",
+            "assets/js/plugins/nprogress/nprogress.js",
+            "assets/js/plugins/cryptojs/aes.js",
+            "assets/js/plugins/cryptojs/md5.js",
             "assets/js/PublicController/loginAction.js"
         ]);
 
@@ -78,13 +78,13 @@ class PublicController extends AbstractBase implements PublicControllerInterface
 
         $this->setJs([
             "assets/js/libs/jquery-3.4.1.min.js",
-            "assets/js/bootstrap.min.js",
+            "assets/js/libs/bootstrap.min.js",
             "assets/js/libs/lodash.compat.min.js",
-            "plugins/uniform/jquery.uniform.min.js",
-            "plugins/validation/jquery.validate.min.js",
-            "plugins/nprogress/nprogress.js",
-            "plugins/cryptojs/aes.js",
-            "plugins/cryptojs/md5.js",
+            "assets/js/plugins/uniform/jquery.uniform.min.js",
+            "assets/js/plugins/validation/jquery.validate.min.js",
+            "assets/js/plugins/nprogress/nprogress.js",
+            "assets/js/plugins/cryptojs/aes.js",
+            "assets/js/plugins/cryptojs/md5.js",
             "assets/js/PublicController/registerAction.js"
         ]);
 

@@ -44,6 +44,12 @@ class User implements CustomEntityInterface
     protected $password = "";
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=5, nullable=false, options={"default"="en_US"})
+     */
+    protected $locale = "en_US";
+
+    /**
      * @var Group|null
      * @ORM\ManyToOne(targetEntity="Group", inversedBy="users")
      * @ORM\JoinColumn(name="group_id", referencedColumnName="id")
@@ -127,5 +133,21 @@ class User implements CustomEntityInterface
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    /**
+     * @param string $locale
+     */
+    public function setLocale(string $locale): void
+    {
+        $this->locale = $locale;
     }
 }

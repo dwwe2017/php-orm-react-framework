@@ -67,36 +67,36 @@ class MinifyJsHandler extends Minifier
         $defaultJsPaths = array(
             //jQuery
             sprintf("%s/assets/js/libs/jquery-3.4.1.min.js", $this->baseDir),
-            sprintf("%s/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js", $this->baseDir),
             //Bootstrap
-            sprintf("%s/assets/js/bootstrap.js", $this->baseDir),
+            sprintf("%s/assets/js/libs/bootstrap.js", $this->baseDir),
             sprintf("%s/assets/js/libs/lodash.compat.min.js", $this->baseDir),
             //Smartphone Touch Events
-            sprintf("%s/plugins/touchpunch/jquery.ui.touch-punch.min.js", $this->baseDir),
-            sprintf("%s/plugins/event.swipe/jquery.event.move.js", $this->baseDir),
-            sprintf("%s/plugins/event.swipe/jquery.event.swipe.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/touchpunch/jquery.ui.touch-punch.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/event.swipe/jquery.event.move.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/event.swipe/jquery.event.swipe.js", $this->baseDir),
             //General
             sprintf("%s/assets/js/libs/breakpoints.js", $this->baseDir),
-            sprintf("%s/plugins/respond/respond.min.js", $this->baseDir),
-            sprintf("%s/plugins/cookie/jquery.cookie.min.js", $this->baseDir),
-            sprintf("%s/plugins/slimscroll/jquery.slimscroll.min.js", $this->baseDir),
-            sprintf("%s/plugins/slimscroll/jquery.slimscroll.horizontal.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/respond/respond.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/cookie/jquery.cookie.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/slimscroll/jquery.slimscroll.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/slimscroll/jquery.slimscroll.horizontal.min.js", $this->baseDir),
             //Charts
-            sprintf("%s/plugins/sparkline/jquery.sparkline.min.js", $this->baseDir),
-            sprintf("%s/plugins/daterangepicker/moment.min.js", $this->baseDir),
-            sprintf("%s/plugins/daterangepicker/daterangepicker.js", $this->baseDir),
-            sprintf("%s/plugins/blockui/jquery.blockUI.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/sparkline/jquery.sparkline.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/daterangepicker/moment.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/daterangepicker/daterangepicker.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/blockui/jquery.blockUI.min.js", $this->baseDir),
             //Forms
-            sprintf("%s/plugins/uniform/jquery.uniform.min.js", $this->baseDir),
-            sprintf("%s/plugins/select2/select2.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/uniform/jquery.uniform.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/select2/select2.min.js", $this->baseDir),
             //DataTables
-            sprintf("%s/plugins/datatables/jquery.dataTables.min.js", $this->baseDir),
-            sprintf("%s/plugins/datatables/DT_bootstrap.js", $this->baseDir),
-            sprintf("%s/plugins/datatables/responsive/datatables.responsive.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/datatables/jquery.dataTables.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/datatables/DT_bootstrap.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/datatables/responsive/datatables.responsive.js", $this->baseDir),
             //Notifications
-            sprintf("%s/plugins/noty/jquery.noty.js", $this->baseDir),
-            sprintf("%s/plugins/noty/layouts/top.js", $this->baseDir),
-            sprintf("%s/plugins/noty/themes/default.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/noty/jquery.noty.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/noty/layouts/top.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/noty/themes/default.js", $this->baseDir),
             //Application
             sprintf("%s/assets/js/app.js", $this->baseDir),
             sprintf("%s/assets/js/plugins.js", $this->baseDir),

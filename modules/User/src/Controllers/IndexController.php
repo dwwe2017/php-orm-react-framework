@@ -21,31 +21,19 @@ use Helpers\EntityViewHelper;
 class IndexController extends RestrictedController
 {
     /**
-     * @SubNavigation(text="All users")
-     * @throws DoctrineException
+     * @internal Dispatch
      */
     public function indexAction(): void
     {
-        $em = $this->getModuleDbService()->getEntityManager();
-        $viewHelper = EntityViewHelper::init($em);
-
-        $data = $viewHelper->getResponsiveTableArrayFromEntity(
-            User::class,
-            $this->getSessionHandler()->getUsers(),
-            "icon-reorder",
-            true, true,
-            ["user", "index", "userAdd"],
-            ["user", "index", "user"],
-            ["user", "index", "userDel"]
-        );
-
-        $this->addContext("data", $data);
+        $this->redirect("user", "index", "list");
     }
 
     /**
-     * @SubNavigation(text="Search user", icon="icon-search")
+     * @SubNavigation(text="All users")
+     * @internal ReactJS
+     * @see ApiController::listAction()
      */
-    public function userSearchAction(): void
+    public function listAction(): void
     {
 
     }
@@ -54,14 +42,6 @@ class IndexController extends RestrictedController
      * @SubNavigation(text="Add user", icon="icon-plus")
      */
     public function userAddAction(): void
-    {
-
-    }
-
-    /**
-     *
-     */
-    public function userAction(): void
     {
 
     }

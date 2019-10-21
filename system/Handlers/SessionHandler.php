@@ -14,6 +14,7 @@ use Entities\Group;
 use Entities\User;
 use Exception;
 use Exceptions\SessionException;
+use Helpers\StringHelper;
 use Services\DoctrineService;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
@@ -295,6 +296,53 @@ class SessionHandler
         }
 
         return $this->getUser()->getUsers();
+    }
+
+    /**
+     * @param array $users
+     * @return array
+     */
+    public final function getUsersArray(array $users = [])
+    {
+        $result = array();
+        $users = empty($users) ? $this->getUsers() : $users;
+        $meta = $this->getEm()->getClassMetadata(User::class);
+        foreach ($users as $key => $user) {
+            if (!$user instanceof User) {
+                continue;
+            }
+
+            $data = array();
+            foreach ($meta->getFieldNames() as $fieldName) {
+                $getter = sprintf("get%s", ucfirst(StringHelper::init($fieldName)->camelize()->getString()));
+                if (!method_exists($user, $getter)) {
+                    continue;
+                }
+
+                $content = $user->{$getter}();
+                if (strcasecmp($fieldName, "users") == 0) {
+                    array_push($result, self::getUsersArray($content));
+                } elseif ($content instanceof DateTime) {
+                    $data[$user->getId()][$fieldName] = $content->format("d.m.Y");
+                } elseif (is_object($content) && method_exists($content, "getName")) {
+                    $data[$user->getId()][$fieldName] = htmlentities($content->getName());
+                } else {
+                    $data[$user->getId()][$fieldName] = htmlentities($content);
+                }
+            }
+
+            $result[] = $data[$user->getId()];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return \Doctrine\ORM\Mapping\ClassMetadata
+     */
+    public function getDefaultMeta()
+    {
+        return $this->getEm()->getClassMetadata(User::class);
     }
 
     /**

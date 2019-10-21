@@ -136,4 +136,28 @@ class FileHelper
             @unlink($this->file);
         }
     }
+
+    /**
+     * @return false|string|null
+     */
+    public final function getContents()
+    {
+        if($this->isReadable())
+        {
+            return file_get_contents($this->file);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $data
+     * @param int $flags
+     * @param null $context
+     * @return false|int|null
+     */
+    public final function putContents($data, $flags = 0, $context = null)
+    {
+        return @file_put_contents($this->file, $data, $flags, $context);
+    }
 }

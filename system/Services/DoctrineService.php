@@ -173,8 +173,29 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
             $this->removeEventListener($em, Events::postConnect, MysqlSessionInit::class);
         }
 
-        $tool = new SchemaTool($em);
+        $checksum = DirHelper::init($this->getOption("entity_dir"))->getMd5CheckSum([".php"], [".", "..", ".checksum"]);
+        $csFile = FileHelper::init(sprintf("%s/.checksum", $this->getOption("entity_dir")));
 
+        /**
+         * @internal Here is a checksum from the entities formed to learn changes or initialization.
+         * For changes to the DB schema, an automatic adjustment is made here.
+         * @see https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/tools.html#database-schema-generation
+         */
+        if($csFile->getContents() !== $checksum)
+        {
+            try {
+                $tool = new SchemaTool($em);
+                $schemas = $this->getEntitySchemas($em);
+                if (!empty($schemas)) {
+                    $tool->updateSchema($schemas);
+                }
+
+                $csFile->putContents($checksum);
+
+            } catch (Exception $e) {
+                throw new DoctrineException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
 
         return $em;
     }
@@ -223,6 +244,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
         /**
          * @internal Both for the system and for modules, if the default driver "pdo_sqlite"
          * is selected, the database is automatically created if it does not exist.
+         * @see https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/tools.html#database-schema-generation
          */
         if (strcasecmp($options->get("driver", false), "pdo_sqlite") == 0) {
             $sqLitePath = $options->get("path", false);

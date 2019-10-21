@@ -78,4 +78,33 @@ class DirHelper
 
         return $result;
     }
+
+    /**
+     * @param array $filter
+     * @param array $withOut
+     * @return string
+     */
+    public function getMd5CheckSum(array $filter = [], array $withOut = [".", ".."])
+    {
+        if ($this->exceptionClass) {
+            FileHelper::init($this->dir, $this->exceptionClass)->isReadable();
+        }
+
+        $result = "";
+        foreach (scandir($this->dir) as $item) {
+            if (in_array($item, $withOut)) {
+                continue;
+            } elseif (empty($filter)) {
+                $result .= md5_file(sprintf("%s/%s", $this->dir, $item));
+            } else {
+                foreach ($filter as $value) {
+                    if (strpos($item, $value) !== false) {
+                        $result .= md5_file(sprintf("%s/%s", $this->dir, $item));
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
 }
