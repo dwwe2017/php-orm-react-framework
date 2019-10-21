@@ -26,6 +26,7 @@ use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
 use Helpers\EntityViewHelper;
+use Helpers\ReactHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
 use Monolog\Logger;
@@ -216,6 +217,11 @@ trait AbstractBaseTrait
      * @var AnnotationReader
      */
     private $annotationReader;
+
+    /**
+     * @var ReactHelper
+     */
+    private $reactHelper;
 
     /**
      * @var EntityViewHelper
@@ -697,6 +703,14 @@ trait AbstractBaseTrait
     private function getReactJs()
     {
         return $this->reactJs;
+    }
+
+    /**
+     * @return ReactHelper
+     */
+    private function getReactHelper(): ReactHelper
+    {
+        return $this->reactHelper;
     }
 
     /**

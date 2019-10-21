@@ -51,7 +51,7 @@
     TSI2 - Tea(m)speak Interface 2<br>&copy; 2019 by DW <\> Web-Engineering
 </div>
 <script type="text/javascript" src="assets/js/libs/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/libs/bootstrap.min.js"></script>
 <script type="text/javascript" src="assets/js/libs/lodash.compat.min.js"></script>
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>

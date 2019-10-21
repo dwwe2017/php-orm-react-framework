@@ -30,7 +30,7 @@ use Twig\Error\SyntaxError;
  * Class RestrictedController
  * @package Controllers
  */
-class RestrictedController extends AbstractBase implements RestrictedControllerInterface
+class RestrictedController extends AbstractBase
 {
     use RestrictedControllerTrait;
 
@@ -61,13 +61,14 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
      * @param string $action
      * @throws AnnotationException
      * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws Throwable
      * @throws LoaderError
+     * @throws ReflectionException
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws \Exceptions\MinifyCssException
+     * @throws \Exceptions\MinifyJsException
      */
-    public function run(string $action)
+    public function betRun(string $action): void
     {
         /**
          * Access requirement at least user
@@ -88,13 +89,13 @@ class RestrictedController extends AbstractBase implements RestrictedControllerI
             $this->render403();
         }
 
-        parent::run($action);
+        $this->postRun($action);
     }
 
     /**
      *
      */
-    public function indexAction(): void
+    public function indexAction()
     {
         // TODO: Implement indexAction() method.
     }

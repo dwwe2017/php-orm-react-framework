@@ -1,8 +1,0 @@
-{% extends "layout.default.body.tpl.twig" %}
-
-{% block page_content %}
-    {% import "generic.tables.macro.lib.twig" as table %}
-    {% if(data != false) %}
-        {{ table.responsive(data) }}
-    {% endif %}
-{% endblock page_content %}

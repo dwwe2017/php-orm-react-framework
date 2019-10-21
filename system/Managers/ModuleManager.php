@@ -224,7 +224,9 @@ class ModuleManager
      */
     public final function getBaseUrl($relative = true): string
     {
-        return $relative ? substr(str_replace($this->getBaseDir(), "", $this->getModuleBaseDir()), 1) : $this->getModuleBaseDir();
+        $result = $relative ? str_replace($this->getBaseDir(), "", $this->getModuleBaseDir()) : $this->getModuleBaseDir();
+        //$subDir = stripos($_SERVER["REQUEST_URI"], "?") !== false ? explode("?", $_SERVER["REQUEST_URI"])[0] : $_SERVER["REQUEST_URI"];
+        return $result;//str_replace("/index.php", "", sprintf("%s/%s", $subDir, $result));
     }
 
     /**

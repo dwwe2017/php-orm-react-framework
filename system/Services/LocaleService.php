@@ -34,7 +34,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * @var string
      */
     const DOMAIN = "messages";
-    
+
     /**
      * @var GettextTranslator
      */
@@ -56,6 +56,11 @@ class LocaleService implements VendorExtensionServiceInterface
     private $modLocaleDir = "";
 
     /**
+     * @var string
+     */
+    private $languageCode = "";
+
+    /**
      * LocaleService constructor.
      * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
@@ -67,7 +72,7 @@ class LocaleService implements VendorExtensionServiceInterface
 
         $config = $moduleManager->getConfig();
         $baseDir = $config->get("base_dir");
-        $language = $config->get("language");
+        $this->languageCode = $config->get("language");
 
         $this->sysLocaleDir = sprintf("%s/locale", $baseDir);
         $this->modLocaleDir = sprintf("%s/locale", $moduleManager->getModuleBaseDir());
@@ -80,7 +85,7 @@ class LocaleService implements VendorExtensionServiceInterface
          * Module translation
          */
         $this->modTranslator = new GettextTranslator();
-        $this->modTranslator->setLanguage($language);
+        $this->modTranslator->setLanguage($this->getLanguageCode());
         $this->modTranslator->loadDomain(self::DOMAIN, $this->modLocaleDir);
         $this->modTranslator->register();
 
@@ -89,7 +94,7 @@ class LocaleService implements VendorExtensionServiceInterface
          * System translation
          */
         $this->sysTranslator = new Translator();
-        $this->sysTranslator->loadTranslations($this->getTranslations($language));
+        $this->sysTranslator->loadTranslations($this->getTranslations($this->getLanguageCode()));
         $this->sysTranslator->register();
     }
 
@@ -162,5 +167,13 @@ class LocaleService implements VendorExtensionServiceInterface
     private function getTranslations(string $localeCode)
     {
         return $this->getSystemTranslations($localeCode)->mergeWith($this->getModuleTranslations($localeCode));
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguageCode(): string
+    {
+        return $this->languageCode;
     }
 }
