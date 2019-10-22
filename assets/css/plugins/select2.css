@@ -99,7 +99,7 @@ Version: 3.4.1 Timestamp: Thu Jun 27 18:02:10 PDT 2013
   font-size: 1px;
   text-decoration: none;
   border: 0;
-  background: url('../../../plugins/select2/select2.png') right top no-repeat;
+  background: url('../../../assets/js/plugins/select2/select2.png') right top no-repeat;
   cursor: pointer;
   outline: 0;
 }
@@ -190,7 +190,7 @@ Version: 3.4.1 Timestamp: Thu Jun 27 18:02:10 PDT 2013
   display: block;
   width: 100%;
   height: 100%;
-  background: url('../../../plugins/select2/select2.png') no-repeat 0 1px;
+  background: url('../../../assets/js/plugins/select2/select2.png') no-repeat 0 1px;
 }
 .select2-search {
   display: inline-block;
@@ -219,13 +219,13 @@ Version: 3.4.1 Timestamp: Thu Jun 27 18:02:10 PDT 2013
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
-  background: #ffffff url('../../../plugins/select2/select2.png') no-repeat 100% -22px;
+  background: #ffffff url('../../../assets/js/plugins/select2/select2.png') no-repeat 100% -22px;
 }
 .select2-drop.select2-drop-above .select2-search input {
   margin-top: 4px;
 }
 .select2-search input.select2-active {
-  background: #ffffff url('../../../plugins/select2/select2-spinner.gif') no-repeat 100%;
+  background: #ffffff url('../../../assets/js/plugins/select2/select2-spinner.gif') no-repeat 100%;
 }
 .select2-container-active .select2-choice,
 .select2-container-active .select2-choices {
@@ -355,7 +355,7 @@ disabled look for disabled choices in the results dropdown
   display: none;
 }
 .select2-more-results.select2-active {
-  background: #f4f4f4 url('../../../plugins/select2/select2-spinner.gif') no-repeat 100%;
+  background: #f4f4f4 url('../../../assets/js/plugins/select2/select2-spinner.gif') no-repeat 100%;
 }
 .select2-more-results {
   background: #f4f4f4;
@@ -424,7 +424,7 @@ disabled look for disabled choices in the results dropdown
   background: transparent !important;
 }
 .select2-container-multi .select2-choices .select2-search-field input.select2-active {
-  background: #ffffff url('../../../plugins/select2/select2-spinner.gif') no-repeat 100% !important;
+  background: #ffffff url('../../../assets/js/plugins/select2/select2-spinner.gif') no-repeat 100% !important;
 }
 .select2-default {
   color: #999 !important;
@@ -466,7 +466,7 @@ disabled look for disabled choices in the results dropdown
   top: 4px;
   font-size: 1px;
   outline: none;
-  background: url('../../../plugins/select2/select2.png') right top no-repeat;
+  background: url('../../../assets/js/plugins/select2/select2.png') right top no-repeat;
 }
 .select2-container-multi .select2-search-choice-close {
   left: 3px;
@@ -529,7 +529,7 @@ disabled look for disabled choices in the results dropdown
   .select2-search-choice-close,
   .select2-container .select2-choice abbr,
   .select2-container .select2-choice .select2-arrow b {
-    background-image: url('../../../plugins/select2/select2x2.png') !important;
+    background-image: url('../../../assets/js/plugins/select2/select2x2.png') !important;
     background-repeat: no-repeat !important;
     background-size: 60px 40px !important;
   }

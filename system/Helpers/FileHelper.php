@@ -138,16 +138,18 @@ class FileHelper
     }
 
     /**
+     * @param null $default
      * @return false|string|null
      */
-    public final function getContents()
+    public final function getContents($default = null)
     {
         if($this->isReadable())
         {
-            return file_get_contents($this->file);
+            $result = file_get_contents($this->file);
+            return $result ? $result : $default;
         }
 
-        return null;
+        return $default;
     }
 
     /**

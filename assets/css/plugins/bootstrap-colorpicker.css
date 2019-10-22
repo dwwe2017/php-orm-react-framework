@@ -21,7 +21,7 @@
 .colorpicker-saturation {
   width: 100px;
   height: 100px;
-  background-image: url('../../../plugins/bootstrap-colorpicker/img/saturation.png');
+  background-image: url('../../../assets/js/plugins/bootstrap-colorpicker/img/saturation.png');
   cursor: crosshair;
   float: left;
 }

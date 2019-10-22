@@ -4,8 +4,10 @@
 namespace Helpers;
 
 
-use Configula\ConfigFactory;
 use Configula\ConfigValues;
+use Controllers\AbstractBase;
+use Handlers\MinifyCssHandler;
+use Handlers\MinifyJsHandler;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
@@ -32,29 +34,9 @@ class ReactHelper
     private $entryPointsFile = "";
 
     /**
-     * @var string
-     */
-    private $manifestFile = "";
-
-    /**
      * @var ConfigValues
      */
     private $entryPoints;
-
-    /**
-     * @var ConfigValues
-     */
-    private $manifestData;
-
-    /**
-     * @var string
-     */
-    private $runtimeJsFile = "";
-
-    /**
-     * @var string
-     */
-    private $mainJsFile = "";
 
     /**
      * ReactHelper constructor.
@@ -66,22 +48,9 @@ class ReactHelper
         $this->moduleBaseDir = $moduleBaseDir;
         $this->moduleBaseUrl = $moduleBaseUrl;
 
-        $this->entryPointsFile = sprintf("%s/views/entrypoints.json", $this->moduleBaseDir);
-        $this->manifestFile = sprintf("%s/views/manifest.json", $this->moduleBaseDir);
-
-        $this->manifestData = FileHelper::init($this->manifestFile)->isReadable()
-            ? ConfigFactory::loadPath($this->manifestFile) : new ConfigValues([]);
-
-        $this->mainJsFile = sprintf("%s/views%s", $this->moduleBaseDir,
-            $this->getManifestData()->get("main.js", null)
-        );
-
-        $this->runtimeJsFile = sprintf("%s/views%s", $this->moduleBaseDir,
-            $this->getManifestData()->get("runtime.js", null)
-        );
-
-        $this->entryPoints = FileHelper::init($this->entryPointsFile)->isReadable()
-            ? ConfigFactory::loadPath($this->entryPointsFile) : new ConfigValues([]);
+        $this->entryPointsFile = FileHelper::init(sprintf("%s/views/entrypoints.json", $this->moduleBaseDir));
+        $this->entryPoints = $this->entryPointsFile->isReadable()
+            ? new ConfigValues(json_decode($this->entryPointsFile->getContents("{}"), true)) : new ConfigValues([]);
     }
 
     /**
@@ -91,9 +60,9 @@ class ReactHelper
      */
     public static final function init(string $moduleBaseDir, string $moduleBaseUrl)
     {
-        if (is_null(self::$instance) || serialize($moduleBaseDir.$moduleBaseUrl) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize($moduleBaseDir . $moduleBaseUrl) !== self::$instanceKey) {
             self::$instance = new self($moduleBaseDir, $moduleBaseUrl);
-            self::$instanceKey = serialize($moduleBaseDir.$moduleBaseUrl);
+            self::$instanceKey = serialize($moduleBaseDir . $moduleBaseUrl);
         }
 
         return self::$instance;
@@ -104,9 +73,7 @@ class ReactHelper
      */
     public function usesReactJs()
     {
-        if (!FileHelper::init($this->getRuntimeJsFile())->isReadable()) {
-            return false;
-        } elseif (!FileHelper::init($this->getMainJsFile())->isReadable()) {
+        if (!$this->entryPointsFile->isReadable()) {
             return false;
         }
 
@@ -114,19 +81,70 @@ class ReactHelper
     }
 
     /**
-     * @return string
+     * @param string $tag
+     * @param bool $asArray
+     * @return array|string
      */
-    public function getEntryScriptTags()
+    public function getEntryScriptTags($tag = "js", $asArray = false)
     {
-        $result = "";
-        if($this->usesReactJs())
-        {
-            foreach ($this->getManifestData()->getArrayCopy() as $value){
-                $result .= sprintf("<script src=\"%s/views%s\"></script>", substr($this->getModuleBaseUrl(), 1), $value);
+        $result = $asArray ? [] : "";
+        if ($this->usesReactJs()) {
+            $entrypoints = $this->getEntryPoints()->get(sprintf("entrypoints.main.%s", strtolower($tag)), []);
+            if (empty($entrypoints)) {
+                return $result;
+            }
+
+            foreach ($entrypoints as $value) {
+                if ($asArray) {
+                    $result[] = sprintf("%s/views%s", substr($this->getModuleBaseUrl(), 1), $value);
+                    continue;
+                }
+
+                switch ($tag) {
+                    case "css":
+                        $result .= sprintf("<link href=\"%s/views%s\" rel=\"stylesheet\" type=\"text/css\" />", substr($this->getModuleBaseUrl(), 1), $value);
+                        break;
+                    default:
+                        $result .= sprintf("<script src=\"%s/views%s\"></script>", substr($this->getModuleBaseUrl(), 1), $value);
+                        break;
+                }
             }
         }
 
         return $result;
+    }
+
+    /**
+     * @param MinifyCssHandler $minifyCssHandler
+     * @internal Works perfect
+     * @see AbstractBase::preRun()
+     */
+    public function addReactCss(MinifyCssHandler $minifyCssHandler): void
+    {
+        $reactCss = $this->getEntryScriptTags("css", true);
+        if (empty($reactCss)) {
+            return;
+        }
+
+        foreach ($reactCss as $css) {
+            $minifyCssHandler->addCss($css);
+        }
+    }
+
+    /**
+     * @param MinifyJsHandler $minifyJsHandler
+     * @internal Unfortunately it does not work, because the code compiled by the webpack and probably too complex for minimizing :)
+     */
+    public function addReactJs(MinifyJsHandler $minifyJsHandler): void
+    {
+        $reactJs = $this->getEntryScriptTags("js", true);
+        if (empty($reactJs)) {
+            return;
+        }
+
+        foreach ($reactJs as $js) {
+            $minifyJsHandler->addJsContent($js);
+        }
     }
 
     /**
@@ -135,30 +153,6 @@ class ReactHelper
     protected function getEntryPoints(): ConfigValues
     {
         return $this->entryPoints;
-    }
-
-    /**
-     * @return ConfigValues
-     */
-    protected function getManifestData(): ConfigValues
-    {
-        return $this->manifestData;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMainJsFile(): string
-    {
-        return $this->mainJsFile;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRuntimeJsFile(): string
-    {
-        return $this->runtimeJsFile;
     }
 
     /**

@@ -55,7 +55,7 @@ div.button * {
   padding: 0;
 }
 .highContrastDetect {
-  background: url("../../../plugins/uniform/images/bg-input.png") repeat-x 0 0;
+  background: url("../../../assets/js/plugins/uniform/images/bg-input.png") repeat-x 0 0;
   width: 0;
   height: 0;
 }
@@ -64,13 +64,13 @@ input.uniform-input,
 select.uniform-multiselect,
 textarea.uniform {
   padding: 3px;
-  background: url("../../../plugins/uniform/images/bg-input.png") repeat-x 0 0;
+  background: url("../../../assets/js/plugins/uniform/images/bg-input.png") repeat-x 0 0;
   outline: 0;
 }
 input.uniform-input.active,
 select.uniform-multiselect.active,
 textarea.uniform.active {
-  background: url("../../../plugins/uniform/images/bg-input-focus.png") repeat-x 0 0;
+  background: url("../../../assets/js/plugins/uniform/images/bg-input-focus.png") repeat-x 0 0;
 }
 /* Remove default webkit and possible mozilla .search styles.
  * Keeping this as :active to remove browser styles */

@@ -300,9 +300,10 @@ class SessionHandler
 
     /**
      * @param array $users
+     * @param bool $action_column
      * @return array
      */
-    public final function getUsersArray(array $users = [])
+    public final function getUsersArray(array $users = [], $action_column = false)
     {
         $result = array();
         $users = empty($users) ? $this->getUsers() : $users;
@@ -328,6 +329,10 @@ class SessionHandler
                     $data[$user->getId()][$fieldName] = htmlentities($content->getName());
                 } else {
                     $data[$user->getId()][$fieldName] = htmlentities($content);
+                }
+
+                if($action_column){
+                    $data[$user->getId()]["action"] = "";
                 }
             }
 

@@ -105,12 +105,12 @@
  * Responsive
  * * * * * * * * * * * */
 table.has-columns-hidden > tbody > tr > td > span.responsiveExpander {
-  background: url('../../../plugins/datatables/responsive/img/plus.png') no-repeat 5px center;
+  background: url('../../../assets/js/plugins/datatables/responsive/img/plus.png') no-repeat 5px center;
   padding-left: 32px;
   cursor: pointer;
 }
 table.has-columns-hidden > tbody > tr.detail-show > td span.responsiveExpander {
-  background: url('../../../plugins/datatables/responsive/img/minus.png') no-repeat 5px center;
+  background: url('../../../assets/js/plugins/datatables/responsive/img/minus.png') no-repeat 5px center;
 }
 table.has-columns-hidden > tbody > tr.row-detail > td {
   background: #eee;

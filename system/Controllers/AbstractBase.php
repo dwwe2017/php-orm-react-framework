@@ -279,8 +279,8 @@ abstract class AbstractBase
         $methodName = sprintf("%sAction", $action);
 
         if ($this->getReactHelper()->usesReactJs()) {
-            $this->reactJs = $this->getReactHelper()->getEntryScriptTags();
-            $action = "index";
+            $this->reactJs = $this->getReactHelper()->getEntryScriptTags("js");
+            $this->getReactHelper()->addReactCss($this->getCssHandler());
         } elseif (!method_exists($this, $methodName)) {
             $this->render404();
         }

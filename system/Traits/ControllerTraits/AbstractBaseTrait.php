@@ -99,6 +99,11 @@ trait AbstractBaseTrait
     private $reactJs = null;
 
     /**
+     * @var null|string
+     */
+    private $reactCss = null;
+
+    /**
      * @var string
      */
     private $view = "";
@@ -511,13 +516,14 @@ trait AbstractBaseTrait
     {
         $controller = $this->getModuleManager()->getControllerShortName();
 
-        if ($this->getReactJs()) {
+        if ($this->getReactHelper()->usesReactJs()) {
             $this->view = "generic.default.react.tpl.twig";
         } else {
             $this->view = $controller . '/' . $templatePath . '.tpl.twig';
         }
 
         $this->addContext("reactJs", $this->getReactJs());
+        $this->addContext("reactCss", $this->getReactCss());
     }
 
     /**
@@ -703,6 +709,14 @@ trait AbstractBaseTrait
     private function getReactJs()
     {
         return $this->reactJs;
+    }
+
+    /**
+     * @return string|null
+     */
+    private function getReactCss(): ?string
+    {
+        return $this->reactCss;
     }
 
     /**
