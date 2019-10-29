@@ -12,10 +12,11 @@ namespace Entities;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use Exceptions\InvalidArgumentException;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Helpers\ArrayHelper;
 use Interfaces\EntityInterfaces\CustomEntityInterface;
-use Traits\EntityTraits\CustomEntityTrait;
 
 
 /**
@@ -26,8 +27,6 @@ use Traits\EntityTraits\CustomEntityTrait;
  */
 class Group implements CustomEntityInterface
 {
-    use CustomEntityTrait;
-
     const ROLE_ROOT = 4;
 
     const ROLE_ADMIN = 3;
@@ -37,6 +36,41 @@ class Group implements CustomEntityInterface
     const ROLE_USER = 1;
 
     const ROLE_ANY = -1;
+
+    /**
+     * @var int
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer", length=11, nullable=false)
+     */
+    protected $id;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=55, nullable=false)
+     */
+    protected $name;
+
+    /**
+     * @var DateTime|null
+     * @Gedmo\Timestampable(on="change", field={"group_id"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $changed;
+
+    /**
+     * @var DateTime|null
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $updated;
+
+    /**
+     * @var DateTime|null
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $created;
 
     /**
      * @var int
@@ -52,11 +86,14 @@ class Group implements CustomEntityInterface
     protected $users;
 
     /**
-     *
+     * CustomEntityTrait constructor.
+     * @param array $data
      */
-    public function init(): void
+    public function __construct(array $data = array())
     {
         $this->users = new ArrayCollection();
+
+        empty($data) || ArrayHelper::init($data)->mapClass($this);
     }
 
     /**
@@ -78,5 +115,64 @@ class Group implements CustomEntityInterface
         }
 
         $this->role = $role;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return DateTime|null
+     * @throws Exception
+     */
+    public function getCreated(): ?DateTime
+    {
+        return $this->created ?? new DateTime();
+    }
+
+    /**
+     * @return DateTime|null
+     * @throws Exception
+     */
+    public function getUpdated(): ?DateTime
+    {
+        return $this->updated ?? new DateTime();
+    }
+
+    /**
+     * @return DateTime|null
+     * @throws Exception
+     */
+    public function getChanged(): ?DateTime
+    {
+        return $this->changed ?? new DateTime();
+    }
+
+    /**
+     * @return ArrayCollection|null
+     */
+    public function getUsers(): ?ArrayCollection
+    {
+        return $this->users;
     }
 }

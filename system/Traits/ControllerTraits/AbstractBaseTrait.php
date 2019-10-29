@@ -343,16 +343,17 @@ trait AbstractBaseTrait
     /**
      * @param string|null $fileOrString
      * @param bool $codeAsString
+     * @param bool $fromSystem
      * @example $this->addCss("assets/css/custom.css")
      */
-    protected final function addCss(?string $fileOrString, bool $codeAsString = false)
+    protected final function addCss(?string $fileOrString, bool $codeAsString = false, bool $fromSystem = false): void
     {
         if (is_null($fileOrString)) {
             return;
         }
 
         $fileOrString = $codeAsString ? $fileOrString
-            : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
+            : sprintf("%s/%s", $fromSystem ? $this->getBaseDir() : $this->getModuleBaseDir(), $fileOrString);
 
         $this->getCssHandler()->addCss($fileOrString, $codeAsString);
     }
@@ -379,16 +380,17 @@ trait AbstractBaseTrait
     /**
      * @param string|null $fileOrString
      * @param bool $codeAsString
+     * @param bool $fromSystem
      * @example $this->addJs("assets/js/custom.js")
      */
-    protected final function addJs(?string $fileOrString, bool $codeAsString = false): void
+    protected final function addJs(?string $fileOrString, bool $codeAsString = false, bool $fromSystem = false): void
     {
         if (is_null($fileOrString)) {
             return;
         }
 
         $fileOrString = $codeAsString ? $fileOrString
-            : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
+            : sprintf("%s/%s", $fromSystem ? $this->getBaseDir() : $this->getModuleBaseDir(), $fileOrString);
 
         $this->getJsHandler()->addJsContent($fileOrString, $codeAsString);
     }

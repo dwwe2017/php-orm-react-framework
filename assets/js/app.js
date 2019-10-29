@@ -684,6 +684,14 @@ var App = function() {
 			handleProjectSwitcher(); // Adds functionality for project switcher at the header
 		},
 
+		initWidgets: function() {
+			handleWidgets();
+		},
+
+		initCheckableTables: function() {
+			handleCheckableTables();
+		},
+
 		getLayoutColorCode: function(name) {
 			if (layoutColorCodes[name]) {
 				return layoutColorCodes[name];

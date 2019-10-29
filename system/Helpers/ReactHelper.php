@@ -6,6 +6,7 @@ namespace Helpers;
 
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
+use Exceptions\FileFactoryException;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -37,6 +38,11 @@ class ReactHelper
      * @var ConfigValues
      */
     private $entryPoints;
+
+    /**
+     * @var string
+     */
+    private $entryPointAction = "indexAction";
 
     /**
      * ReactHelper constructor.
@@ -89,7 +95,9 @@ class ReactHelper
     {
         $result = $asArray ? [] : "";
         if ($this->usesReactJs()) {
-            $entrypoints = $this->getEntryPoints()->get(sprintf("entrypoints.main.%s", strtolower($tag)), []);
+
+            $entrypoints = $this->getEntryPoints()->get(sprintf("entrypoints.%s.%s", $this->getEntryPointAction(), strtolower($tag)), []);
+
             if (empty($entrypoints)) {
                 return $result;
             }
@@ -105,7 +113,7 @@ class ReactHelper
                         $result .= sprintf("<link href=\"%s/views%s\" rel=\"stylesheet\" type=\"text/css\" />", substr($this->getModuleBaseUrl(), 1), $value);
                         break;
                     default:
-                        $result .= sprintf("<script src=\"%s/views%s\"></script>", substr($this->getModuleBaseUrl(), 1), $value);
+                        $result .= sprintf("<script src=\"%s/views%s\" type='text/javascript'></script>", substr($this->getModuleBaseUrl(), 1), $value);
                         break;
                 }
             }
@@ -161,5 +169,21 @@ class ReactHelper
     private function getModuleBaseUrl(): string
     {
         return $this->moduleBaseUrl;
+    }
+
+    /**
+     * @param string|null $entryPointAction
+     */
+    public function setEntryPointAction(?string $entryPointAction): void
+    {
+        $this->entryPointAction = $entryPointAction;
+    }
+
+    /**
+     * @return string|null
+     */
+    private function getEntryPointAction(): ?string
+    {
+        return ucfirst($this->entryPointAction);
     }
 }

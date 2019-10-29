@@ -279,12 +279,16 @@ abstract class AbstractBase
         $methodName = sprintf("%sAction", $action);
 
         if ($this->getReactHelper()->usesReactJs()) {
-            $this->reactJs = $this->getReactHelper()->getEntryScriptTags("js");
+            $this->getReactHelper()->setEntryPointAction(sprintf("%s/%s",
+                $this->getModuleManager()->getControllerShortName(), $methodName
+            ));
             $this->getReactHelper()->addReactCss($this->getCssHandler());
+            $this->reactJs = $this->getReactHelper()->getEntryScriptTags("js");
         } elseif (!method_exists($this, $methodName)) {
             $this->render404();
         }
 
+        $this->addContext('action_id', lcfirst($methodName));
         $this->addContext('action', $action);
 
         $this->betRun($action);
@@ -446,9 +450,10 @@ abstract class AbstractBase
         /**
          * Necessary Environment vars
          */
-        $this->addContext("base_url", $this->getModuleManager()->getBaseUrl(true));
-        $this->addContext("module_id", $this->getModuleManager()->getModuleShortName());
+        $this->addContext("controller_id", lcfirst($this->getModuleManager()->getControllerShortName()));
+        $this->addContext("module_id", lcfirst($this->getModuleManager()->getModuleShortName()));
         $this->addContext("lang_code", $this->getLocaleService()->getLanguageCode());
+        $this->addContext("base_url", $this->getRequestHandler()->getBaseUrl());
 
         /**
          * Flash messages

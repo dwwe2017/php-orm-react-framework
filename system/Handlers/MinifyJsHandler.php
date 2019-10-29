@@ -85,7 +85,7 @@ class MinifyJsHandler extends Minifier
             sprintf("%s/assets/js/plugins/sparkline/jquery.sparkline.min.js", $this->baseDir),
             sprintf("%s/assets/js/plugins/daterangepicker/moment.min.js", $this->baseDir),
             sprintf("%s/assets/js/plugins/daterangepicker/daterangepicker.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/blockui/jquery.blockUI.min.js", $this->baseDir),
+            sprintf("%s/assets/js/plugins/blockui/jquery.blockUI.js", $this->baseDir),
             //Forms
             sprintf("%s/assets/js/plugins/uniform/jquery.uniform.min.js", $this->baseDir),
             sprintf("%s/assets/js/plugins/select2/select2.min.js", $this->baseDir),

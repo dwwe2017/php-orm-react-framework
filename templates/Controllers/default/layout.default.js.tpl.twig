@@ -53,9 +53,11 @@
         <script type="text/javascript">
             window.INIT_PROPS = {
                 domId: "_{{ md5(reactJs) }}",
-                actionId: "{{ action|capitalize }}Action",
+                actionId: "{{ action_id }}",
                 moduleId: "{{ module_id }}",
-                langCode: "{{ lang_code }}"
+                langCode: "{{ lang_code }}",
+                baseUrl: "{{ base_url|raw }}",
+                controllerId: "{{ controller_id }}"
             };
         </script>
         {# @internal

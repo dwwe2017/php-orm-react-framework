@@ -66,6 +66,11 @@ class RequestHandler
     private $xml = false;
 
     /**
+     * @var string
+     */
+    private $baseUrl = "";
+
+    /**
      * RequestHandler constructor.
      * @param AbstractBase $controllerInstance
      */
@@ -77,7 +82,20 @@ class RequestHandler
         $this->query = ConfigFactory::fromArray($_GET ?? []);
         $this->server = ConfigFactory::fromArray($_SERVER ?? []);
 
-        $this->requestUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI]";
+        $this->requestUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+        $this->baseUrl = ($split = explode("/index.php", $_SERVER["REQUEST_URI"])) > 1 ? $split[0] : $_SERVER["REQUEST_URI"];
+
+        if($this->query->get("module", null)){
+            $this->baseUrl .= "/index.php?module=" . $this->query->get("module");
+        }
+
+        if($this->query->get("controller", null)){
+            $this->baseUrl .= "&controller=" . $this->query->get("controller");
+        }
+
+        if($this->query->get("action", null)){
+            $this->baseUrl .= "&action=" . $this->query->get("action");
+        }
 
         $this->xmlRequest = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
             && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
@@ -178,13 +196,21 @@ class RequestHandler
     }
 
     /**
-     * @param null $default
+     * @param string $default
      */
     public function doRedirect($default = "?module=dashboard"): void
     {
         if(($target = $this->getRequest()->get("redirect", $default))){
-            header("Location: " . $target);
+            header("Location: " . trim($target));
             exit();
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseUrl(): string
+    {
+        return $this->baseUrl;
     }
 }
