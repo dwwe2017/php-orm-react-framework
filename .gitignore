@@ -16,3 +16,6 @@
 **/package.json
 **/package-lock.json
 /modules/**
+/assets/js/node_modules/
+/assets/js/components/
+/assets/js/webpack.config.js

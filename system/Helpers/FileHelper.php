@@ -139,14 +139,14 @@ class FileHelper
 
     /**
      * @param null $default
-     * @return false|string|null
+     * @return mixed
      */
     public final function getContents($default = null)
     {
         if($this->isReadable())
         {
             $result = file_get_contents($this->file);
-            return $result ? $result : $default;
+            return $result !== false ? $result : $default;
         }
 
         return $default;

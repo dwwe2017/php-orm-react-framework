@@ -22,10 +22,12 @@ use Handlers\CacheHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
+use Handlers\ReactHandler;
 use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
 use Helpers\EntityViewHelper;
+use Helpers\FileHelper;
 use Helpers\ReactHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
@@ -94,16 +96,6 @@ trait AbstractBaseTrait
     private $template;
 
     /**
-     * @var null|string
-     */
-    private $reactJs = null;
-
-    /**
-     * @var null|string
-     */
-    private $reactCss = null;
-
-    /**
      * @var string
      */
     private $view = "";
@@ -117,6 +109,16 @@ trait AbstractBaseTrait
      * @var MinifyJsHandler
      */
     private $jsHandler;
+
+    /**
+     * @var ReactHandler
+     */
+    private $reactHandler;
+
+    /**
+     * @var array
+     */
+    private $pureJs = [];
 
     /**
      * @var SessionHandler
@@ -224,11 +226,6 @@ trait AbstractBaseTrait
     private $annotationReader;
 
     /**
-     * @var ReactHelper
-     */
-    private $reactHelper;
-
-    /**
      * @var EntityViewHelper
      */
     private $viewHelper;
@@ -267,6 +264,16 @@ trait AbstractBaseTrait
     protected final function addContext($key, $value): void
     {
         $this->context[$key] = $value;
+    }
+
+    /**
+     * @param array $context
+     */
+    protected final function contextPush(array $context): void
+    {
+        foreach ($context as $key => $value){
+            $this->context[$key] = $value;
+        }
     }
 
     /**
@@ -518,14 +525,11 @@ trait AbstractBaseTrait
     {
         $controller = $this->getModuleManager()->getControllerShortName();
 
-        if ($this->getReactHelper()->usesReactJs()) {
-            $this->view = "generic.default.react.tpl.twig";
+        if ($this->getReactHandler()->hasModuleEntryPoint()) {
+            $this->view = "layout.react.body.page.content.tpl.twig";
         } else {
             $this->view = $controller . '/' . $templatePath . '.tpl.twig';
         }
-
-        $this->addContext("reactJs", $this->getReactJs());
-        $this->addContext("reactCss", $this->getReactCss());
     }
 
     /**
@@ -596,6 +600,14 @@ trait AbstractBaseTrait
     private function getJsHandler(): MinifyJsHandler
     {
         return $this->jsHandler;
+    }
+
+    /**
+     * @return ReactHandler
+     */
+    private function getReactHandler(): ReactHandler
+    {
+        return $this->reactHandler;
     }
 
     /**
@@ -703,30 +715,6 @@ trait AbstractBaseTrait
     private function isDebugMode(): bool
     {
         return $this->debugMode;
-    }
-
-    /**
-     * @return string|null
-     */
-    private function getReactJs()
-    {
-        return $this->reactJs;
-    }
-
-    /**
-     * @return string|null
-     */
-    private function getReactCss(): ?string
-    {
-        return $this->reactCss;
-    }
-
-    /**
-     * @return ReactHelper
-     */
-    private function getReactHelper(): ReactHelper
-    {
-        return $this->reactHelper;
     }
 
     /**
