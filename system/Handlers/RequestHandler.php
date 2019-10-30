@@ -86,15 +86,21 @@ class RequestHandler
         $this->baseUrl = ($split = explode("/index.php", $_SERVER["REQUEST_URI"])) > 1 ? $split[0] : $_SERVER["REQUEST_URI"];
 
         if($this->query->get("module", null)){
-            $this->baseUrl .= "/index.php?module=" . $this->query->get("module");
+            $query = $this->query->get("module");
+            $query = strpos($query, "/") ? explode("/", $query)[0] : $query;
+            $this->baseUrl .= "/index.php?module=" . $query;
         }
 
         if($this->query->get("controller", null)){
-            $this->baseUrl .= "&controller=" . $this->query->get("controller");
+            $query = $this->query->get("controller");
+            $query = strpos($query, "/") ? explode("/", $query)[0] : $query;
+            $this->baseUrl .= "&controller=" . $query;
         }
 
         if($this->query->get("action", null)){
-            $this->baseUrl .= "&action=" . $this->query->get("action");
+            $query = $this->query->get("action");
+            $query = strpos($query, "/") ? explode("/", $query)[0] : $query;
+            $this->baseUrl .= "&action=" . $query;
         }
 
         $this->xmlRequest = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
