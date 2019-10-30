@@ -8,7 +8,6 @@ use DateTime;
 use Doctrine\ORM\EntityManager;
 use Exceptions\FileFactoryException;
 use Interfaces\EntityInterfaces\CustomEntityInterface;
-use Traits\EntityTraits\CustomEntityTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
@@ -80,13 +79,13 @@ class EntityViewHelper
         $meta = $this->entityManager->getClassMetadata($className);
 
         /**
-         * @internal Here, it is checked whether the entity to be processed also contains or uses the corresponding traits and / or interfaces
+         * @internal Here, it is checked whether the entity to be processed also contains or uses the corresponding interfaces
          * @see CustomEntityInterface
-         * @see CustomEntityTrait
          */
         $classHelper = ClassHelper::init($meta->getReflectionClass(), FileFactoryException::class);
-        $classHelper->hasInterface(CustomEntityInterface::class);
-        $classHelper->hasTrait(CustomEntityTrait::class);
+        if (!$classHelper->hasInterface(CustomEntityInterface::class)) {
+            throw new \InvalidArgumentException("The entity must implement the CustomEntityInterface", E_ERROR);
+        }
 
         foreach ($meta->getFieldNames() as $fieldName) {
             $thead[md5($fieldName)] = [
@@ -123,7 +122,7 @@ class EntityViewHelper
                     $tbody[$key][] = [
                         "content" => $content->format("d.m.Y")
                     ];
-                } elseif(is_object($content) && method_exists($content, "getName")) {
+                } elseif (is_object($content) && method_exists($content, "getName")) {
                     $tbody[$key][] = [
                         "content" => htmlentities($content->getName())
                     ];

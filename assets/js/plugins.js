@@ -563,8 +563,11 @@ var Plugins = function() {
 
 		getSparklineStatboxDefaults: function() {
 			return defaultSparklineStatboxOptions;
-		}
+		},
 
+		initDataTables: function (){
+			initDataTables();
+		}
 	};
 
 }();

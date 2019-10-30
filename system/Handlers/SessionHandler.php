@@ -14,7 +14,7 @@ use Entities\Group;
 use Entities\User;
 use Exception;
 use Exceptions\SessionException;
-use Helpers\StringHelper;
+use Helpers\EntityHelper;
 use Services\DoctrineService;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
@@ -306,28 +306,24 @@ class SessionHandler
     {
         $result = array();
         $users = empty($users) ? $this->getUsers() : $users;
-        $meta = $this->getEm()->getClassMetadata(User::class);
-        foreach ($users as $key => $user) {
+        $getters = EntityHelper::init($this->getEm())->getGetterMethods(User::class);
+
+        foreach ($users as $user) {
             if (!$user instanceof User) {
                 continue;
             }
 
             $data = array();
-            foreach ($meta->getFieldNames() as $fieldName) {
-                $getter = sprintf("get%s", ucfirst(StringHelper::init($fieldName)->camelize()->getString()));
-                if (!method_exists($user, $getter)) {
-                    continue;
-                }
-
-                $content = $user->{$getter}();
+            foreach ($getters as $fieldName => $getterMethod) {
+                $methodResult = $user->{$getterMethod}();
                 if (strcasecmp($fieldName, "users") == 0) {
-                    array_push($result, self::getUsersArray($content));
-                } elseif ($content instanceof DateTime) {
-                    $data[$user->getId()][$fieldName] = $content->format("d.m.Y");
-                } elseif (is_object($content) && method_exists($content, "getName")) {
-                    $data[$user->getId()][$fieldName] = htmlentities($content->getName());
+                    $data[$user->getId()][$fieldName] = count($methodResult); //array_push($result, self::getUsersArray($methodResult));
+                } elseif ($methodResult instanceof DateTime) {
+                    $data[$user->getId()][$fieldName] = $methodResult->format("d.m.Y");
+                } elseif (is_object($methodResult) && method_exists($methodResult, "getName")) {
+                    $data[$user->getId()][$fieldName] = htmlentities($methodResult->getName());
                 } else {
-                    $data[$user->getId()][$fieldName] = htmlentities($content);
+                    $data[$user->getId()][$fieldName] = htmlentities($methodResult);
                 }
             }
 

@@ -1,0 +1,9 @@
+{
+  "entrypoints": {
+    "RestrictedController": {
+      "js": [
+        "/RestrictedController.js"
+      ]
+    }
+  }
+}

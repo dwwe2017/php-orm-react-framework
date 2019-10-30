@@ -22,10 +22,12 @@ use Handlers\CacheHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
+use Handlers\ReactHandler;
 use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
 use Helpers\EntityViewHelper;
+use Helpers\FileHelper;
 use Helpers\ReactHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
@@ -94,11 +96,6 @@ trait AbstractBaseTrait
     private $template;
 
     /**
-     * @var null|string
-     */
-    private $reactJs = null;
-
-    /**
      * @var string
      */
     private $view = "";
@@ -112,6 +109,16 @@ trait AbstractBaseTrait
      * @var MinifyJsHandler
      */
     private $jsHandler;
+
+    /**
+     * @var ReactHandler
+     */
+    private $reactHandler;
+
+    /**
+     * @var array
+     */
+    private $pureJs = [];
 
     /**
      * @var SessionHandler
@@ -219,11 +226,6 @@ trait AbstractBaseTrait
     private $annotationReader;
 
     /**
-     * @var ReactHelper
-     */
-    private $reactHelper;
-
-    /**
      * @var EntityViewHelper
      */
     private $viewHelper;
@@ -262,6 +264,16 @@ trait AbstractBaseTrait
     protected final function addContext($key, $value): void
     {
         $this->context[$key] = $value;
+    }
+
+    /**
+     * @param array $context
+     */
+    protected final function contextPush(array $context): void
+    {
+        foreach ($context as $key => $value){
+            $this->context[$key] = $value;
+        }
     }
 
     /**
@@ -338,16 +350,17 @@ trait AbstractBaseTrait
     /**
      * @param string|null $fileOrString
      * @param bool $codeAsString
+     * @param bool $fromSystem
      * @example $this->addCss("assets/css/custom.css")
      */
-    protected final function addCss(?string $fileOrString, bool $codeAsString = false)
+    protected final function addCss(?string $fileOrString, bool $codeAsString = false, bool $fromSystem = false): void
     {
         if (is_null($fileOrString)) {
             return;
         }
 
         $fileOrString = $codeAsString ? $fileOrString
-            : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
+            : sprintf("%s/%s", $fromSystem ? $this->getBaseDir() : $this->getModuleBaseDir(), $fileOrString);
 
         $this->getCssHandler()->addCss($fileOrString, $codeAsString);
     }
@@ -374,16 +387,17 @@ trait AbstractBaseTrait
     /**
      * @param string|null $fileOrString
      * @param bool $codeAsString
+     * @param bool $fromSystem
      * @example $this->addJs("assets/js/custom.js")
      */
-    protected final function addJs(?string $fileOrString, bool $codeAsString = false): void
+    protected final function addJs(?string $fileOrString, bool $codeAsString = false, bool $fromSystem = false): void
     {
         if (is_null($fileOrString)) {
             return;
         }
 
         $fileOrString = $codeAsString ? $fileOrString
-            : sprintf("%s/%s", $this->getModuleBaseDir(), $fileOrString);
+            : sprintf("%s/%s", $fromSystem ? $this->getBaseDir() : $this->getModuleBaseDir(), $fileOrString);
 
         $this->getJsHandler()->addJsContent($fileOrString, $codeAsString);
     }
@@ -511,13 +525,11 @@ trait AbstractBaseTrait
     {
         $controller = $this->getModuleManager()->getControllerShortName();
 
-        if ($this->getReactJs()) {
-            $this->view = "generic.default.react.tpl.twig";
+        if ($this->getReactHandler()->hasModuleEntryPoint()) {
+            $this->view = "layout.react.body.page.content.tpl.twig";
         } else {
             $this->view = $controller . '/' . $templatePath . '.tpl.twig';
         }
-
-        $this->addContext("reactJs", $this->getReactJs());
     }
 
     /**
@@ -588,6 +600,14 @@ trait AbstractBaseTrait
     private function getJsHandler(): MinifyJsHandler
     {
         return $this->jsHandler;
+    }
+
+    /**
+     * @return ReactHandler
+     */
+    private function getReactHandler(): ReactHandler
+    {
+        return $this->reactHandler;
     }
 
     /**
@@ -695,22 +715,6 @@ trait AbstractBaseTrait
     private function isDebugMode(): bool
     {
         return $this->debugMode;
-    }
-
-    /**
-     * @return string|null
-     */
-    private function getReactJs()
-    {
-        return $this->reactJs;
-    }
-
-    /**
-     * @return ReactHelper
-     */
-    private function getReactHelper(): ReactHelper
-    {
-        return $this->reactHelper;
     }
 
     /**

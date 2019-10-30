@@ -14,7 +14,6 @@ use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Exceptions\CacheException;
 use Exceptions\DoctrineException;
-use Exceptions\FileFactoryException;
 use Exceptions\InvalidArgumentException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
@@ -24,11 +23,10 @@ use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
+use Handlers\ReactHandler;
 use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
-use Helpers\FileHelper;
-use Helpers\ReactHelper;
 use Interfaces\ControllerInterfaces\XmlControllerInterface;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
@@ -196,9 +194,12 @@ abstract class AbstractBase
          * Asset handlers
          * @see AbstractBaseTrait::getCssHandler() // !Only available for system
          * @see AbstractBaseTrait::getJsHandler() // !Only available for system
+         * @see AbstractBaseTrait::getReactHandler() // !Only available for system
          */
         $this->cssHandler = MinifyCssHandler::init($this->getConfig());
         $this->jsHandler = MinifyJsHandler::init($this->getConfig());
+        $this->reactHandler = ReactHandler::init($this, $this->getModuleManager());
+
 
         /**
          * Navigation handler
@@ -231,13 +232,6 @@ abstract class AbstractBase
          * @see AbstractBaseTrait::getAbsolutePathHelper() // Available in modules
          */
         $this->absolutePathHelper = AbsolutePathHelper::init($this->getBaseDir()); // Available in modules
-
-        /**
-         * ReactHelper
-         * @see AbstractBase::run()
-         * @see https://github.com/dwwe2017/tsi2-module-skeletton
-         */
-        $this->reactHelper = ReactHelper::init($this->getModuleBaseDir(), $this->getModuleManager()->getBaseUrl());
 
         /**
          * Reflection Helper
@@ -277,15 +271,13 @@ abstract class AbstractBase
     private function preRun(string $action): void
     {
         $methodName = sprintf("%sAction", $action);
+        $this->getReactHandler()->setModuleControllerAction($methodName);
 
-        if ($this->getReactHelper()->usesReactJs()) {
-            $this->reactJs = $this->getReactHelper()->getEntryScriptTags();
-            $action = "index";
+        if ($this->getReactHandler()->hasModuleEntryPoint()) {
+            $this->getReactHandler()->addReactCss($this->getCssHandler());
         } elseif (!method_exists($this, $methodName)) {
             $this->render404();
         }
-
-        $this->addContext('action', $action);
 
         $this->betRun($action);
     }
@@ -444,11 +436,31 @@ abstract class AbstractBase
     protected function render(): void
     {
         /**
-         * Necessary Environment vars
+         * System React.js entry points
          */
-        $this->addContext("base_url", $this->getModuleManager()->getBaseUrl(true));
-        $this->addContext("module_id", $this->getModuleManager()->getModuleShortName());
-        $this->addContext("lang_code", $this->getLocaleService()->getLanguageCode());
+        $this->addContext("base_controller_react_entry_points", $this->getReactHandler()
+            ->getSystemControllerEntryPoints()
+        );
+
+        /**
+         * Module React.js entry points
+         */
+        if ($this->getReactHandler()->hasModuleEntryPoint()) {
+            $module_controller_react_js_entry_points = $this->getReactHandler()->getModuleControllerJsEntryPoints();
+            $this->contextPush(array(
+                "module_controller_react_dom_id" => sprintf("_%s", md5(json_encode($module_controller_react_js_entry_points))),
+                "module_controller_react_js_entry_points" => $module_controller_react_js_entry_points
+            ));
+        }
+
+        /**
+         * General Environment info
+         */
+        $this->contextPush(array(
+            "module_id" => lcfirst($this->getModuleManager()->getModuleShortName()),
+            "lang_code" => $this->getLocaleService()->getLanguageCode(),
+            "base_url" => $this->getRequestHandler()->getBaseUrl()
+        ));
 
         /**
          * Flash messages

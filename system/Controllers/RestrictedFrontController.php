@@ -20,13 +20,10 @@ class RestrictedFrontController extends RestrictedController implements Restrict
 {
     /**
      * @param string $action
-     * @throws AnnotationException
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws Throwable
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws Throwable
      */
     public final function run(string $action)
     {
