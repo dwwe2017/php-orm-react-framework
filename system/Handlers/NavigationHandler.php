@@ -15,6 +15,7 @@ use Helpers\StringHelper;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
+use Traits\ControllerTraits\AbstractBaseTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
@@ -99,38 +100,7 @@ class NavigationHandler
         }
 
         $this->initRoutes($controllerInstance);
-
-        if ($this->getSessionInstance()->isRegistered()) {
-
-            $user = $this->getSessionInstance()->getUser();
-
-            $this->routes[self::RESTRICTED_NAV]["top_right"] = [
-                [
-                    "options" => [
-                        "class" => "user",
-                        "text" => $user->getName(),
-                        "href" => "javascript:void(0)",
-                        "icon" => "icon-male"
-                    ],
-                    "routes" => [
-                        [
-                            "options" => [
-                                "text" => "My Profile",
-                                "href" => sprintf("index.php?controller=restricted&action=profile"),
-                                "icon" => "icon-user"
-                            ]
-                        ],
-                        [
-                            "options" => [
-                                "text" => "Logout",
-                                "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
-                                "icon" => "icon-key"
-                            ]
-                        ]
-                    ]
-                ]
-            ];
-        }
+        $this->initUserRoutes();
     }
 
     /**
@@ -294,6 +264,50 @@ class NavigationHandler
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * If the user is logged in, a corresponding menu is displayed
+     */
+    private function initUserRoutes(): void
+    {
+        if ($this->getSessionInstance()->isRegistered()) {
+
+            $user = $this->getSessionInstance()->getUser();
+
+            $this->routes[self::RESTRICTED_NAV]["top_right"] = [
+                [
+                    "options" => [
+                        "class" => "user",
+                        "text" => $user->getName(),
+                        "href" => "javascript:void(0)",
+                        "icon" => "icon-male"
+                    ],
+                    "routes" => [
+                        [
+                            "options" => [
+                                /**
+                                 * @see AbstractBaseTrait::getSystemLocaleService()
+                                 */
+                                "text" => __("My Profile"),
+                                "href" => sprintf("index.php?controller=restricted&action=profile"),
+                                "icon" => "icon-user"
+                            ]
+                        ],
+                        [
+                            "options" => [
+                                /**
+                                 * @see AbstractBaseTrait::getSystemLocaleService()
+                                 */
+                                "text" => __("Logout"),
+                                "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
+                                "icon" => "icon-key"
+                            ]
+                        ]
+                    ]
+                ]
+            ];
         }
     }
 

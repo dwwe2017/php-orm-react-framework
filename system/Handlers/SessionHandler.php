@@ -9,6 +9,7 @@ use Controllers\AbstractBase;
 use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\OptimisticLockException;
 use Entities\Group;
 use Entities\User;
@@ -100,7 +101,7 @@ class SessionHandler
                      * @internal If already logged in..
                      */
                     $user = $repo->find($uid);
-                    if ($user instanceof User) {
+                    if ($user && $user instanceof User) {
                         $this->initRegistration($user);
                     }
 
@@ -281,7 +282,7 @@ class SessionHandler
     /**
      * @return User|null
      */
-    public final function getBy()
+    public final function getParentUser()
     {
         return $this->getUser()->getBy();
     }
@@ -334,7 +335,7 @@ class SessionHandler
     }
 
     /**
-     * @return \Doctrine\ORM\Mapping\ClassMetadata
+     * @return ClassMetadata
      */
     public function getDefaultMeta()
     {

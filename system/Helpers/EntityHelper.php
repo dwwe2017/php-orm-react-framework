@@ -71,13 +71,36 @@ class EntityHelper
         $result = [];
         $fieldNames = $this->getFieldNames($className);
 
-        foreach ($fieldNames as $fieldName){
+        foreach ($fieldNames as $fieldName) {
             $getter = sprintf("get%s", ucfirst(StringHelper::init($fieldName)->camelize()->getString()));
             if (!method_exists($className, $getter)) {
                 continue;
             }
 
             $result[] = $fieldName;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $className
+     * @param bool $sort
+     * @param array $attrs
+     * @return array
+     */
+    public function getGetterFieldNamesColumn(string $className, $sort = true, $attrs = ["data-class" => "expand"])
+    {
+        $result = [];
+        $getterFields = $this->getGetterFieldNames($className);
+
+        foreach ($getterFields as $getterField) {
+            $result[] = [
+                "dataField" => $getterField,
+                "text" => StringHelper::init($getterField)->decamelize()->ucFirst()->getString(),
+                "sort" => $sort,
+                "attrs" => $attrs
+            ];
         }
 
         return $result;
@@ -92,7 +115,7 @@ class EntityHelper
         $result = [];
         $fieldNames = $this->getFieldNames($className);
 
-        foreach ($fieldNames as $fieldName){
+        foreach ($fieldNames as $fieldName) {
             $getter = sprintf("get%s", ucfirst(StringHelper::init($fieldName)->camelize()->getString()));
             if (!method_exists($className, $getter)) {
                 continue;
