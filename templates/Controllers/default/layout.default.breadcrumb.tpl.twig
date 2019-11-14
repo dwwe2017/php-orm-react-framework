@@ -1,19 +1,15 @@
 {% block layout_breadcrumb %}
+    {% import "generic.nav.macro.lib.twig" as navigation %}
+
     <!-- Breadcrumbs line -->
     <div class="crumbs">
-        <ul id="breadcrumbs" class="breadcrumb">
-            <li>
-                <i class="icon-home"></i>
-                <a href="index.html">Dashboard</a>
-            </li>
-            <li class="current">
-                <a href="calendar.html" title="">Calendar</a>
-            </li>
-        </ul>
+        <!-- Breadcrumbs Menu -->
+        {{ navigation.breadcrumbs((breadcrumb_routes)) }}
+        <!-- /Breadcrumbs Menu -->
 
-        <ul class="crumb-buttons">
-            <li><a href="charts.html" title=""><i class="icon-signal"></i><span>Statistics</span></a></li>
-        </ul>
+        <!-- Crumb Bar Menu -->
+        {{ navigation.crump_bar(navigation_routes) }}
+        <!-- /Crumb Bar Menu -->
     </div>
     <!-- /Breadcrumbs line -->
 {% endblock layout_breadcrumb %}

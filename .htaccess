@@ -2,7 +2,4 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteRule !(^|index\.php|\.(js|css|gif|jpeg|jpg|png|woff))$ - [L,R=403]
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule .* /index.php
 </IfModule>
