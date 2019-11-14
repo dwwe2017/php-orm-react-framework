@@ -7,6 +7,7 @@ namespace Handlers;
 use Controllers\AbstractBase;
 use Doctrine\Common\Annotations\AnnotationException;
 use Entities\Group;
+use Entities\User;
 use Exceptions\InvalidArgumentException;
 use Exceptions\NavigationException;
 use Helpers\AnnotationHelper;
@@ -15,6 +16,7 @@ use Helpers\StringHelper;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
+use Traits\ControllerTraits\AbstractBaseTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
@@ -71,6 +73,11 @@ class NavigationHandler
     private $navigation = [];
 
     /**
+     * @var array
+     */
+    private $breadcrumb_routes = [];
+
+    /**
      * NavigationHandler constructor.
      * @param AbstractBase $controllerInstance
      * @param SessionHandler $sessionInstance
@@ -80,6 +87,7 @@ class NavigationHandler
      */
     private final function __construct(AbstractBase $controllerInstance, SessionHandler $sessionInstance)
     {
+        $this->initDefaultBreadcrumbRoutes();
         $this->sessionInstance = $sessionInstance;
 
         $baseDir = $controllerInstance->getBaseDir();
@@ -99,38 +107,7 @@ class NavigationHandler
         }
 
         $this->initRoutes($controllerInstance);
-
-        if ($this->getSessionInstance()->isRegistered()) {
-
-            $user = $this->getSessionInstance()->getUser();
-
-            $this->routes[self::RESTRICTED_NAV]["top_right"] = [
-                [
-                    "options" => [
-                        "class" => "user",
-                        "text" => $user->getName(),
-                        "href" => "javascript:void(0)",
-                        "icon" => "icon-male"
-                    ],
-                    "routes" => [
-                        [
-                            "options" => [
-                                "text" => "My Profile",
-                                "href" => sprintf("index.php?controller=restricted&action=profile"),
-                                "icon" => "icon-user"
-                            ]
-                        ],
-                        [
-                            "options" => [
-                                "text" => "Logout",
-                                "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
-                                "icon" => "icon-key"
-                            ]
-                        ]
-                    ]
-                ]
-            ];
-        }
+        $this->initUserRoutes();
     }
 
     /**
@@ -298,6 +275,121 @@ class NavigationHandler
     }
 
     /**
+     * If the user is logged in, a corresponding menu is displayed
+     */
+    private function initUserRoutes(): void
+    {
+        if ($this->getSessionInstance()->isRegistered()) {
+
+            $user = $this->getSessionInstance()->getUser();
+
+            $this->routes[self::RESTRICTED_NAV]["top_right"] = [
+                [
+                    "options" => [
+                        "class" => "user",
+                        "text" => $user->getName(),
+                        "href" => "javascript:void(0)",
+                        "icon" => "icon-male"
+                    ],
+                    "routes" => [
+                        [
+                            "options" => [
+                                /**
+                                 * @see AbstractBaseTrait::getSystemLocaleService()
+                                 */
+                                "text" => __("My Profile"),
+                                "href" => sprintf("index.php?controller=restricted&action=profile"),
+                                "icon" => "icon-user"
+                            ]
+                        ],
+                        [
+                            "options" => [
+                                /**
+                                 * @see AbstractBaseTrait::getSystemLocaleService()
+                                 */
+                                "text" => __("Logout"),
+                                "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
+                                "icon" => "icon-key"
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+
+            $routes = [];
+            foreach ($this->getSessionInstance()->getUsers() as $childUser) {
+                if (!$childUser instanceof User) {
+                    continue;
+                }
+
+                $routes[] = [
+                    "options" => [
+                        "text" => $childUser->getName() . "/" . $childUser->getGroup()->getName(),
+                        "href" => "javascript:void(0)",
+                        "icon" => "icon-user"
+                    ]
+                ];
+            }
+
+            $this->routes[self::RESTRICTED_NAV]["crump_bar"] = [
+                [
+                    "options" => [
+                        "text" => sprintf("%s (%s)", __("User online"), count($user->getUsers())),
+                        "href" => "javascript:void(0)",
+                        "icon" => "icon-user"
+                    ],
+                    "routes" => $routes,
+                ],
+                [
+                    "options" => [
+                        "text" => date("d.m.Y H:i:s"),
+                        "href" => "javascript:void(0)",
+                        "icon" => "icon-calendar"
+                    ]
+                ]
+            ];
+        }
+    }
+
+    /**
+     *
+     */
+    public final function initDefaultBreadcrumbRoutes()
+    {
+        if (isset($_GET["module"]) && !empty($_GET["module"])) {
+            $this->breadcrumb_routes[] = [
+                "current" => !isset($_GET["controller"]),
+                "text" => StringHelper::init($_GET["module"])->decamelize()->ucFirst()->getString(),
+                "href" => isset($_GET["controller"]) ? sprintf("index.php?module=%s", $_GET["module"]) : "javascript:void(0)"
+            ];
+
+            if (isset($_GET["controller"]) && !empty($_GET["controller"])) {
+                $this->breadcrumb_routes[] = [
+                    "current" => !isset($_GET["action"]),
+                    "text" => StringHelper::init($_GET["controller"])->decamelize()->ucFirst()->getString(),
+                    "href" => isset($_GET["action"]) ? sprintf("index.php?module=%s&controller=%s", $_GET["module"], $_GET["controller"]) : "javascript:void(0)"
+                ];
+            }
+        } else {
+            if (isset($_GET["controller"]) && !empty($_GET["controller"])) {
+                $this->breadcrumb_routes[] = [
+                    "current" => !isset($_GET["action"]),
+                    "text" => StringHelper::init($_GET["controller"])->decamelize()->ucFirst()->getString(),
+                    "href" => isset($_GET["action"]) ? sprintf("index.php?controller=%s", $_GET["controller"]) : "javascript:void(0)"
+                ];
+            }
+        }
+
+        if (isset($_GET["action"]) && !empty($_GET["action"])) {
+            $this->breadcrumb_routes[] = [
+                "current" => true,
+                "text" => StringHelper::init($_GET["action"])->decamelize()->ucFirst()->getString(),
+                "href" => "javascript:void(0)"
+            ];
+        }
+    }
+
+    /**
      * @param $classSiteAccessLevel
      * @param $position
      * @param $key
@@ -321,6 +413,14 @@ class NavigationHandler
         }
 
         return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public final function getBreadcrumbRoutes(): array
+    {
+        return $this->breadcrumb_routes;
     }
 
     /**

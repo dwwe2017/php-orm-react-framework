@@ -1,0 +1,10 @@
+{
+  "entrypoints": {
+    "RestrictedController/profileAction": {
+      "js": [
+        "/runtime.js",
+        "/RestrictedController/profileAction.js"
+      ]
+    }
+  }
+}

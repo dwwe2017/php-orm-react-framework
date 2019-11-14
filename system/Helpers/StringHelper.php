@@ -140,6 +140,15 @@ class StringHelper
     /**
      * @return $this
      */
+    public function ucFirst()
+    {
+        $this->string = ucfirst($this->string);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function rmNamespace()
     {
         $lastSeparator = strripos($this->string, "\\")+1;

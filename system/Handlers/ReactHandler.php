@@ -67,9 +67,19 @@ class ReactHandler
     private $moduleControllerEntryPointFile;
 
     /**
+     * @var FileHelper|null
+     */
+    private $moduleControllerManifestFile;
+
+    /**
      * @var ConfigValues
      */
     private $moduleControllerEntryPointConfig;
+
+    /**
+     * @var ConfigValues
+     */
+    private $moduleControllerManifestConfig;
 
     /**
      * @var array
@@ -98,13 +108,13 @@ class ReactHandler
         $this->systemControllerEntryPointConfig = $this->systemControllerEntryPointFile->isReadable()
             ? new ConfigValues(json_decode($this->systemControllerEntryPointFile->getContents("[]"), true)) : new ConfigValues([]);
 
-        if($controllerInstance instanceof RestrictedController){
+        if ($controllerInstance instanceof RestrictedController) {
             $this->systemControllerEntryPoints = $this->systemControllerEntryPointConfig->get("entrypoints.RestrictedController.js", []);
-        }elseif($controllerInstance instanceof PublicController){
+        } elseif ($controllerInstance instanceof PublicController) {
             $this->systemControllerEntryPoints = $this->systemControllerEntryPointConfig->get("entrypoints.PublicController.js", []);
         }
 
-        if(!empty($this->systemControllerEntryPoints)){
+        if (!empty($this->systemControllerEntryPoints)) {
             $this->systemControllerEntryPoints = array_map([$this, "addRelativeBaseAssetJsReactPath"], $this->systemControllerEntryPoints);
         }
 
@@ -114,6 +124,13 @@ class ReactHandler
         $this->moduleControllerEntryPointFile = FileHelper::init(sprintf("%s/views/entrypoints.json", $this->moduleBaseDir));
         $this->moduleControllerEntryPointConfig = $this->moduleControllerEntryPointFile->isReadable()
             ? new ConfigValues(json_decode($this->moduleControllerEntryPointFile->getContents("{}"), true)) : new ConfigValues([]);
+
+        /**
+         * Manifest to be for the current controller/action is a related view
+         */
+        $this->moduleControllerManifestFile = FileHelper::init(sprintf("%s/views/manifest.json", $this->moduleBaseDir));
+        $this->moduleControllerManifestConfig = $this->moduleControllerManifestFile->isReadable()
+            ? new ConfigValues(json_decode($this->moduleControllerManifestFile->getContents("{}"), true)) : new ConfigValues([]);
     }
 
     /**
@@ -121,7 +138,8 @@ class ReactHandler
      */
     public function hasModuleEntryPoint()
     {
-        return $this->moduleControllerEntryPointFile->isReadable();
+        $manifestTag = ucfirst(sprintf("%s/%s.js", $this->moduleControllerShortName, $this->getModuleControllerAction()));
+        return $this->moduleControllerManifestConfig->has($manifestTag);
     }
 
     /**
@@ -139,7 +157,8 @@ class ReactHandler
      */
     public function addRelativeModuleViewsPath($file)
     {
-        return sprintf("%s/views%s", substr($this->moduleBaseUrl, 1), $file);
+        $path = sprintf("%s/views%s", substr($this->moduleBaseUrl, 1), $file);
+        return empty($this->moduleBaseUrl) ? substr($path, 1) : $path;
     }
 
     /**
@@ -149,9 +168,9 @@ class ReactHandler
      */
     public static final function init(AbstractBase $controllerInstance, ModuleManager $moduleManager)
     {
-        if (is_null(self::$instance) || serialize(get_class($controllerInstance).get_class($moduleManager)) !== self::$instanceKey) {
+        if (is_null(self::$instance) || serialize(get_class($controllerInstance) . get_class($moduleManager)) !== self::$instanceKey) {
             self::$instance = new self($controllerInstance, $moduleManager);
-            self::$instanceKey = serialize(get_class($controllerInstance).get_class($moduleManager));
+            self::$instanceKey = serialize(get_class($controllerInstance) . get_class($moduleManager));
         }
 
         return self::$instance;
@@ -186,13 +205,13 @@ class ReactHandler
      */
     public function getModuleControllerCssEntryPoints(): array
     {
-        if(empty($this->getModuleControllerAction())){
+        if (empty($this->getModuleControllerAction())) {
             return [];
         }
 
         $moduleEntryPointTag = ucfirst(sprintf("%s/%s", $this->moduleControllerShortName, $this->getModuleControllerAction()));
         $this->moduleControllerCssEntryPoints = $this->moduleControllerEntryPointConfig->get(sprintf("entrypoints.%s.css", $moduleEntryPointTag), []);
-        if(!empty($this->moduleControllerCssEntryPoints)){
+        if (!empty($this->moduleControllerCssEntryPoints)) {
             $this->moduleControllerCssEntryPoints = array_map([$this, "addRelativeModuleViewsPath"], $this->moduleControllerCssEntryPoints);
         }
 
@@ -204,13 +223,13 @@ class ReactHandler
      */
     public function getModuleControllerJsEntryPoints(): array
     {
-        if(empty($this->getModuleControllerAction())){
+        if (empty($this->getModuleControllerAction())) {
             return [];
         }
 
         $moduleEntryPointTag = ucfirst(sprintf("%s/%s", $this->moduleControllerShortName, $this->getModuleControllerAction()));
         $this->moduleControllerJsEntryPoints = $this->moduleControllerEntryPointConfig->get(sprintf("entrypoints.%s.js", $moduleEntryPointTag), []);
-        if(!empty($this->moduleControllerJsEntryPoints)){
+        if (!empty($this->moduleControllerJsEntryPoints)) {
             $this->moduleControllerJsEntryPoints = array_map([$this, "addRelativeModuleViewsPath"], $this->moduleControllerJsEntryPoints);
         }
 

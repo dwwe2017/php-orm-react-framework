@@ -333,7 +333,7 @@ abstract class AbstractBase
         /**
          * Run method
          */
-        $this->$methodName();
+        $this->{$methodName}();
 
         /**
          * Render template and views

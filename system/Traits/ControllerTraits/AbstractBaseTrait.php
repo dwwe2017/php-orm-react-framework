@@ -27,8 +27,7 @@ use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
 use Helpers\EntityViewHelper;
-use Helpers\FileHelper;
-use Helpers\ReactHelper;
+use Helpers\StringHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
 use Monolog\Logger;
@@ -490,6 +489,14 @@ trait AbstractBaseTrait
     }
 
     /**
+     * @return array
+     */
+    protected function getBreadcrumbRoutes(): array
+    {
+        return $this->getNavigationHandler()->getBreadcrumbRoutes();
+    }
+
+    /**
      * PRIVATE AREA
      */
 
@@ -544,6 +551,12 @@ trait AbstractBaseTrait
         if (!is_null($templatePath)) {
             $this->setView($templatePath);
         }
+
+        /**
+         * Breadcrumbs are set here by default, but can be adjusted individually
+         * from each controller or method via the "breadcrumb_routes" context field.
+         */
+        $this->addContext("breadcrumb_routes", $this->getBreadcrumbRoutes());
 
         /**
          * @internal Silent exceptions if debug mode is inactive
@@ -752,22 +765,4 @@ trait AbstractBaseTrait
         $result = call_user_func_array([$object, $method], $args);
         return $result;
     }
-
-    /**
-     * CACHED AREA - PUBLIC
-     */
-
-    //***
-
-    /**
-     * CACHED AREA - PROTECTED
-     */
-
-    //***
-
-    /**
-     * CACHED AREA - PRIVATE
-     */
-
-    //***
 }
