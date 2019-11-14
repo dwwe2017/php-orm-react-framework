@@ -8,6 +8,14 @@ The TSI-Framework is now the basic framework for all modules and offers a profes
 
 Below you may find some useful links that lead to necessary documentations!
 
+## React
+
+A JavaScript library for building user interfaces
+
+[https://reactjs.org/](https://reactjs.org/)
+
+***
+
 ## Doctrine 2 ORM
 
 Doctrine 2 is an object-relational mapper (ORM) <http://en.wikipedia.org/wiki/Object-relational_mapping> for PHP 5.4+ that provides transparent persistence for PHP objects. It uses the Data Mapper pattern at the heart, aiming for a complete separation of your domain/business logic from the persistence in a relational database management system.
