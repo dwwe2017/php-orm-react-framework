@@ -14,3 +14,4 @@
 !assets/js/node_modules/
 **/package-lock.json
 /modules/**
+/yarn-error.log

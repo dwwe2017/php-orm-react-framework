@@ -4,7 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import Routes from "./routes";
-import {HashRouter} from "react-router-dom";
+import {HashRouter, withRouter} from "react-router-dom";
 
 const initProps = window.INIT_PROPS;
 const renderDOM = initProps.reactDOM;
