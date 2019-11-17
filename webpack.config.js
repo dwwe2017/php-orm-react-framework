@@ -12,6 +12,9 @@ Encore
     .cleanupOutputBeforeBuild(['*.js'], (options) => {
         options.dry = true;
     })
+    .configureBabel(function (babelConfig) {
+        babelConfig.plugins.push("@babel/plugin-proposal-class-properties");
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();
