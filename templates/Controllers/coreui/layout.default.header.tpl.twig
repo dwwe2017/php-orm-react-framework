@@ -1,0 +1,31 @@
+{% block layout_header %}
+    {#% import "generic.nav.macro.lib.twig" as navigation %#}
+
+    <header class="c-header">
+
+        <!-- Top Left Menu -->
+        {#{ navigation.top_left(navigation_routes) }#}
+        <!-- /Top Left Menu -->
+
+        <!-- Top Right Menu -->
+        {#{ navigation.top_right(navigation_routes) }#}
+        <!-- Top Right Menu -->
+
+        {#% block layout_header_messages %#}
+            {# block layout_header_messages #}
+            {#% include "layout.react.header.messages.tpl.twig" %#}
+        {#% endblock layout_header_messages %#}
+
+        {#% block layout_header_tasks %#}
+            {# block layout_header_tasks #}
+            {#% include "layout.react.header.tasks.tpl.twig" %#}
+        {#% endblock layout_header_tasks %#}
+
+        {#% block layout_header_notifications %#}
+            {# block layout_header_notifications #}
+            {#% include "layout.react.header.notifications.tpl.twig" %#}
+        {#% endblock layout_header_notifications %#}
+
+    </header>
+
+{% endblock layout_header %}

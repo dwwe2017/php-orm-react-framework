@@ -50,6 +50,7 @@
         "caseyamcl/configula": "^3.0",
         "gettext/gettext": "^4.6",
         "twig/extensions": "^1.5",
-        "blocktrail/cryptojs-aes-php": "^0.1.0"
+        "blocktrail/cryptojs-aes-php": "^0.1.0",
+        "coreui/coreui": "v3.0.0-beta.3"
     }
 }

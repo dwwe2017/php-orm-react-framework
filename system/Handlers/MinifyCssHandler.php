@@ -32,6 +32,11 @@ class MinifyCssHandler
     private $baseDir = "";
 
     /**
+     * @var array
+     */
+    private $defaultCssPaths = [];
+
+    /**
      * @var string
      */
     private $defaultMinifyCssDir = "";
@@ -53,6 +58,7 @@ class MinifyCssHandler
     private final function __construct(ConfigValues $config)
     {
         $this->baseDir = $config->get("base_dir");
+        $this->defaultCssPaths = $config->get("default_css", []);
         $this->defaultMinifyCssDir = sprintf("%s/data/cache/css", $this->baseDir);
 
         FileHelper::init($this->defaultMinifyCssDir, MinifyCssException::class)
@@ -64,35 +70,7 @@ class MinifyCssHandler
      */
     private function setDefaults()
     {
-        $defaultCssPaths = array(
-            //Bootstrap
-            sprintf("%s/assets/css/bootstrap.min.css", $this->baseDir),
-            sprintf("%s/assets/css/main.css", $this->baseDir),
-            //Plugins
-            sprintf("%s/assets/css/plugins/bootstrap-colorpicker.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/bootstrap-multiselect.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/bootstrap-switch.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/bootstrap-wizard.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/bootstrap-wysihtml5.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/datatables.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/datatables_bootstrap.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/daterangepicker.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/duallistbox.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/fullcalendar.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/jquery-ui.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/nestable.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/nprogress.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/pickadate.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/select2.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/tagsinput.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/typeahead.css", $this->baseDir),
-            sprintf("%s/assets/css/plugins/uniform.css", $this->baseDir),
-            //General
-            sprintf("%s/assets/css/responsive.css", $this->baseDir),
-            sprintf("%s/assets/css/icons.css", $this->baseDir)
-        );
-
-        foreach ($defaultCssPaths as $cssPath) {
+        foreach ($this->defaultCssPaths as $cssPath) {
             $this->addCss($cssPath);
         }
     }
@@ -136,7 +114,7 @@ class MinifyCssHandler
         if (!file_exists($this->getDefaultMinifyCssFile())) {
             $content = "";
             foreach ($this->cssContent as $item) {
-                $content .= is_file($item) ? file_get_contents($item) : trim($item);
+                $content .= strlen($item) < 999 && is_file($item) ? file_get_contents($item) : trim($item);
             }
 
             try {
@@ -164,11 +142,14 @@ class MinifyCssHandler
      */
     public final function addCss(?string $fileOrString, $codeAsString = false): void
     {
-        if(is_null($fileOrString)){
+        if (is_null($fileOrString)) {
             return;
         }
 
-        if ($codeAsString) {
+        if ($codeAsString || strcasecmp(substr($fileOrString, -4), ".css") != 0) {
+            self::$md5checksum .= trim(md5($fileOrString));
+        } elseif (strcasecmp(substr($fileOrString, 0, 4), "http") == 0) {
+            $fileOrString = @file_get_contents($fileOrString);
             self::$md5checksum .= trim(md5($fileOrString));
         } else {
             FileHelper::init($fileOrString, MinifyCssException::class)->isReadable();
