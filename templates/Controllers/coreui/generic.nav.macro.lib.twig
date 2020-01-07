@@ -86,49 +86,61 @@
 @macro top_right
 @param navigation_routes array
  #}
-{% macro top_right_user(navigation_routes=[]) %}
-
-    {% if navigation_routes.top_right_user is defined %}
-        {% if navigation_routes.top_right_user != false %}
-            {% if navigation_routes.top_right_user.avatar is defined %}
-                {% if navigation_routes.top_right_user.avatar != false %}
+{% macro top_right(navigation_routes=[]) %}
+    {% if navigation_routes.user_account is defined %}
+        {% if navigation_routes.user_account != false %}
+            {% if navigation_routes.user_account.avatar is defined %}
+                {% if navigation_routes.user_account.avatar != false %}
                     <li class="c-header-nav-item dropdown">
-                        <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                           aria-expanded="false">
-                            <div class="c-avatar">
-                                <img class="c-avatar-img" src="{{ navigation_routes.top_right_user.avatar|raw }}" alt="">
-                            </div>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right pt-0">
-                            <div class="dropdown-header bg-light py-2">
-                                <strong>Settings</strong>
-                            </div>
-                            <a class="dropdown-item" href="index.php?controller=restricted&action=profile">
-                                <svg class="c-icon mfe-2">
-                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-user"/>
-                                </svg>
-                                Profile
-                            </a>
-                            <a class="dropdown-item" href="{# todo #}">
-                                <svg class="c-icon mfe-2">
-                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-settings"/>
-                                </svg>
-                                Settings
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{# todo #}">
-                                <svg class="c-icon mfe-2">
-                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-lock-locked"/>
-                                </svg>
-                                Lock Account</a>
-                            <a class="dropdown-item" href="index.php?controller=restrictedInvoke&action=signOut">
-                                <svg class="c-icon mfe-2">
-                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-account-logout"/>
-                                </svg>
-                                Logout
-                            </a>
+                    <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <div class="c-avatar">
+                            <img class="c-avatar-img" src="{{ navigation_routes.user_account.avatar|raw }}" alt="">
                         </div>
-                    </li>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right pt-0">
+                        {% if navigation_routes.top_right is defined %}
+                            {% if navigation_routes.top_right != false %}
+                                {% for item in navigation_routes.top_right %}
+                                    <div class="{% if(item.options.class is defined) %}{% if(item.options.class != false) %}{{ item.options.class }}{% endif %}{% endif %}">
+                                        {% if(item.options.icon is defined) %}
+                                            {% if(item.options.icon != false) %}
+                                                <i class="c-icon {{ item.options.icon }}"></i>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if(item.options.text is defined) %}
+                                            {% if(item.options.text != false) %}
+                                                {{ item.options.text|trans }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    {% if(item.routes is defined) %}
+                                        {% if(item.routes != false) %}
+                                            {% for route in item.routes %}
+                                                <a href="{% if(route.options.href is defined) %}{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}{% endif %}"
+                                                   title="{% if(route.options.title is defined) %}{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}{% endif %}"
+                                                   class="dropdown-item"
+                                                >
+                                                    {% if(route.options.icon is defined) %}
+                                                        {% if(route.options.icon != false) %}
+                                                            <svg class="c-icon mfe-2">
+                                                                <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ route.options.icon }}"/>
+                                                            </svg>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% if(route.options.text is defined) %}
+                                                        {% if(route.options.text != false) %}
+                                                            {{ route.options.text|trans }}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </a>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    </div>
                 {% endif %}
             {% endif %}
         {% endif %}
