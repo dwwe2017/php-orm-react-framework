@@ -16,7 +16,6 @@ use Helpers\StringHelper;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
-use Traits\ControllerTraits\AbstractBaseTrait;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
@@ -283,7 +282,41 @@ class NavigationHandler
 
             $user = $this->getSessionInstance()->getUser();
 
-            $this->routes[self::RESTRICTED_NAV]["top_right_user"]["avatar"] = $user->getAvatar();
+            /**
+             * @see templates/Controllers/coreui/generic.nav.macro.lib.twig::macro top_right
+             */
+            $this->routes[self::RESTRICTED_NAV]["user_account"]["avatar"] = $user->getAvatar();
+            $this->routes[self::RESTRICTED_NAV]["top_right"] = [
+                [
+                    "options" => [
+                        "class" => "dropdown-header bg-light py-2",
+                        "text" => __("Account"),
+                        "href" => "javascript:void(0)"
+                    ],
+                    "routes" => [
+                        [
+                            "options" => [
+                                /**
+                                 * @see AbstractBaseTrait::getSystemLocaleService()
+                                 */
+                                "text" => __("My Profile"),
+                                "href" => sprintf("index.php?controller=restricted&action=profile"),
+                                "icon" => "cil-user"
+                            ]
+                        ],
+                        [
+                            "options" => [
+                                /**
+                                 * @see AbstractBaseTrait::getSystemLocaleService()
+                                 */
+                                "text" => __("Logout"),
+                                "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
+                                "icon" => "cil-account-logout"
+                            ]
+                        ]
+                    ]
+                ]
+            ];
 
             $routes = [];
             foreach ($this->getSessionInstance()->getUsers() as $childUser) {
