@@ -1,0 +1,54 @@
+extends /_layout/default.pug
+
+block scripts
+  // Plugins and scripts required by this view
+  script(src='node_modules/jquery/dist/jquery.slim.min.js')
+  script(src='node_modules/jquery-validation/dist/jquery.validate.js')
+  script(src='js/validation.js')
+
+block view
+  .fade-in
+    .row
+      .col-md-12
+        .card
+          .card-header
+            |  Validation - jQuery Validation Plugin
+            a.badge.badge-danger(href='https://coreui.io/pro/') CoreUI Pro Component
+            .card-header-actions
+              a.card-header-action(href='https://github.com/jzaefferer/jquery-validation', target='_blank')
+                small.text-muted docs
+          .card-body
+            | This jQuery plugin makes simple clientside form validation easy, whilst still offering plenty of customization options. It makes a good choice if you’re building something new from scratch, but also when you’re trying to integrate something into an existing application with lots of existing markup. The plugin comes bundled with a useful set of validation methods, including URL and email validation, while providing an API to write your own methods. All bundled methods come with default error messages in english and translations into 37 other languages.
+            hr
+            .row
+              .col-md-6
+                h6 Simple Form
+                form#signupForm
+                  .form-group
+                    label.col-form-label(for='firstname') First name
+                    input#firstname.form-control(type='text', name='firstname', placeholder='First name')
+                  .form-group
+                    label.col-form-label(for='lastname') Last name
+                    input#lastname.form-control(type='text', name='lastname', placeholder='Last name')
+                  .form-group
+                    label.col-form-label(for='username') Username
+                    input#username.form-control(type='text', name='username', placeholder='Username')
+                  .form-group
+                    label.col-form-label(for='email') Email
+                    input#email.form-control(type='text', name='email', placeholder='Email')
+                  .row
+                    .form-group.col-md-6
+                      label.col-form-label(for='password') Password
+                      input#password.form-control(type='password', name='password', placeholder='Password')
+                    .form-group.col-md-6
+                      label.col-form-label(for='confirm_password') Confirm password
+                      input#confirm_password.form-control(type='password', name='confirm_password', placeholder='Confirm password')
+                  .form-group
+                    .checkbox
+                      label
+                        input#agree(type='checkbox', name='agree', value='agree')
+                        |  Please agree to our policy
+                  .form-group
+                    button.btn.btn-primary(type='submit', name='signup', value='Sign up') Sign up
+      // /.col
+    // /.row

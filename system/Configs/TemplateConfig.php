@@ -29,8 +29,8 @@ class TemplateConfig implements VendorExtensionConfigInterface
 
     /**
      * TemplateConfig constructor.
-     * @see ModuleManager::__construct()
      * @param DefaultConfig $defaultConfig
+     * @see ModuleManager::__construct()
      */
     public final function __construct(DefaultConfig $defaultConfig)
     {
@@ -60,6 +60,58 @@ class TemplateConfig implements VendorExtensionConfigInterface
         }
 
         /**
+         * Check and factory default JS files
+         */
+        $defaultJsFiles = $this->config->get("default_js", []);
+        $jsFiles = empty($defaultJsFiles) ? $tplConfig->get("default_js", []) : $defaultJsFiles;
+
+        if (!empty($jsFiles)) {
+            $defaultJsFiles = [];
+            foreach ($jsFiles as $jsFile) {
+                if ((strcasecmp(substr($jsFile, 0, 4), "http") == 0)
+                    || (strcasecmp(substr($jsFile, -3), ".js") != 0)) {
+                    $defaultJsFiles[] = $jsFile;
+                    continue;
+                }
+
+                $jsFile = sprintf("%s/%s", $baseDir, $jsFile);
+                if (FileHelper::init($jsFile, TemplateException::class)->isReadable()) {
+                    $defaultJsFiles[] = $jsFile;
+                }
+            }
+
+            $tplConfig = $tplConfig->mergeValues([
+                "default_js" => $defaultJsFiles
+            ]);
+        }
+
+        /**
+         * Check and factory default CSS files
+         */
+        $defaultCssFiles = $this->config->get("default_css", []);
+        $cssFiles = empty($defaultCssFiles) ? $tplConfig->get("default_css", []) : $defaultCssFiles;
+
+        if (!empty($cssFiles)) {
+            $defaultCssFiles = [];
+            foreach ($cssFiles as $cssFile) {
+                if ((strcasecmp(substr($cssFile, 0, 4), "http") == 0)
+                    || (strcasecmp(substr($cssFile, -4), ".css") != 0)) {
+                    $defaultCssFiles[] = $cssFile;
+                    continue;
+                }
+
+                $cssFile = sprintf("%s/%s", $baseDir, $cssFile);
+                if (FileHelper::init($cssFile, TemplateException::class)->isReadable()) {
+                    $defaultCssFiles[] = $cssFile;
+                }
+            }
+
+            $tplConfig = $tplConfig->mergeValues([
+                "default_css" => $defaultCssFiles
+            ]);
+        }
+
+        /**
          * Finished
          */
         $this->configValues = $tplConfig;
@@ -75,7 +127,7 @@ class TemplateConfig implements VendorExtensionConfigInterface
         return [
             "template_options" => [
                 "debug" => $isDebug,
-                "template" => "default",
+                "template" => "coreui",
                 "charset " => "utf-8",
                 "base_template_class" => "\\Twig\\Template",
                 "cache" => $isDebug ? false : "data/cache/compilation",
@@ -83,7 +135,9 @@ class TemplateConfig implements VendorExtensionConfigInterface
                 "strict_variables" => $isDebug,
                 "autoescape" => "html",
                 "optimizations" => $isDebug ? 0 : -1,
-            ]
+            ],
+            "default_js" => [],
+            "default_css" => [],
         ];
     }
 }

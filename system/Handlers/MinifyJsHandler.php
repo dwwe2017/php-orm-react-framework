@@ -32,6 +32,11 @@ class MinifyJsHandler extends Minifier
     private $baseDir = "";
 
     /**
+     * @var array
+     */
+    private $defaultJsPaths = [];
+
+    /**
      * @var string
      */
     private $defaultMinifyJsDir = "";
@@ -53,6 +58,7 @@ class MinifyJsHandler extends Minifier
     private final function __construct(ConfigValues $config)
     {
         $this->baseDir = $config->get("base_dir");
+        $this->defaultJsPaths = $config->get("default_js", []);
         $this->defaultMinifyJsDir = sprintf("%s/data/cache/js", $this->baseDir);
 
         FileHelper::init($this->defaultMinifyJsDir, MinifyJsException::class)
@@ -64,59 +70,13 @@ class MinifyJsHandler extends Minifier
      */
     private function setDefaults()
     {
-        $defaultJsPaths = array(
-            //jQuery
-            sprintf("%s/assets/js/libs/jquery-3.4.1.min.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js", $this->baseDir),
-            //Bootstrap
-            sprintf("%s/assets/js/libs/bootstrap.js", $this->baseDir),
-            sprintf("%s/assets/js/libs/lodash.compat.min.js", $this->baseDir),
-            //Smartphone Touch Events
-            sprintf("%s/assets/js/plugins/touchpunch/jquery.ui.touch-punch.min.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/event.swipe/jquery.event.move.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/event.swipe/jquery.event.swipe.js", $this->baseDir),
-            //General
-            sprintf("%s/assets/js/libs/breakpoints.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/respond/respond.min.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/cookie/jquery.cookie.min.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/slimscroll/jquery.slimscroll.min.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/slimscroll/jquery.slimscroll.horizontal.min.js", $this->baseDir),
-            //Charts
-            sprintf("%s/assets/js/plugins/sparkline/jquery.sparkline.min.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/daterangepicker/moment.min.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/daterangepicker/daterangepicker.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/blockui/jquery.blockUI.js", $this->baseDir),
-            //Forms
-            sprintf("%s/assets/js/plugins/uniform/jquery.uniform.min.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/select2/select2.min.js", $this->baseDir),
-            //DataTables
-            sprintf("%s/assets/js/plugins/datatables/jquery.dataTables.min.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/datatables/DT_bootstrap.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/datatables/responsive/datatables.responsive.js", $this->baseDir),
-            //Notifications
-            sprintf("%s/assets/js/plugins/noty/jquery.noty.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/noty/layouts/top.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins/noty/themes/default.js", $this->baseDir),
-            //Application
-            sprintf("%s/assets/js/app.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins.form-components.js", $this->baseDir),
-            sprintf("%s/assets/js/system.js", $this->baseDir),
-        );
-
-        foreach ($defaultJsPaths as $jsPath) {
-            $this->addJsContent($jsPath);
+        if(empty($this->defaultJsPaths)){
+            return;
         }
 
-        $this->addJsContent(
-            "$(document).ready(function(){
-                \"use strict\";
-
-                App.init(); // Init layout and core plugins
-                Plugins.init(); // Init all plugins
-                FormComponents.init(); // Init all form-specific plugins
-            });", true
-        );
+        foreach ($this->defaultJsPaths as $jsPath) {
+            $this->addJsContent($jsPath);
+        }
     }
 
     /**
@@ -141,6 +101,10 @@ class MinifyJsHandler extends Minifier
      */
     public final function compileAndGet($clearOldFiles = true)
     {
+        if(empty($this->jsContent)){
+            return false;
+        }
+
         $this->defaultMinifyJsFile = sprintf("%s/%s.js", $this->defaultMinifyJsDir, md5(self::$md5checksum));
 
         if ($clearOldFiles) {
@@ -158,7 +122,7 @@ class MinifyJsHandler extends Minifier
         if (!file_exists($this->getDefaultMinifyJsFile())) {
             $content = "";
             foreach ($this->jsContent as $item) {
-                $content .= is_file($item) ? file_get_contents($item) : trim($item);
+                $content .= strlen($item) < 999 && is_file($item) ? file_get_contents($item) : trim($item);
             }
 
             try {
@@ -186,11 +150,14 @@ class MinifyJsHandler extends Minifier
      */
     public final function addJsContent(?string $fileOrString, $codeAsString = false): void
     {
-        if(is_null($fileOrString)){
+        if (is_null($fileOrString)) {
             return;
         }
 
-        if ($codeAsString) {
+        if ($codeAsString || strcasecmp(substr($fileOrString, -3), ".js") != 0) {
+            self::$md5checksum .= trim(md5($fileOrString));
+        } elseif (strcasecmp(substr($fileOrString, 0, 4), "http") == 0) {
+            $fileOrString = @file_get_contents($fileOrString);
             self::$md5checksum .= trim(md5($fileOrString));
         } else {
             FileHelper::init($fileOrString, MinifyJsException::class)->isReadable();

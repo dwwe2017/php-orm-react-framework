@@ -108,14 +108,19 @@ class EntityHelper
 
     /**
      * @param string $className
+     * @param array $exclude
      * @return array
      */
-    public function getGetterMethods(string $className)
+    public function getGetterMethods(string $className, array $exclude = [])
     {
         $result = [];
         $fieldNames = $this->getFieldNames($className);
 
         foreach ($fieldNames as $fieldName) {
+            if(in_array($fieldName, $exclude)){
+                continue;
+            }
+
             $getter = sprintf("get%s", ucfirst(StringHelper::init($fieldName)->camelize()->getString()));
             if (!method_exists($className, $getter)) {
                 continue;

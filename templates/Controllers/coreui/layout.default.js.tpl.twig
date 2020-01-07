@@ -1,0 +1,47 @@
+{% block layout_js %}
+
+    {% if base_controller_react_entry_points is defined %}
+        {% if base_controller_react_entry_points != false %}
+            {#
+            @see assets/js/react
+            Here the Reactjs of the different BaseController is implemented to show for example the notifications in the sidebar
+            #}
+            {% for entry_point in base_controller_react_entry_points %}
+                <script src="{{ entry_point|raw }}" type="text/javascript"></script>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+
+    {% if module_controller_react_dom_id is defined %}
+        {% if module_controller_react_js_entry_points != false %}
+            {# @internal
+            @see https://symfonycasts.com/screencast/reactjs/server-pass-props
+            The only place where I want you to feel safe using the global window object is inside of your
+            entry point: it should grab all of the stuff you need, and pass it into your React app.
+            #}
+            <!--=== React.js ===-->
+            <script type="text/javascript">
+                window.INIT_PROPS = {
+                    reactDOM: "{{ module_controller_react_dom_id }}",
+                    langCode: "{{ lang_code }}",
+                    baseUrl: "{{ base_url|raw }}"
+                };
+            </script>
+            {# @internal
+            @see ReactHelper::getEntryScriptTags()
+            #}
+            {% for entry_point in module_controller_react_js_entry_points %}
+                <script src="{{ entry_point|raw }}" type="text/javascript"></script>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+
+    <script src="assets/vendors/pace-progress/js/pace.min.js" type="text/javascript"></script>
+    <script src="assets/vendors/@coreui/coreui-pro/js/coreui.bundle.min.js" type="text/javascript"></script>
+
+    <!--=== JavaScript ===-->
+    {% if minified_js != false %}
+        <script type="text/javascript" src="{{ minified_js }}"></script>
+    {% endif %}
+
+{% endblock layout_js %}

@@ -1,0 +1,171 @@
+extends /_layout/default.pug
+
+block styles
+  link(href='vendors/bootstrap-daterangepicker/css/daterangepicker.min.css', rel='stylesheet')
+  link(href='node_modules/select2/dist/css/select2.min.css', rel='stylesheet')
+  link(href='vendors/select2/css/select2-coreui.min.css', rel='stylesheet')
+
+block scripts
+  // Plugins and scripts required by this view
+  script(src='node_modules/jquery/dist/jquery.slim.min.js')
+  script(src='node_modules/jquery.maskedinput/src/jquery.maskedinput.js')
+  script(src='node_modules/moment/min/moment.min.js')
+  script(src='node_modules/select2/dist/js/select2.min.js')
+  script(src='node_modules/bootstrap-daterangepicker/daterangepicker.js')
+  script(src='js/advanced-forms.js')
+
+block view
+  .fade-in
+    .row
+      .col-md-6
+        .card
+          .card-header
+            |  Masked Input Plugin for jQuery
+            a.badge.badge-danger(href='https://coreui.io/pro/') CoreUI Pro Component
+            .card-header-actions
+              a.card-header-action(href='https://github.com/digitalBush/jquery.maskedinput', target='_blank')
+                small.text-muted docs
+          .card-body
+            form
+              fieldset.form-group
+                label Date input
+                .input-group
+                  span.input-group-prepend
+                    span.input-group-text
+                      svg.c-icon
+                        use(xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-calendar")
+                  input#date.form-control(type='text')
+                small.text-muted ex. 99/99/9999
+              fieldset.form-group
+                label Phone input
+                .input-group
+                  span.input-group-prepend
+                    span.input-group-text
+                      svg.c-icon
+                        use(xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-phone")
+                  input#phone.form-control(type='text')
+                small.text-muted ex. (999) 999-9999
+              fieldset.form-group
+                label Taxpayer Identification Numbers
+                .input-group
+                  span.input-group-prepend
+                    span.input-group-text
+                      svg.c-icon
+                        use(xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-dollar")
+                  input#tin.form-control(type='text')
+                small.text-muted ex. 99-9999999
+              fieldset.form-group
+                label Social Security Number
+                .input-group
+                  span.input-group-prepend
+                    span.input-group-text
+                      svg.c-icon
+                        use(xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-user")
+                  input#ssn.form-control(type='text')
+                small.text-muted ex. 999-99-9999
+              fieldset.form-group
+                label Eye Script
+                .input-group
+                  span.input-group-prepend
+                    span.input-group-text
+                      svg.c-icon
+                        use(xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-asterisk")
+                  input#eyescript.form-control(type='text')
+                small.text-muted ex. ~9.99 ~9.99 999
+              fieldset.form-group
+                label Credit Card Number
+                .input-group
+                  span.input-group-prepend
+                    span.input-group-text
+                      svg.c-icon
+                        use(xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-credit-card")
+                  input#ccn.form-control(type='text', placeholder='0000 0000 0000 0000')
+                small.text-muted ex. 9999 9999 9999 9999
+      // /.col
+      .col-md-6
+        .card
+          .card-header
+            |  Select2
+            a.badge.badge-danger(href='https://coreui.io/pro/') CoreUI Pro Component
+            .card-header-actions
+              a.card-header-action(href='https://select2.github.io', target='_blank')
+                small.text-muted docs
+          .card-body
+            fieldset.form-group
+              label Modern Select
+              select#select2-1.form-control.select2-single
+                option Option 1
+                option Option 2
+                option Option 3
+                option Option 4
+                option Option 5
+            fieldset.form-group
+              label Multiple Select / Tags
+              select#select2-2.form-control.select2-multiple(multiple='')
+                option Option 1
+                option(selected='') Option 2
+                option Option 3
+                option Option 4
+                option Option 5
+            fieldset.form-group
+              label Group Select
+              select#select2-3.form-control(data-placeholder='Your Favorite Football Team')
+                option(value='')
+                optgroup(label='NFC EAST')
+                  option Dallas Cowboys
+                  option New York Giants
+                  option Philadelphia Eagles
+                  option Washington Redskins
+                optgroup(label='NFC NORTH')
+                  option Chicago Bears
+                  option Detroit Lions
+                  option Green Bay Packers
+                  option Minnesota Vikings
+                optgroup(label='NFC SOUTH')
+                  option Atlanta Falcons
+                  option Carolina Panthers
+                  option New Orleans Saints
+                  option Tampa Bay Buccaneers
+                optgroup(label='NFC WEST')
+                  option Arizona Cardinals
+                  option St. Louis Rams
+                  option San Francisco 49ers
+                  option Seattle Seahawks
+                optgroup(label='AFC EAST')
+                  option Buffalo Bills
+                  option Miami Dolphins
+                  option New England Patriots
+                  option New York Jets
+                optgroup(label='AFC NORTH')
+                  option Baltimore Ravens
+                  option Cincinnati Bengals
+                  option Cleveland Browns
+                  option Pittsburgh Steelers
+                optgroup(label='AFC SOUTH')
+                  option Houston Texans
+                  option Indianapolis Colts
+                  option Jacksonville Jaguars
+                  option Tennessee Titans
+                optgroup(label='AFC WEST')
+                  option Denver Broncos
+                  option Kansas City Chiefs
+                  option Oakland Raiders
+                  option San Diego Chargers
+        .card
+          .card-header
+            |  DateRangePicker
+            a.badge.badge-danger(href='https://coreui.io/pro/') CoreUI Pro Component
+            .card-header-actions
+              a.card-header-action(href='http://www.daterangepicker.com', target='_blank')
+                small.text-muted docs
+          .card-body
+            fieldset.form-group
+              label DateRangePicker
+              .input-group
+                span.input-group-prepend
+                  span.input-group-text
+                    svg.c-icon
+                      use(xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-calendar")
+                input.form-control(name='daterange', type='text')
+      // /.col
+    // /.row

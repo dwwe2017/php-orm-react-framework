@@ -10,6 +10,9 @@
 namespace Services;
 
 
+use Configs\PortalConfig;
+use Configula\ConfigValues;
+use Exceptions\TemplateException;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
@@ -72,6 +75,19 @@ class TemplateService implements VendorExtensionServiceInterface
         $envOptions = $config->get("template_options", []);
         $this->environment = new Environment($this->loader, $envOptions);
         $this->environment->addExtension(new Twig_Extensions_Extension_I18n());
+
+        $portalOptions = $config->get("portal_options", []);
+
+        /**
+         * A global variable is like any other template variable, except that it's available in all templates and macros:
+         * @see https://twig.symfony.com/doc/3.x/advanced.html#globals
+         * @see PortalConfig
+         */
+        if(!empty($portalOptions)){
+            foreach ($portalOptions as $key => $portalOption){
+                $this->environment->addGlobal($key, $portalOption);
+            }
+        }
     }
 
     /**

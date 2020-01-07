@@ -1,0 +1,13 @@
+{% block layout_css %}
+
+    <!--=== CoreUI ===-->
+    <link href="assets/css/style.min.css" rel="stylesheet">
+    <link href="assets/vendors/pace-progress/css/pace.min.css" rel="stylesheet">
+    <link href="assets/vendors/@coreui/icons/css/free.min.css" rel="stylesheet">
+
+    <!--=== CSS ===-->
+    {% if minified_css != false %}
+        <!--=== Minified ===-->
+        <link href="{{ minified_css }}" rel="stylesheet" type="text/css">
+    {% endif %}
+{% endblock layout_css %}
