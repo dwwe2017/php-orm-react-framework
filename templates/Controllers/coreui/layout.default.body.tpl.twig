@@ -1,7 +1,7 @@
 {% extends "layout.default.tpl.twig" %}
 
 {% block layout_body %}
-    <body class="c-app">
+    <body class="c-app {% if(b_dark_layout is defined and b_dark_layout == true) %}c-dark-theme{% endif %}">
 
     {% block layout_sidebar %}
         {# block layout_sidebar #}
@@ -16,26 +16,26 @@
             {% endblock layout_header %}
 
             <div class="c-body">
+
                 <main class="c-main">
 
-                    {#% block layout_breadcrumb %#}
-                        {# block layout_breadcrumb #}
-                        {#% include "layout.default.breadcrumb.tpl.twig" %#}
-                    {#% endblock layout_breadcrumb %#}
-
-                    {#% block layout_page_header %#}
-                        {# block layout_page_header #}
-                        {#% include "layout.default.page.header.tpl.twig" %#}
-                    {#% endblock layout_page_header %#}
-
-                    {% block page_content %}
-                    {% endblock page_content %}
+                    <div class="container-fluid">
+                        <div class="fade-in">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {% block page_content %}
+                                    {% endblock page_content %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </main>
+
             </div>
 
             <footer class="c-footer">
-                <!-- Footer content here -->
+                <div><a href="https://www.teamspeak-interface.net">TSI</a> © 2020 DW <\> Web-Engineering</div>
             </footer>
         </div>
 

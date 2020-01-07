@@ -1,10 +1,13 @@
 {% block layout_css %}
+
+    <!--=== CoreUI ===-->
+    <link href="assets/css/style.min.css" rel="stylesheet">
+    <link href="assets/vendors/pace-progress/css/pace.min.css" rel="stylesheet">
+    <link href="assets/vendors/@coreui/icons/css/free.min.css" rel="stylesheet">
+
     <!--=== CSS ===-->
     {% if minified_css != false %}
         <!--=== Minified ===-->
-        <link href="{{ minified_css }}" rel="stylesheet" type="text/css" />
-    {% else %}
-        <!-- CoreUI CSS -->
-        <link rel="stylesheet" href="https://unpkg.com/@coreui/coreui@3.0.0-beta.1/dist/css/coreui.min.css" crossorigin="anonymous">
+        <link href="{{ minified_css }}" rel="stylesheet" type="text/css">
     {% endif %}
 {% endblock layout_css %}

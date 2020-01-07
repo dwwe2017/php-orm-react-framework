@@ -121,6 +121,8 @@ abstract class AbstractBase
         $this->systemLocaleService = $this->getLocaleService()->getSystemTranslator(); // !Only available for system
         $this->moduleLocaleService = $this->getLocaleService()->getModuleTranslator(); // Available in modules
 
+        $this->localeService->setLanguage("de_DE");
+
         /**
          * Logger service
          * @author https://github.com/Seldaek/monolog

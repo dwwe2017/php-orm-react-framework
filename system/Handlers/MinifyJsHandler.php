@@ -70,6 +70,10 @@ class MinifyJsHandler extends Minifier
      */
     private function setDefaults()
     {
+        if(empty($this->defaultJsPaths)){
+            return;
+        }
+
         foreach ($this->defaultJsPaths as $jsPath) {
             $this->addJsContent($jsPath);
         }
@@ -97,6 +101,10 @@ class MinifyJsHandler extends Minifier
      */
     public final function compileAndGet($clearOldFiles = true)
     {
+        if(empty($this->jsContent)){
+            return false;
+        }
+
         $this->defaultMinifyJsFile = sprintf("%s/%s.js", $this->defaultMinifyJsDir, md5(self::$md5checksum));
 
         if ($clearOldFiles) {

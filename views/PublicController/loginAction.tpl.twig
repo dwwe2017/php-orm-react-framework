@@ -1,28 +1,81 @@
 {% extends "layout.default.tpl.twig" %}
 
 {% block layout_body %}
-    {% import "generic.forms.macro.lib.twig" as forms %}
+    <body class="c-app flex-row align-items-center">
 
-    <body class="login">
-    <!-- Logo -->
-    <div class="logo">
-        <img src="{{ asset("img/logo.png") }}" alt="logo" />
-        <strong>TS</strong>INTERFACE
-    </div>
-    <!-- /Logo -->
-
-    <!-- Login Box -->
-    <div class="box">
-        <div class="content">
-
-            {{ forms.formular_login_default() }}
-
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-{% if(b_allow_registration is defined and b_allow_registration == true) %}8{% else %}4{% endif %}">
+                <div class="card-group">
+                    <div class="card p-4">
+                        <div class="card-body">
+                            <form class="needs-validation" action="" method="post" novalidate>
+                                <h1>{% trans %}Login{% endtrans %}</h1>
+                                <p class="text-muted">{% trans %}Sign In to your Account{% endtrans %}</p>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                          <svg class="c-icon">
+                                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-user"/>
+                                          </svg>
+                                        </span>
+                                    </div>
+                                    <input id="username" name="username" class="form-control" type="text" placeholder="{% trans %}Username{% endtrans %}" required>
+                                    <div class="invalid-feedback">
+                                        {% trans %}Please enter your username{% endtrans %}
+                                    </div>
+                                </div>
+                                <div class="input-group mb-4">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                          <svg class="c-icon">
+                                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-lock-locked"/>
+                                          </svg>
+                                        </span>
+                                    </div>
+                                    <input id="password" name="password" class="form-control" type="password" placeholder="{% trans %}Password{% endtrans %}" required>
+                                    <div class="invalid-feedback">
+                                        {% trans %}Please enter your password{% endtrans %}
+                                    </div>
+                                </div>
+                                {% if(b_allow_stay_logged_in is defined and b_allow_stay_logged_in == true) %}
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" name="remember" id="remember">
+                                            <label class="form-check-label" for="remember">
+                                                {% trans %}Remember me{% endtrans %}
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-primary px-4" type="submit">{% trans %}Login{% endtrans %}</button>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <a href="{# todo #}" class="btn btn-link px-0">{% trans %}Forgot password?{% endtrans %}</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {% if(b_allow_registration is defined and b_allow_registration == true) %}
+                        <div class="card text-white bg-primary py-5 d-md-down-none" style="width:44%">
+                            <div class="card-body text-center">
+                                <div>
+                                    <h2>{% trans %}Sign Up{% endtrans %}</h2>
+                                    <p>
+                                        {% trans %}Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.{% endtrans %}
+                                    </p>
+                                    <button class="btn btn-lg btn-outline-light mt-3" type="button">{% trans %}Register Now!{% endtrans %}</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-
-        {{ forms.formular_reset_default() }}
-
     </div>
-    <!-- /Login Box -->
 
     {% block layout_js %}
         {# block layout_js #}

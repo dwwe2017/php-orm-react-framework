@@ -62,10 +62,11 @@ class TemplateConfig implements VendorExtensionConfigInterface
         /**
          * Check and factory default JS files
          */
-        $defaultJsFiles = [];
-        $jsFiles = $tplConfig->get("default_js", []);
+        $defaultJsFiles = $this->config->get("default_js", []);
+        $jsFiles = empty($defaultJsFiles) ? $tplConfig->get("default_js", []) : $defaultJsFiles;
 
         if (!empty($jsFiles)) {
+            $defaultJsFiles = [];
             foreach ($jsFiles as $jsFile) {
                 if ((strcasecmp(substr($jsFile, 0, 4), "http") == 0)
                     || (strcasecmp(substr($jsFile, -3), ".js") != 0)) {
@@ -87,10 +88,11 @@ class TemplateConfig implements VendorExtensionConfigInterface
         /**
          * Check and factory default CSS files
          */
-        $defaultCssFiles = [];
-        $cssFiles = $tplConfig->get("default_css", []);
+        $defaultCssFiles = $this->config->get("default_css", []);
+        $cssFiles = empty($defaultCssFiles) ? $tplConfig->get("default_css", []) : $defaultCssFiles;
 
         if (!empty($cssFiles)) {
+            $defaultCssFiles = [];
             foreach ($cssFiles as $cssFile) {
                 if ((strcasecmp(substr($cssFile, 0, 4), "http") == 0)
                     || (strcasecmp(substr($cssFile, -4), ".css") != 0)) {
@@ -125,7 +127,7 @@ class TemplateConfig implements VendorExtensionConfigInterface
         return [
             "template_options" => [
                 "debug" => $isDebug,
-                "template" => "default",
+                "template" => "coreui",
                 "charset " => "utf-8",
                 "base_template_class" => "\\Twig\\Template",
                 "cache" => $isDebug ? false : "data/cache/compilation",
@@ -134,78 +136,8 @@ class TemplateConfig implements VendorExtensionConfigInterface
                 "autoescape" => "html",
                 "optimizations" => $isDebug ? 0 : -1,
             ],
-            "default_js" => [
-                "assets/js/libs/jquery-3.4.1.min.js",
-                "assets/js/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js",
-                //Bootstrap
-                "assets/js/libs/bootstrap.js",
-                "assets/js/libs/lodash.compat.min.js",
-                //Smartphone Touch Events
-                "assets/js/plugins/touchpunch/jquery.ui.touch-punch.min.js",
-                "assets/js/plugins/event.swipe/jquery.event.move.js",
-                "assets/js/plugins/event.swipe/jquery.event.swipe.js",
-                //General
-                "assets/js/libs/breakpoints.js",
-                "assets/js/plugins/respond/respond.min.js",
-                "assets/js/plugins/cookie/jquery.cookie.min.js",
-                "assets/js/plugins/slimscroll/jquery.slimscroll.min.js",
-                "assets/js/plugins/slimscroll/jquery.slimscroll.horizontal.min.js",
-                //Charts
-                "assets/js/plugins/sparkline/jquery.sparkline.min.js",
-                "assets/js/plugins/daterangepicker/moment.min.js",
-                "assets/js/plugins/daterangepicker/daterangepicker.js",
-                "assets/js/plugins/blockui/jquery.blockUI.js",
-                //Forms
-                "assets/js/plugins/uniform/jquery.uniform.min.js",
-                "assets/js/plugins/select2/select2.min.js",
-                //DataTables
-                "assets/js/plugins/datatables/jquery.dataTables.min.js",
-                "assets/js/plugins/datatables/DT_bootstrap.js",
-                "assets/js/plugins/datatables/responsive/datatables.responsive.js",
-                //Notifications
-                "assets/js/plugins/noty/jquery.noty.js",
-                "assets/js/plugins/noty/layouts/top.js",
-                "assets/js/plugins/noty/themes/default.js",
-                //Application
-                "assets/js/app.js",
-                "assets/js/plugins.js",
-                "assets/js/plugins.form-components.js",
-                "assets/js/system.js",
-                "$(document).ready(function(){
-                    \"use strict\";
-    
-                    App.init(); // Init layout and core plugins
-                    Plugins.init(); // Init all plugins
-                    FormComponents.init(); // Init all form-specific plugins
-                });"
-            ],
-            "default_css" => [
-                //Bootstrap
-                "assets/css/bootstrap.min.css",
-                "assets/css/main.css",
-                //Plugins
-                "assets/css/plugins/bootstrap-colorpicker.css",
-                "assets/css/plugins/bootstrap-multiselect.css",
-                "assets/css/plugins/bootstrap-switch.css",
-                "assets/css/plugins/bootstrap-wizard.css",
-                "assets/css/plugins/bootstrap-wysihtml5.css",
-                "assets/css/plugins/datatables.css",
-                "assets/css/plugins/datatables_bootstrap.css",
-                "assets/css/plugins/daterangepicker.css",
-                "assets/css/plugins/duallistbox.css",
-                "assets/css/plugins/fullcalendar.css",
-                "assets/css/plugins/jquery-ui.css",
-                "assets/css/plugins/nestable.css",
-                "assets/css/plugins/nprogress.css",
-                "assets/css/plugins/pickadate.css",
-                "assets/css/plugins/select2.css",
-                "assets/css/plugins/tagsinput.css",
-                "assets/css/plugins/typeahead.css",
-                "assets/css/plugins/uniform.css",
-                //General
-                "assets/css/responsive.css",
-                "assets/css/icons.css"
-            ],
+            "default_js" => [],
+            "default_css" => [],
         ];
     }
 }

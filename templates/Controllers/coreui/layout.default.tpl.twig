@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{% if(s_html_lang is defined) %}{{ s_html_lang }}{% else %}en{% endif %}">
 
 {% block layout_head %}
     {# block layout_head #}

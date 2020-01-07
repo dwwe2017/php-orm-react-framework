@@ -1,8 +1,8 @@
 // Copyright 2019. DW </> Web-Engineering. All rights reserved.
-import React, {Component} from "react";
+import React, {Component, Fragment} from "react";
 
 export default class LayoutHeaderTasks extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             progress1: 0,
@@ -39,28 +39,28 @@ export default class LayoutHeaderTasks extends Component {
     }
 
     tick1() {
-        const progress1 = this.state.progress1 < 100 ? (this.state.progress1+1) : 100;
+        const progress1 = this.state.progress1 < 100 ? (this.state.progress1 + 1) : 100;
         this.setState({
             progress1
         });
     }
 
     tick2() {
-        const progress2 = this.state.progress2 < 100 ? (this.state.progress2+1) : 100;
+        const progress2 = this.state.progress2 < 100 ? (this.state.progress2 + 1) : 100;
         this.setState({
             progress2
         });
     }
 
     tick3() {
-        const progress3 = this.state.progress3 < 100 ? (this.state.progress3+1) : 100;
+        const progress3 = this.state.progress3 < 100 ? (this.state.progress3 + 1) : 100;
         this.setState({
             progress3
         });
     }
 
     tick4() {
-        const progress4 = this.state.progress4 < 100 ? (this.state.progress4+1) : 100;
+        const progress4 = this.state.progress4 < 100 ? (this.state.progress4 + 1) : 100;
         this.setState({
             progress4
         });
@@ -68,66 +68,61 @@ export default class LayoutHeaderTasks extends Component {
 
     render() {
         return (
-            <ul className="nav navbar-nav navbar-right" >
-                <li className="dropdown hidden-xs hidden-sm" >
-                    <a href="#" className="dropdown-toggle" data-toggle="dropdown" >
-                        <i className="icon-tasks" />
-                        <span className="badge" >4</span >
-                    </a >
-                    <ul className="dropdown-menu extended notification" >
-                        <li className="title" >
-                            <p >You have 4 pending tasks</p >
-                        </li >
-                        <li >
-                            <a href="javascript:void(0);" >
-								<span className="task" >
-									<span className="desc" >Preparing new release</span >
-									<span className="percent" >{this.state.progress1.toString()}%</span >
-								</span >
-                                <div className="progress progress-small" >
-                                    <div style={{width: this.state.progress1.toString() + "%"}} className="progress-bar progress-bar-info" />
-                                </div >
-                            </a >
-                        </li >
-                        <li >
-                            <a href="javascript:void(0);" >
-								<span className="task" >
-									<span className="desc" >Change management</span >
-									<span className="percent" >{this.state.progress2.toString()}%</span >
-								</span >
-                                <div className="progress progress-small progress-striped active" >
-                                    <div style={{width: this.state.progress2.toString() + "%"}} className="progress-bar progress-bar-danger" />
-                                </div >
-                            </a >
-                        </li >
-                        <li >
-                            <a href="javascript:void(0);" >
-								<span className="task" >
-									<span className="desc" >Mobile development</span >
-									<span className="percent" >{this.state.progress3.toString()}%</span >
-								</span >
-                                <div className="progress progress-small" >
-                                    <div style={{width: this.state.progress3.toString() + "%"}} className="progress-bar progress-bar-success" />
-                                </div >
-                            </a >
-                        </li >
-                        <li >
-                            <a href="javascript:void(0);" >
-								<span className="task" >
-									<span className="desc" >Database migration</span >
-									<span className="percent" >{this.state.progress4.toString()}%</span >
-								</span >
-                                <div className="progress progress-small" >
-                                    <div style={{width: this.state.progress4.toString() + "%"}} className="progress-bar progress-bar-warning" />
-                                </div >
-                            </a >
-                        </li >
-                        <li className="footer" >
-                            <a href="javascript:void(0);" >View all tasks</a >
-                        </li >
-                    </ul >
-                </li >
-            </ul >
+            <li className="c-header-nav-item dropdown d-md-down-none mx-2"><a className="c-header-nav-link"
+                                                                              data-toggle="dropdown" href="#"
+                                                                              role="button" aria-haspopup="true"
+                                                                              aria-expanded="false">
+                <svg className="c-icon">
+                    <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-list-rich"/>
+                </svg>
+                <span className="badge badge-pill badge-warning">15</span></a>
+                <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg pt-0">
+                    <div className="dropdown-header bg-light"><strong>You have 5 pending tasks</strong></div>
+                    <a className="dropdown-item d-block" href="#">
+                        <div className="small mb-1">Upgrade NPM &amp; Bower<span
+                            className="float-right"><strong>{this.state.progress1.toString()}%</strong></span></div>
+                        <span className="progress progress-xs">
+                  <div className="progress-bar bg-info" role="progressbar"
+                       style={{width: this.state.progress1.toString() + "%"}}
+                       aria-valuemin="0" aria-valuemax="100"/>
+                </span>
+                    </a><a className="dropdown-item d-block" href="#">
+                    <div className="small mb-1">ReactJS Version<span
+                        className="float-right"><strong>{this.state.progress2.toString()}%</strong></span>
+                    </div>
+                    <span className="progress progress-xs">
+                  <div className="progress-bar bg-danger" role="progressbar"
+                       style={{width: this.state.progress2.toString() + "%"}}
+                       aria-valuemin="0" aria-valuemax="100"/>
+                </span>
+                </a><a className="dropdown-item d-block" href="#">
+                    <div className="small mb-1">VueJS Version<span
+                        className="float-right"><strong>{this.state.progress3.toString()}%</strong></span>
+                    </div>
+                    <span className="progress progress-xs">
+                  <div className="progress-bar bg-warning" role="progressbar"
+                       style={{width: this.state.progress3.toString() + "%"}}
+                       aria-valuemin="0" aria-valuemax="100"/>
+                </span>
+                </a><a className="dropdown-item d-block" href="#">
+                    <div className="small mb-1">Add new layouts<span
+                        className="float-right"><strong>{this.state.progress4.toString()}%</strong></span>
+                    </div>
+                    <span className="progress progress-xs">
+                  <div className="progress-bar bg-info" role="progressbar"
+                       style={{width: this.state.progress4.toString() + "%"}}
+                       aria-valuemin="0" aria-valuemax="100"/>
+                </span>
+                </a><a className="dropdown-item d-block" href="#">
+                    <div className="small mb-1">Angular 8 Version<span
+                        className="float-right"><strong>100%</strong></span></div>
+                    <span className="progress progress-xs">
+                  <div className="progress-bar bg-success" role="progressbar" style={{width: 100 +"%"}}
+                       aria-valuemin="0" aria-valuemax="100"/>
+                </span>
+                </a><a className="dropdown-item text-center border-top" href="#"><strong>View all tasks</strong></a>
+                </div>
+            </li>
         )
     }
 }

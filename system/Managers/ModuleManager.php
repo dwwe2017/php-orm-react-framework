@@ -14,6 +14,7 @@ use Configs\CacheConfig;
 use Configs\DefaultConfig;
 use Configs\DoctrineConfig;
 use Configs\LoggerConfig;
+use Configs\PortalConfig;
 use Configs\TemplateConfig;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
@@ -97,6 +98,11 @@ class ModuleManager
     private $cacheConfig;
 
     /**
+     * @var ConfigValues
+     */
+    private $portalConfig;
+
+    /**
      * ModuleManager constructor.
      * @param AbstractBase $controllerInstance
      */
@@ -122,6 +128,7 @@ class ModuleManager
         $this->doctrineConfig = DoctrineConfig::init($this->defaultConfig);
         $this->loggerConfig = LoggerConfig::init($this->defaultConfig);
         $this->cacheConfig = CacheConfig::init($this->defaultConfig);
+        $this->portalConfig = PortalConfig::init($this->defaultConfig);
 
         $this->config = $this->moduleConfig
             ->merge($this->defaultConfig
@@ -129,7 +136,8 @@ class ModuleManager
             ->merge($this->templateConfig)
             ->merge($this->doctrineConfig)
             ->merge($this->loggerConfig)
-            ->merge($this->cacheConfig);
+            ->merge($this->cacheConfig)
+            ->merge($this->portalConfig);
 
         /**
          * @internal Set default modules whose index controller and index action are called when no parameters are called

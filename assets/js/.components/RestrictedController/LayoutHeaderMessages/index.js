@@ -29,58 +29,78 @@ export default class LayoutHeaderMessages extends Component {
 
     render() {
         return (
-            <ul className="nav navbar-nav navbar-right" >
-                <li className="dropdown hidden-xs hidden-sm" >
-                    <a href="#" className="dropdown-toggle" data-toggle="dropdown" >
-                        <i className="icon-envelope" />
-                        <span className="badge" >{this.state.messages.toString()}</span >
-                    </a >
-                    <ul className="dropdown-menu extended notification" >
-                        <li className="title" >
-                            <p >You have {this.state.messages.toString()} new messages</p >
-                        </li >
-                        <li >
-                            <a href="javascript:void(0);" >
-                                <span className="photo" ><img src="assets/img/demo/avatar-1.jpg" alt="" /></span >
-                                <span className="subject" >
-									<span className="from" >Bob Carter</span >
-									<span className="time" >Just Now</span >
-								</span >
-                                <span className="text" >
-									Consetetur sadipscing elitr...
-								</span >
-                            </a >
-                        </li >
-                        <li >
-                            <a href="javascript:void(0);" >
-                                <span className="photo" ><img src="assets/img/demo/avatar-2.jpg" alt="" /></span >
-                                <span className="subject" >
-									<span className="from" >Jane Doe</span >
-									<span className="time" >45 mins</span >
-								</span >
-                                <span className="text" >
-									Sed diam nonumy...
-								</span >
-                            </a >
-                        </li >
-                        <li >
-                            <a href="javascript:void(0);" >
-                                <span className="photo" ><img src="assets/img/demo/avatar-3.jpg" alt="" /></span >
-                                <span className="subject" >
-									<span className="from" >Patrick Nilson</span >
-									<span className="time" >6 hours</span >
-								</span >
-                                <span className="text" >
-									No sea takimata sanctus...
-								</span >
-                            </a >
-                        </li >
-                        <li className="footer" >
-                            <a href="javascript:void(0);" >View all messages</a >
-                        </li >
-                    </ul >
-                </li >
-            </ul >
+            <li className="c-header-nav-item dropdown d-md-down-none mx-2">
+                <a className="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                   aria-expanded="false">
+                    <svg className="c-icon">
+                        <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-envelope-open"/>
+                    </svg>
+                    <span className="badge badge-pill badge-info">{this.state.messages.toString()}</span></a>
+                <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg pt-0">
+                    <div className="dropdown-header bg-light"><strong>You
+                        have {this.state.messages.toString()} messages</strong></div>
+                    <a className="dropdown-item" href="#">
+                        <div className="message">
+                            <div className="py-3 mfe-3 float-left">
+                                <div className="c-avatar">
+                                    <img className="c-avatar-img" src="assets/img/avatars/7.jpg" alt="user@email.com"/>
+                                    <span className="c-avatar-status bg-success"/>
+                                </div>
+                            </div>
+                            <div><small className="text-muted">John Doe</small><small
+                                className="text-muted float-right mt-1">Just now</small></div>
+                            <div className="text-truncate font-weight-bold"><span
+                                className="text-danger">!</span> Important message
+                            </div>
+                            <div className="small text-muted text-truncate">Lorem ipsum dolor sit amet, consectetur
+                                adipisicing elit, sed do eiusmod tempor incididunt...
+                            </div>
+                        </div>
+                    </a><a className="dropdown-item" href="#">
+                    <div className="message">
+                        <div className="py-3 mfe-3 float-left">
+                            <div className="c-avatar"><img className="c-avatar-img" src="assets/img/avatars/6.jpg"
+                                                           alt="user@email.com"/><span
+                                className="c-avatar-status bg-warning"/></div>
+                        </div>
+                        <div><small className="text-muted">John Doe</small><small
+                            className="text-muted float-right mt-1">5 minutes ago</small></div>
+                        <div className="text-truncate font-weight-bold">Lorem ipsum dolor sit amet</div>
+                        <div className="small text-muted text-truncate">Lorem ipsum dolor sit amet, consectetur
+                            adipisicing elit, sed do eiusmod tempor incididunt...
+                        </div>
+                    </div>
+                </a><a className="dropdown-item" href="#">
+                    <div className="message">
+                        <div className="py-3 mfe-3 float-left">
+                            <div className="c-avatar"><img className="c-avatar-img" src="assets/img/avatars/5.jpg"
+                                                           alt="user@email.com"/><span
+                                className="c-avatar-status bg-danger"/></div>
+                        </div>
+                        <div><small className="text-muted">John Doe</small><small
+                            className="text-muted float-right mt-1">1:52 PM</small></div>
+                        <div className="text-truncate font-weight-bold">Lorem ipsum dolor sit amet</div>
+                        <div className="small text-muted text-truncate">Lorem ipsum dolor sit amet, consectetur
+                            adipisicing elit, sed do eiusmod tempor incididunt...
+                        </div>
+                    </div>
+                </a><a className="dropdown-item" href="#">
+                    <div className="message">
+                        <div className="py-3 mfe-3 float-left">
+                            <div className="c-avatar"><img className="c-avatar-img" src="assets/img/avatars/4.jpg"
+                                                           alt="user@email.com"/><span
+                                className="c-avatar-status bg-info"/></div>
+                        </div>
+                        <div><small className="text-muted">John Doe</small><small
+                            className="text-muted float-right mt-1">4:03 PM</small></div>
+                        <div className="text-truncate font-weight-bold">Lorem ipsum dolor sit amet</div>
+                        <div className="small text-muted text-truncate">Lorem ipsum dolor sit amet, consectetur
+                            adipisicing elit, sed do eiusmod tempor incididunt...
+                        </div>
+                    </div>
+                </a><a className="dropdown-item text-center border-top" href="#"><strong>View all messages</strong></a>
+                </div>
+            </li>
         )
     }
 }

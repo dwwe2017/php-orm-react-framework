@@ -1,0 +1,360 @@
+{#
+@macro form_horizontal
+@param args array
+@param content array
+@param raw string
+@example
+{{ macro.form_horizontal({
+    "id": "TestId",
+    "name": "TestName",
+    "method": "post",
+    "action": "https://www.teamspeak-interface.net"
+}, [
+    "Test <br/>", "Test2 <br/>"
+], "true") }}
+#}
+{% macro form_horizontal(args={}, content=[], raw="") %}
+    <form
+        {% if args.class is not defined %}
+            class="form-horizontal"
+        {% endif %}
+        {% if(args) %}
+            {% for key,arg in args %}
+                {{ key|escape }}="{{ arg|escape }}"
+            {% endfor %}
+        {% endif %}
+    >
+        {% if(content) %}
+            {% for item in content %}
+                {% if(raw != false) %}
+                    {{ item|raw }}
+                {% else %}
+                    {{ item|escape }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </form>
+{% endmacro %}
+
+{#
+@macro form_vertical
+@param args array
+@param content array
+@param raw string
+@example
+{{ macro.form_vertical({
+    "id": "TestId",
+    "name": "TestName",
+    "method": "post",
+    "action": "https://www.teamspeak-interface.net"
+}, [
+    "Test <br/>", "Test2 <br/>"
+], "true") }}
+#}
+{% macro form_vertical(args={}, content=[], raw="") %}
+    <form
+        {% if args.class is not defined %}
+            class="form-vertical"
+        {% endif %}
+        {% if(args) %}
+            {% for key,arg in args %}
+                {{ key|escape }}="{{ arg|escape }}"
+            {% endfor %}
+        {% endif %}
+    >
+        {% if(content) %}
+            {% for item in content %}
+                {% if(raw != false) %}
+                    {{ item|raw }}
+                {% else %}
+                    {{ item|escape }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </form>
+{% endmacro %}
+
+{#
+@macro h3_form_title
+@param title string
+#}
+{% macro h3_form_title(title="", class="form-title") %}
+    <h3 class="{{ class|escape }}">
+        {{ title|trans }}
+    </h3>
+{% endmacro %}
+
+{#
+@macro div_form_actions
+@param content array
+#}
+{% macro div_form_actions(content=[], raw="", class="form-actions") %}
+    <div class="{{ class|escape }}">
+        {% for item in content %}
+            {% if(raw != false) %}
+                {{ item|raw }}
+            {% else %}
+                {{ item|escape }}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{#
+@macro div_form_group
+@param content array
+#}
+{% macro div_form_group(content=[], raw="", class="form-group") %}
+    <div class="{{ class|escape }}">
+        {% for item in content %}
+            {% if(raw != false) %}
+                {{ item|raw }}
+            {% else %}
+                {{ item|escape }}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{#
+@macro div_form_group_label
+@param id string
+@param col_md string
+@param content array
+@todo implement args!
+#}
+{% macro form_group_label(args={}, content=[], raw="") %}
+    <label
+        {% if args.class is not defined %}
+            class="form-vertical"
+        {% endif %}
+        {% if(args) %}
+            {% for key,arg in args %}
+                {{ key|escape }}="{{ arg|escape }}"
+            {% endfor %}
+        {% endif %}
+    >
+        {% for item in content %}
+            {% if(raw != false) %}
+                {{ item|raw }}
+            {% else %}
+                {{ item|escape }}
+            {% endif %}
+        {% endfor %}
+    </label>
+{% endmacro %}
+
+{#
+@macro input_text
+@param array args
+@param class string
+@example
+{{ macro.input_text({
+    "id": "123",
+    "name": "testName",
+    "placeholder": "TestPlaceholder",
+    "value": "TestValue",
+    "data-msg-required": "This field is required!",
+    "required": "true",
+    "autofocus": "autofocus"
+}) }}
+#}
+{% macro input_text(args={}, icon="", class="form-control") %}
+    {% if(icon != false) %}
+        <div class="input-icon">
+        <i class="{{ icon|escape }}"></i>
+    {% endif %}
+    <input type="text"
+            {% if(class != false) %} class="{{ class|escape }}" {% endif %}
+            {% if(args) %}
+                {% for key, arg in args %}
+                    {% if(key == "placeholder") %}
+                        placeholder="{{ arg|trans }}"
+                    {% elseif(key == "required") %}
+                        data-rule-required="true"
+                        required="required"
+                    {% elseif(key == "data-msg-required" ) %}
+                        {% if args.required is defined %}
+                            data-msg-required="{{ arg|trans }}"
+                        {% endif %}
+                    {% else %}
+                        {{ key|escape }}="{{ arg|escape }}"
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+    />
+    {% if(icon != false) %}</div>{% endif %}
+{% endmacro %}
+
+{#
+@macro input_checkbox
+@param array args
+@param class string
+@example
+{{ macro.input_text({
+    "id": "123",
+    "name": "testName",
+    "placeholder": "TestPlaceholder",
+    "value": "TestValue",
+    "data-msg-required": "This field is required!",
+    "required": "true",
+    "autofocus": "autofocus"
+}) }}
+#}
+{% macro input_checkbox(args={}, class="uniform") %}
+    {% if(args.text_before is defined) %}{{ args.text_before|trans }}{% endif %} <input type="checkbox"
+            {% if(class != false) %} class="{{ class|escape }}" {% endif %}
+            {% if(args) %}
+                {% for key, arg in args %}
+                    {% if(key == "required") %}
+                        data-rule-required="true"
+                        required="required"
+                    {% elseif(key == "data-msg-required" ) %}
+                        {% if args.required is defined %}
+                            data-msg-required="{{ arg|trans }}"
+                        {% endif %}
+                    {% elseif(key != "text_after") %}
+                        {% if(key != "text_before") %}
+                            {{ key|escape }}="{{ arg|escape }}"
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+    /> {% if(args.text_after is defined) %}{{ args.text_after|trans }}{% endif %}
+{% endmacro %}
+
+{#
+@macro input_email
+@param array args
+@param class string
+@example
+{{ macro.input_email({
+    "id": "123",
+    "name": "testName",
+    "placeholder": "TestPlaceholder",
+    "value": "TestValue",
+    "data-msg-required": "This field is required!",
+    "required": "true",
+    "autofocus": "autofocus"
+}) }}
+#}
+{% macro input_email(args={}, icon="", class="form-control") %}
+    {% if(icon != false) %}
+        <div class="input-icon">
+        <i class="{{ icon|escape }}"></i>
+    {% endif %}
+    <input type="email" data-rule-email="true"
+            {% if(class != false) %} class="{{ class|escape }}" {% endif %}
+            {% if(args) %}
+                {% for key, arg in args %}
+                    {% if(key == "placeholder") %}
+                        placeholder="{{ arg|trans }}"
+                    {% elseif(key == "required") %}
+                        data-rule-required="true"
+                        required="required"
+                    {% elseif(key == "data-msg-required" ) %}
+                        {% if args.required is defined %}
+                            data-msg-required="{{ arg|trans }}"
+                        {% endif %}
+                    {% else %}
+                        {{ key|escape }}="{{ arg|escape }}"
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+    />
+    {% if(icon != false) %}</div>{% endif %}
+{% endmacro %}
+
+{#
+@macro input_password
+@param array args
+@param class string
+@example
+{{ macro.input_email({
+    "id": "123",
+    "name": "testName",
+    "placeholder": "TestPlaceholder",
+    "value": "TestValue",
+    "data-msg-required": "This field is required!",
+    "data-rule-equalTo": "#password"
+    "required": "true",
+    "autofocus": "autofocus"
+}) }}
+#}
+{% macro input_password(args={}, icon="", class="form-control") %}
+    {% if(icon != false) %}
+        <div class="input-icon">
+        <i class="{{ icon|escape }}"></i>
+    {% endif %}
+    <input type="password"
+            {% if(class != false) %} class="{{ class|escape }}" {% endif %}
+            {% if(args) %}
+                {% for key, arg in args %}
+                    {% if(key == "placeholder") %}
+                        placeholder="{{ arg|trans }}"
+                    {% elseif(key == "required") %}
+                        data-rule-required="true"
+                        required="required"
+                    {% elseif(key == "data-msg-required" ) %}
+                        {% if args.required is defined %}
+                            data-msg-required="{{ arg|trans }}"
+                        {% endif %}
+                    {% else %}
+                        {{ key|escape }}="{{ arg|escape }}"
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+    />
+    {% if(icon != false) %}</div>{% endif %}
+{% endmacro %}
+
+{#
+@macro input_button
+@param args array
+@param icon string
+@param class string
+@example
+{{ macro.input_button({
+    "id": "123",
+    "name": "testName",
+    "type": "submit",
+    "text_after": "Submit"
+}) }}
+#}
+{% macro input_button(args={}, icon="", class="submit btn btn-primary pull-right") %}
+    <button
+        {% if(args.type is not defined) %}
+            type="button"
+        {% endif %}
+        {% if(class != false) %}class="{{ class|escape }}"{% endif %}
+        {% if(args) %}
+            {% for key, arg in args %}
+                {% if(key != "text_before") %}
+                    {% if(key != "text_after") %}
+                        {{ key|escape }}="{{ arg|escape }}"
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    >
+        {% if(args.text_before is defined) %}{{ args.text_before|trans }}{% endif %}
+        {% if(icon != false) %}
+            <i class="{{ icon|escape }}"></i>
+        {% endif %}
+        {% if(args.text_after is defined) %}{{ args.text_after|trans }}{% endif %}
+    </button>
+{% endmacro %}
+
+{#
+@macro form_text
+@param text string
+@example
+{{ macro.form_text("Text to translate") }}
+#}
+{% macro form_text(text="", raw="") %}
+    {% if(raw != false) %}
+        {{ text|trans|raw }}
+    {% else %}
+        {{ text|trans|escape }}
+    {% endif %}
+{% endmacro %}

@@ -52,6 +52,20 @@ class MinifyCssHandler
     private $cssContent = [];
 
     /**
+     * @var array
+     */
+    private $filter = [
+        "ImportImports" => true,
+        "RemoveComments" => true,
+        "RemoveEmptyRulesets" => true,
+        "RemoveEmptyAtBlocks" => true,
+        "ConvertLevel3Properties" => false,
+        "ConvertLevel3AtKeyframes" => false,
+        "Variables" => true,
+        "RemoveLastDelarationSemiColon" => true
+    ];
+
+    /**
      * MinifyCssHandler constructor.
      * @param ConfigValues $config
      */
@@ -70,6 +84,10 @@ class MinifyCssHandler
      */
     private function setDefaults()
     {
+        if(empty($this->defaultCssPaths)){
+            return;
+        }
+
         foreach ($this->defaultCssPaths as $cssPath) {
             $this->addCss($cssPath);
         }
@@ -97,6 +115,10 @@ class MinifyCssHandler
      */
     public final function compileAndGet($clearOldFiles = true)
     {
+        if(empty($this->cssContent)){
+            return false;
+        }
+
         $this->defaultMinifyCssFile = sprintf("%s/%s.css", $this->defaultMinifyCssDir, md5(self::$md5checksum));
 
         if ($clearOldFiles) {
@@ -118,7 +140,7 @@ class MinifyCssHandler
             }
 
             try {
-                return @file_put_contents($this->getDefaultMinifyCssFile(), CssMin::minify($content));
+                return @file_put_contents($this->getDefaultMinifyCssFile(), CssMin::minify($content, $this->getFilter()));
             } catch (Exception $e) {
                 throw new MinifyCssException($e->getMessage(), $e->getCode(), $e);
             }
@@ -170,5 +192,21 @@ class MinifyCssHandler
         foreach ($cssContent as $item) {
             $this->addCss($item);
         }
+    }
+
+    /**
+     * @param array $filter
+     */
+    public function setFilter(array $filter): void
+    {
+        $this->filter = $filter;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFilter(): array
+    {
+        return $this->filter;
     }
 }

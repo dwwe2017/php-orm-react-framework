@@ -283,38 +283,7 @@ class NavigationHandler
 
             $user = $this->getSessionInstance()->getUser();
 
-            $this->routes[self::RESTRICTED_NAV]["top_right"] = [
-                [
-                    "options" => [
-                        "class" => "user",
-                        "text" => $user->getName(),
-                        "href" => "javascript:void(0)",
-                        "icon" => "icon-male"
-                    ],
-                    "routes" => [
-                        [
-                            "options" => [
-                                /**
-                                 * @see AbstractBaseTrait::getSystemLocaleService()
-                                 */
-                                "text" => __("My Profile"),
-                                "href" => sprintf("index.php?controller=restricted&action=profile"),
-                                "icon" => "icon-user"
-                            ]
-                        ],
-                        [
-                            "options" => [
-                                /**
-                                 * @see AbstractBaseTrait::getSystemLocaleService()
-                                 */
-                                "text" => __("Logout"),
-                                "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
-                                "icon" => "icon-key"
-                            ]
-                        ]
-                    ]
-                ]
-            ];
+            $this->routes[self::RESTRICTED_NAV]["top_right_user"]["avatar"] = $user->getAvatar();
 
             $routes = [];
             foreach ($this->getSessionInstance()->getUsers() as $childUser) {
@@ -336,15 +305,15 @@ class NavigationHandler
                     "options" => [
                         "text" => sprintf("%s (%s)", __("User online"), count($user->getUsers())),
                         "href" => "javascript:void(0)",
-                        "icon" => "icon-user"
+                        "icon" => "cil-user"
                     ],
                     "routes" => $routes,
                 ],
                 [
                     "options" => [
-                        "text" => date("d.m.Y H:i:s"),
+                        "text" => date("d.m.Y"),
                         "href" => "javascript:void(0)",
-                        "icon" => "icon-calendar"
+                        "icon" => "cil-calendar"
                     ]
                 ]
             ];
