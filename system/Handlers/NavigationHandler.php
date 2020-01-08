@@ -286,52 +286,6 @@ class NavigationHandler
              * @see templates/Controllers/coreui/generic.nav.macro.lib.twig::macro top_right
              */
             $this->routes[self::RESTRICTED_NAV]["user_account"]["avatar"] = $user->getAvatar();
-            $this->routes[self::RESTRICTED_NAV]["top_right"] = [
-                [
-                    "options" => [
-                        "class" => "dropdown-header bg-light py-2",
-                        "text" => __("Account"),
-                        "href" => "javascript:void(0)"
-                    ],
-                    "routes" => [
-                        [
-                            "options" => [
-                                /**
-                                 * @see AbstractBaseTrait::getSystemLocaleService()
-                                 */
-                                "text" => __("My Profile"),
-                                "href" => sprintf("index.php?controller=restricted&action=profile"),
-                                "icon" => "cil-user"
-                            ]
-                        ],
-                        [
-                            "options" => [
-                                /**
-                                 * @see AbstractBaseTrait::getSystemLocaleService()
-                                 */
-                                "text" => __("Logout"),
-                                "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
-                                "icon" => "cil-account-logout"
-                            ]
-                        ]
-                    ]
-                ]
-            ];
-
-            $routes = [];
-            foreach ($this->getSessionInstance()->getUsers() as $childUser) {
-                if (!$childUser instanceof User) {
-                    continue;
-                }
-
-                $routes[] = [
-                    "options" => [
-                        "text" => $childUser->getName() . "/" . $childUser->getGroup()->getName(),
-                        "href" => "javascript:void(0)",
-                        "icon" => "icon-user"
-                    ]
-                ];
-            }
 
             $this->routes[self::RESTRICTED_NAV]["crump_bar"] = [
                 [
@@ -339,8 +293,7 @@ class NavigationHandler
                         "text" => sprintf("%s (%s)", __("User online"), count($user->getUsers())),
                         "href" => "javascript:void(0)",
                         "icon" => "cil-user"
-                    ],
-                    "routes" => $routes,
+                    ]
                 ],
                 [
                     "options" => [

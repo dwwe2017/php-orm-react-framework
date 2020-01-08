@@ -28,6 +28,11 @@ class Navigation
     /**
      * @var string
      */
+    public $class;
+
+    /**
+     * @var string
+     */
     public $icon = "icon-angle-right";
 
     /**

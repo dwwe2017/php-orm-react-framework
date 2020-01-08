@@ -19,6 +19,4 @@ interface PublicControllerInterface
     public function indexAction();
 
     public function loginAction(): void;
-
-    public function registerAction(): void;
 }

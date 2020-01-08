@@ -99,12 +99,4 @@ class RestrictedController extends AbstractBase
     {
         // TODO: Implement indexAction() method.
     }
-
-    /**
-     *
-     */
-    public final function profileAction(): void
-    {
-
-    }
 }

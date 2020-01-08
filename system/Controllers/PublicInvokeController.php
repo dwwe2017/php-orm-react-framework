@@ -10,6 +10,7 @@
 namespace Controllers;
 
 
+use Exception;
 use Exceptions\MethodNotFoundException;
 use Interfaces\ControllerInterfaces\InvokeControllerInterface;
 
@@ -40,5 +41,14 @@ class PublicInvokeController extends PublicController implements InvokeControlle
         } else {
             throw new MethodNotFoundException(sprintf("Method %s in class %s was not found or could not be loaded", $methodName, get_class($this)));
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public final function signOutAction(): void
+    {
+        $this->getSessionHandler()->signOut();
+        $this->redirect(null, "public", "login");
     }
 }

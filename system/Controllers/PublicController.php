@@ -28,14 +28,4 @@ class PublicController extends AbstractBase implements PublicControllerInterface
             $this->getRequestHandler()->doRedirect();
         }
     }
-
-    /**
-     *
-     */
-    public final function registerAction(): void
-    {
-        if($this->getSessionHandler()->isRegistered()){
-            $this->getRequestHandler()->doRedirect();
-        }
-    }
 }

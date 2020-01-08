@@ -212,8 +212,8 @@ class SessionHandler
                 @setcookie('TSI2pwd', "", $expire);
             }
 
-            if (isset($_COOKIE["TSI2key"])) {
-                @setcookie('TSI2key', "", $expire);
+            if (isset($_COOKIE["TSI2hash"])) {
+                @setcookie('TSI2hash', "", $expire);
             }
 
             is_null($redirect) || header("Location: " . $redirect);
