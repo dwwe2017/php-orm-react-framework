@@ -153,7 +153,10 @@ abstract class AbstractBase
          * Buffer service
          * @author https://www.dwwe.de
          * @internal Whole methods can be buffered here and their results can be buffered
-         * @example $this->getBufferService()->setObject($this->getNavigationHandler())->getRoutes(NavigationHandler::RESTRICTED_NAV)
+         * @example
+         * $this->getBufferService()->setMaxLifetime(60)
+         * $this->getBufferService()->setObject($this->getNavigationHandler())->getRoutes(NavigationHandler::RESTRICTED_NAV)
+         * $this->getBufferService()->getBufferItem()->getExpirationDate()->format("d.m.Y H:i:s")
          */
         $this->bufferService = BufferService::init(CacheHandler::init($this->getSystemCacheService()), $this->getLoggerService());
     }
