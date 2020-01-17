@@ -27,11 +27,13 @@ use Handlers\ReactHandler;
 use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
+use Helpers\CacheInitHelper;
 use Interfaces\ControllerInterfaces\XmlControllerInterface;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
 use ReflectionClass;
 use ReflectionException;
+use Services\BufferService;
 use Services\CacheService;
 use Throwable;
 use Traits\ControllerTraits\AbstractBaseTrait;
@@ -146,6 +148,14 @@ abstract class AbstractBase
          * @see AbstractBaseTrait::getTemplateService()
          */
         $this->templateService = $this->getServiceManager()->getTemplateService(); // !Only available for system
+
+        /**
+         * Buffer service
+         * @author https://www.dwwe.de
+         * @internal Whole methods can be buffered here and their results can be buffered
+         * @example $this->getBufferService()->setObject($this->getNavigationHandler())->getRoutes(NavigationHandler::RESTRICTED_NAV)
+         */
+        $this->bufferService = BufferService::init(CacheHandler::init($this->getSystemCacheService()), $this->getLoggerService());
     }
 
     /**

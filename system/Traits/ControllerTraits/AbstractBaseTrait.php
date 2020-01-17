@@ -34,6 +34,7 @@ use Monolog\Logger;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
 use ReflectionClass;
+use Services\BufferService;
 use Services\CacheService;
 use Services\DoctrineService;
 use Services\LocaleService;
@@ -88,6 +89,11 @@ trait AbstractBaseTrait
      * @var TemplateService
      */
     private $templateService;
+
+    /**
+     * @var BufferService
+     */
+    private $bufferService;
 
     /**
      * @var TemplateWrapper
@@ -494,6 +500,14 @@ trait AbstractBaseTrait
     protected function getBreadcrumbRoutes(): array
     {
         return $this->getNavigationHandler()->getBreadcrumbRoutes();
+    }
+
+    /**
+     * @return BufferService
+     */
+    protected function getBufferService(): BufferService
+    {
+        return $this->bufferService;
     }
 
     /**

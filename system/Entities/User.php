@@ -36,9 +36,9 @@ class User implements CustomEntityInterface
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=55, nullable=false)
+     * @ORM\Column(type="string", length=55, nullable=false, options={"default"=""})
      */
-    protected $name;
+    protected $name = "";
 
     /**
      * @var string
