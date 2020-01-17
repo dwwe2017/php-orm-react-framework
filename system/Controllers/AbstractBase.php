@@ -153,6 +153,7 @@ abstract class AbstractBase
          * Buffer service
          * @author https://www.dwwe.de
          * @internal Whole methods can be buffered here and their results can be buffered
+         * @see AbstractBaseTrait::getBufferService()
          * @example
          * $this->getBufferService()->setMaxLifetime(60)
          * $this->getBufferService()->setObject($this->getNavigationHandler())->getRoutes(NavigationHandler::RESTRICTED_NAV)
