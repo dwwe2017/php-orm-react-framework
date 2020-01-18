@@ -363,7 +363,7 @@ abstract class AbstractBase
             $this->addContext("error", "Not Found");
             die(json_encode($this->getContext()));
         } else {
-            header('HTTP/1.0 404 Not Found');
+            header(XmlControllerInterface::HEADER_ERROR_404);
             /** @noinspection PhpIncludeInspection */
             $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error404.php");
             exit($html ?? "Not Found");
@@ -381,7 +381,7 @@ abstract class AbstractBase
             $this->addContext("error", "Forbidden");
             die(json_encode($this->getContext()));
         } elseif (!$loginRedirect) {
-            header('HTTP/1.0 403 Forbidden');
+            header(XmlControllerInterface::HEADER_ERROR_403);
             /** @noinspection PhpIncludeInspection */
             $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error403.php");
             exit($html ?? "Forbidden");
