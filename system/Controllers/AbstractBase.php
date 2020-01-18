@@ -174,6 +174,7 @@ abstract class AbstractBase
 
         /**
          * Session handler
+         * @see AbstractBaseTrait::getSessionHandler() // Available in modules
          */
         $this->sessionHandler = SessionHandler::init($this->getSystemDbService());
 

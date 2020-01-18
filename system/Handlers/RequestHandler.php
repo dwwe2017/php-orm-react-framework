@@ -82,22 +82,22 @@ class RequestHandler
         $this->query = ConfigFactory::fromArray($_GET ?? []);
         $this->server = ConfigFactory::fromArray($_SERVER ?? []);
 
-        $this->requestUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+        $this->requestUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
         $this->baseUrl = ($split = explode("/index.php", $_SERVER["REQUEST_URI"])) > 1 ? $split[0] : $_SERVER["REQUEST_URI"];
 
-        if($this->query->get("module", null)){
+        if ($this->query->get("module", null)) {
             $query = $this->query->get("module");
             $query = strpos($query, "/") ? explode("/", $query)[0] : $query;
             $this->baseUrl .= "/index.php?module=" . $query;
         }
 
-        if($this->query->get("controller", null)){
+        if ($this->query->get("controller", null)) {
             $query = $this->query->get("controller");
             $query = strpos($query, "/") ? explode("/", $query)[0] : $query;
             $this->baseUrl .= "&controller=" . $query;
         }
 
-        if($this->query->get("action", null)){
+        if ($this->query->get("action", null)) {
             $query = $this->query->get("action");
             $query = strpos($query, "/") ? explode("/", $query)[0] : $query;
             $this->baseUrl .= "&action=" . $query;
@@ -206,7 +206,9 @@ class RequestHandler
      */
     public function doRedirect($default = "?module=dashboard"): void
     {
-        if(($target = $this->getRequest()->get("redirect", $default))){
+        $target = $this->getRequest()->get("redirect", $default);
+
+        if ($target) {
             header("Location: " . trim($target));
             exit();
         }
