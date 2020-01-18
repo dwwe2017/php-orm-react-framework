@@ -197,11 +197,6 @@ abstract class AbstractBase
          * Buffering handler
          * @author https://www.dwwe.de
          * @see AbstractBaseTrait::getBufferHandler() // Available in modules
-         * @internal Whole methods and their results can be buffered
-         * @example
-         * $this->getBufferHandler()->setMaxLifetime(60)
-         * $this->getBufferHandler()->setObject($this->getNavigationHandler())->getRoutes(NavigationHandler::RESTRICTED_NAV)
-         * $this->getBufferHandler()->getBufferItem()->getExpirationDate()->format("d.m.Y H:i:s")
          */
         $this->bufferHandler = BufferHandler::init($this->getSystemCacheHandler(), $this->getLoggerService());
 

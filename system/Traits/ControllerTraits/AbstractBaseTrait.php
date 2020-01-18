@@ -503,6 +503,11 @@ trait AbstractBaseTrait
 
     /**
      * @return BufferHandler
+     * @internal Whole methods and their results can be buffered
+     * @example
+     * $this->getBufferHandler()->setMaxLifetime(60)
+     * $this->getBufferHandler()->setObject($this->getNavigationHandler())->getRoutes(NavigationHandler::RESTRICTED_NAV)
+     * $this->getBufferHandler()->getBufferItem()->getExpirationDate()->format("d.m.Y H:i:s")
      */
     protected function getBufferHandler(): BufferHandler
     {
