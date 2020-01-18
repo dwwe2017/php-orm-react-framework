@@ -19,6 +19,7 @@ use Doctrine\ORM\EntityManager;
 use Gettext\GettextTranslator;
 use Gettext\Translator;
 use Handlers\CacheHandler;
+use Handlers\BufferHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
@@ -27,14 +28,12 @@ use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
 use Helpers\EntityViewHelper;
-use Helpers\StringHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
 use Monolog\Logger;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
 use ReflectionClass;
-use Services\BufferService;
 use Services\CacheService;
 use Services\DoctrineService;
 use Services\LocaleService;
@@ -91,9 +90,9 @@ trait AbstractBaseTrait
     private $templateService;
 
     /**
-     * @var BufferService
+     * @var BufferHandler
      */
-    private $bufferService;
+    private $bufferHandler;
 
     /**
      * @var TemplateWrapper
@@ -503,11 +502,11 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return BufferService
+     * @return BufferHandler
      */
-    protected function getBufferService(): BufferService
+    protected function getBufferHandler(): BufferHandler
     {
-        return $this->bufferService;
+        return $this->bufferHandler;
     }
 
     /**

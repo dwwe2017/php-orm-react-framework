@@ -7,10 +7,9 @@
 // License Informations: This program may only be used in conjunction with a valid license.
 // To purchase a valid license please visit the website www.teamspeak-interface.de
 
-namespace Services;
+namespace Handlers;
 
 
-use Handlers\CacheHandler;
 use InvalidArgumentException;
 use Monolog\Logger;
 use Phpfastcache\Core\Item\ExtendedCacheItemInterface;
@@ -18,10 +17,10 @@ use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
- * Class BufferService
+ * Class BufferHandler
  * @package Services
  */
-class BufferService
+class BufferHandler
 {
     use InstantiationStaticsUtilTrait;
 
@@ -41,9 +40,9 @@ class BufferService
     private $object;
 
     /**
-     * @var
+     * @var int
      */
-    private $maxLifetime = 3600;
+    private $maxLifetime = 300;
 
     /**
      * @var string
@@ -58,7 +57,7 @@ class BufferService
     /**
      * @param CacheHandler $cacheHandler
      * @param Logger $loggerService
-     * @return BufferService|null
+     * @return BufferHandler
      */
     public static function init(CacheHandler $cacheHandler, Logger $loggerService)
     {
@@ -71,7 +70,7 @@ class BufferService
     }
 
     /**
-     * BufferService constructor.
+     * BufferHandler constructor.
      * @param CacheHandler $cacheHandler
      * @param Logger $loggerService
      * @example ($this->getNavigationHandler(), $cacheHandler, $loggerService)
@@ -142,11 +141,11 @@ class BufferService
     }
 
     /**
-     * @param mixed $maxLifetime
+     * @param mixed $seconds
      */
-    public function setMaxLifetime($maxLifetime): void
+    public function setMaxLifetime($seconds): void
     {
-        $this->maxLifetime = $maxLifetime;
+        $this->maxLifetime = $seconds;
     }
 
     /**

@@ -18,6 +18,7 @@ use Exceptions\InvalidArgumentException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
 use Exceptions\SessionException;
+use Handlers\BufferHandler;
 use Handlers\CacheHandler;
 use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
@@ -148,18 +149,6 @@ abstract class AbstractBase
          * @see AbstractBaseTrait::getTemplateService()
          */
         $this->templateService = $this->getServiceManager()->getTemplateService(); // !Only available for system
-
-        /**
-         * Buffer service
-         * @author https://www.dwwe.de
-         * @see AbstractBaseTrait::getBufferService()
-         * @internal Whole methods can be buffered here and their results can be buffered
-         * @example
-         * $this->getBufferService()->setMaxLifetime(60)
-         * $this->getBufferService()->setObject($this->getNavigationHandler())->getRoutes(NavigationHandler::RESTRICTED_NAV)
-         * $this->getBufferService()->getBufferItem()->getExpirationDate()->format("d.m.Y H:i:s")
-         */
-        $this->bufferService = BufferService::init(CacheHandler::init($this->getSystemCacheService()), $this->getLoggerService());
     }
 
     /**
@@ -203,6 +192,18 @@ abstract class AbstractBase
          */
         $this->systemCacheHandler = CacheHandler::init($this->getSystemCacheService());
         $this->moduleCacheHandler = CacheHandler::init($this->getModuleCacheService());
+
+        /**
+         * Buffering handler
+         * @author https://www.dwwe.de
+         * @see AbstractBaseTrait::getBufferHandler() // Available in modules
+         * @internal Whole methods and their results can be buffered
+         * @example
+         * $this->getBufferHandler()->setMaxLifetime(60)
+         * $this->getBufferHandler()->setObject($this->getNavigationHandler())->getRoutes(NavigationHandler::RESTRICTED_NAV)
+         * $this->getBufferHandler()->getBufferItem()->getExpirationDate()->format("d.m.Y H:i:s")
+         */
+        $this->bufferHandler = BufferHandler::init($this->getSystemCacheHandler(), $this->getLoggerService());
 
         /**
          * Asset handlers
