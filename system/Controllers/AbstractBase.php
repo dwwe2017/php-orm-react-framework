@@ -176,7 +176,7 @@ abstract class AbstractBase
          * Session handler
          * @see AbstractBaseTrait::getSessionHandler() // Available in modules
          */
-        $this->sessionHandler = SessionHandler::init($this->getSystemDbService());
+        $this->sessionHandler = SessionHandler::init($this->getSystemDbService(), $this->getLoggerService());
 
         /**
          * @see RequestHandler::isXml()
@@ -389,7 +389,7 @@ abstract class AbstractBase
             /**
              * @see PublicController::loginAction()
              */
-            $this->redirect(null, "public", "login", array(
+            $this->redirect(null, "publicFront", "login", array(
                 "redirect" => urlencode($this->getRequestHandler()->getRequestUrl())
             ));
         }

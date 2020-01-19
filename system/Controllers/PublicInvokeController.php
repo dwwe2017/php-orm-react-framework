@@ -44,11 +44,11 @@ class PublicInvokeController extends PublicController implements InvokeControlle
     }
 
     /**
-     * @throws Exception
+     *
      */
     public final function signOutAction(): void
     {
         $this->getSessionHandler()->signOut();
-        $this->redirect(null, "public", "login");
+        $this->redirect(null, "publicFront", "login");
     }
 }

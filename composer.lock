@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b318c5e4f452534decc3ac378d815059",
+    "content-hash": "f68a902dcef572c09219ae0dcc02afe7",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1336,6 +1336,40 @@
                 "url"
             ],
             "time": "2019-07-01T23:21:34+00:00"
+        },
+        {
+            "name": "mikechip/php-httpauth",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikechip/php-httpauth.git",
+                "reference": "3d91bfc55d2f12000eabc775f073f3b822f7dc02"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikechip/php-httpauth/zipball/3d91bfc55d2f12000eabc775f073f3b822f7dc02",
+                "reference": "3d91bfc55d2f12000eabc775f073f3b822f7dc02",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/HttpAuth.php",
+                    "src/HttpAuthException.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Boris Stelmakh",
+                    "email": "mikechip@pm.me"
+                }
+            ],
+            "description": "HTTP authorization wrapper for PHP 7",
+            "time": "2019-10-26T21:01:59+00:00"
         },
         {
             "name": "mongodb/mongodb",

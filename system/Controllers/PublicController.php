@@ -18,14 +18,4 @@ class PublicController extends AbstractBase implements PublicControllerInterface
     {
         // TODO: Implement indexAction() method.
     }
-
-    /**
-     *
-     */
-    public final function loginAction(): void
-    {
-        if($this->getSessionHandler()->isRegistered()){
-            $this->getRequestHandler()->doRedirect();
-        }
-    }
 }
