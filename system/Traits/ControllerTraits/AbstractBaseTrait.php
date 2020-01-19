@@ -17,6 +17,7 @@ use Controllers\SettingsController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
 use Gettext\GettextTranslator;
+use Gettext\Translations;
 use Gettext\Translator;
 use Handlers\CacheHandler;
 use Handlers\BufferHandler;
@@ -281,6 +282,14 @@ trait AbstractBaseTrait
     }
 
     /**
+     *
+     */
+    protected final function contextClear(): void
+    {
+        $this->context = [];
+    }
+
+    /**
      * @param $message
      */
     protected final function setMessage(string $message): void
@@ -512,6 +521,15 @@ trait AbstractBaseTrait
     protected function getBufferHandler(): BufferHandler
     {
         return $this->bufferHandler;
+    }
+
+    /**
+     * @param string|null $localeCode
+     * @return Translations
+     */
+    protected function getTranslations(?string $localeCode = null)
+    {
+        return $this->getLocaleService()->getTranslations($localeCode);
     }
 
     /**

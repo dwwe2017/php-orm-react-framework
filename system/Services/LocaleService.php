@@ -161,11 +161,12 @@ class LocaleService implements VendorExtensionServiceInterface
     }
 
     /**
-     * @param string $localeCode
+     * @param string|null $localeCode
      * @return Translations
      */
-    private function getTranslations(string $localeCode)
+    public function getTranslations(?string $localeCode = null)
     {
+        $localeCode = is_null($localeCode) ? $this->getLanguageCode() : $localeCode;
         return $this->getSystemTranslations($localeCode)->mergeWith($this->getModuleTranslations($localeCode));
     }
 

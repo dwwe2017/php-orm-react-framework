@@ -139,7 +139,7 @@ class RequestHandler
     /**
      * @return ConfigValues
      */
-    public function getRequest()
+    public function getRequest(): ConfigValues
     {
         return $this->request;
     }
@@ -147,7 +147,7 @@ class RequestHandler
     /**
      * @return ConfigValues
      */
-    public function getPost()
+    public function getPost(): ConfigValues
     {
         return $this->post;
     }
@@ -155,7 +155,7 @@ class RequestHandler
     /**
      * @return ConfigValues
      */
-    public function getQuery()
+    public function getQuery(): ConfigValues
     {
         return $this->query;
     }
