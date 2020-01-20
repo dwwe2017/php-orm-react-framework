@@ -12,6 +12,7 @@ namespace Configs;
 
 use Configula\ConfigFactory;
 use Exceptions\LoggerException;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Managers\ModuleManager;
@@ -51,6 +52,11 @@ class LoggerConfig implements VendorExtensionConfigInterface
          */
         $logDir = sprintf("%s/%s", $baseDir, $loggerConfig->get("logger_options.log_dir"));
         FileHelper::init($logDir, LoggerException::class)->isWritable(true);
+
+        /**
+         * Check and create directory protection
+         */
+        DirHelper::init($logDir)->addDirectoryProtection();
 
         /**
          * Merge file values with absolute path

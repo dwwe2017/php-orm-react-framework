@@ -16,6 +16,7 @@ use Exception;
 use Exceptions\CacheException;
 use Helpers\ArrayHelper;
 use Helpers\DeclarationHelper;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Managers\ModuleManager;
@@ -82,8 +83,14 @@ class CacheConfig implements VendorExtensionConfigInterface
         /**
          * Check file permissions for system cache dir
          */
-        FileHelper::init($cacheSystemOptions->get("system.driver.driverConfig.path"), CacheException::class)
+        $driverConfigPath = $cacheSystemOptions->get("system.driver.driverConfig.path");
+        FileHelper::init($driverConfigPath, CacheException::class)
             ->isWritable(true);
+
+        /**
+         * Check and create directory protection
+         */
+        DirHelper::init($driverConfigPath)->addDirectoryProtection();
 
         $cacheModuleOptions = new ConfigValues([]);
 
@@ -113,6 +120,11 @@ class CacheConfig implements VendorExtensionConfigInterface
                 $cacheModuleOptions = $cacheModuleOptions->mergeValues([
                     "module" => ["driver" => ["driverConfig" => ["path" => $cacheModuleDir], "driverClass" => $cacheModuleClass]]
                 ]);
+
+                /**
+                 * Check and create directory protection
+                 */
+                DirHelper::init($cacheModuleDir)->addDirectoryProtection();
             }
         }
 

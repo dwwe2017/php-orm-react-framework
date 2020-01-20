@@ -13,6 +13,7 @@ namespace Handlers;
 use Configula\ConfigValues;
 use Exception;
 use Exceptions\MinifyJsException;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use JShrink\Minifier;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -63,6 +64,11 @@ class MinifyJsHandler extends Minifier
 
         FileHelper::init($this->defaultMinifyJsDir, MinifyJsException::class)
             ->isWritable(true);
+
+        /**
+         * Check and create directory restriction
+         */
+        DirHelper::init($this->defaultMinifyJsDir)->addDirectoryRestriction(["js"]);
     }
 
     /**

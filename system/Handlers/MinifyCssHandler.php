@@ -14,6 +14,7 @@ use Configula\ConfigValues;
 use CssMin;
 use Exception;
 use Exceptions\MinifyCssException;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
@@ -77,6 +78,11 @@ class MinifyCssHandler
 
         FileHelper::init($this->defaultMinifyCssDir, MinifyCssException::class)
             ->isWritable(true);
+
+        /**
+         * Check and create directory restriction
+         */
+        DirHelper::init($this->defaultMinifyCssDir)->addDirectoryRestriction(["css"]);
     }
 
     /**

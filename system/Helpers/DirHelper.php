@@ -107,4 +107,53 @@ class DirHelper
 
         return $result;
     }
+
+    /**
+     * @return bool
+     */
+    public function addDirectoryProtection()
+    {
+        FileHelper::init($this->dir)->isWritable(true);
+        $htaccess = sprintf("%s/.htaccess", $this->dir);
+
+        if(file_exists($htaccess)){
+           return true;
+        }
+
+        return @file_put_contents($htaccess, "# Apache 2.2
+<IfModule !authz_core_module>
+	Order deny,allow
+    Deny from all
+</IfModule>
+
+# Apache 2.4+
+<IfModule authz_core_module>
+	<RequireAll>
+		Require all denied
+	</RequireAll>
+</IfModule>") !== false;
+    }
+
+    /**
+     * @param $allowed_files_types_regex
+     * @return bool
+     */
+    public function addDirectoryRestriction($allowed_files_types_regex = "^|index\.php|\.(js|css|gif|jpeg|jpg|png|woff|svg)")
+    {
+        FileHelper::init($this->dir)->isWritable(true);
+        $htaccess = sprintf("%s/.htaccess", $this->dir);
+
+        if(file_exists($htaccess) || empty($allowed_files_types_regex)){
+            return true;
+        }
+
+        return @file_put_contents($htaccess, sprintf("# Prevent unauthorized access to non-user content
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule !(%s)$ - [L,R=403]
+</IfModule>", is_array($allowed_files_types_regex)
+                ? sprintf("\.(%s)", implode("|", $allowed_files_types_regex))
+                : $allowed_files_types_regex)
+            ) !== false;
+    }
 }

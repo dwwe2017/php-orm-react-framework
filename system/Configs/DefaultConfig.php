@@ -14,6 +14,7 @@ use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exceptions\ConfigException;
 use Handlers\NavigationHandler;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\ApplicationConfigInterface;
 use Managers\ModuleManager;
@@ -61,7 +62,11 @@ class DefaultConfig implements ApplicationConfigInterface
     public final function __construct(ModuleManager $moduleManager)
     {
         $this->baseDir = $moduleManager->getBaseDir();
+        DirHelper::init($this->baseDir)->addDirectoryRestriction();
+
         $this->moduleBaseDir = $moduleManager->getModuleBaseDir();
+        DirHelper::init($this->moduleBaseDir)->addDirectoryRestriction();
+
         $this->moduleName = $moduleManager->getModuleName();
         $this->moduleShortName = $moduleManager->getModuleShortName();
 
@@ -70,6 +75,11 @@ class DefaultConfig implements ApplicationConfigInterface
          */
         $configDir = sprintf("%s/config", $this->baseDir);
         FileHelper::init($configDir, ConfigException::class)->isReadable();
+
+        /**
+         * Check and create directory protection
+         */
+        DirHelper::init($configDir)->addDirectoryProtection();
 
         $this->configValues = ConfigFactory::loadSingleDirectory($configDir, $this->getOptionsDefault());
     }
