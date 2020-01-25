@@ -62,7 +62,7 @@ class DefaultConfig implements ApplicationConfigInterface
     public final function __construct(ModuleManager $moduleManager)
     {
         $this->baseDir = $moduleManager->getBaseDir();
-        DirHelper::init($this->baseDir)->addDirectoryRestriction();
+        DirHelper::init($this->baseDir)->addDirectoryRestriction("^|index\.php|\.(js|css|gif|jpeg|jpg|png|woff|svg)", true);
 
         $this->moduleBaseDir = $moduleManager->getModuleBaseDir();
         DirHelper::init($this->moduleBaseDir)->addDirectoryRestriction();

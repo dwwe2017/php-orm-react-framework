@@ -31,6 +31,7 @@ use Helpers\AbsolutePathHelper;
 use Helpers\EntityViewHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
+use Mike4ip\HttpAuth;
 use Monolog\Logger;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
@@ -800,5 +801,13 @@ trait AbstractBaseTrait
 
         $result = call_user_func_array([$object, $method], $args);
         return $result;
+    }
+
+    /**
+     * @return HttpAuth
+     */
+    public function getHttpAuthWrapper()
+    {
+        return new HttpAuth();
     }
 }

@@ -13,6 +13,7 @@ namespace Handlers;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
+use Controllers\ApiController;
 use Controllers\PublicXmlController;
 use Controllers\RestrictedXmlController;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -66,6 +67,11 @@ class RequestHandler
     private $xml = false;
 
     /**
+     * @var bool
+     */
+    private $api = false;
+
+    /**
      * @var string
      */
     private $baseUrl = "";
@@ -112,6 +118,8 @@ class RequestHandler
         $this->xml = $controllerInstance instanceof RestrictedXmlController
             || $controllerInstance instanceof PublicXmlController
             || $this->isXmlRequest();
+
+        $this->api = $this->isXml() && $controllerInstance instanceof ApiController;
     }
 
     /**
@@ -220,5 +228,13 @@ class RequestHandler
     public function getBaseUrl(): string
     {
         return $this->baseUrl;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isApi(): bool
+    {
+        return $this->api;
     }
 }

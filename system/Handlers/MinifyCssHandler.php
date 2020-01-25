@@ -119,7 +119,7 @@ class MinifyCssHandler
      * @return bool|int
      * @throws MinifyCssException
      */
-    public final function compileAndGet($clearOldFiles = true)
+    public final function compile($clearOldFiles = true)
     {
         if(empty($this->cssContent)){
             return false;

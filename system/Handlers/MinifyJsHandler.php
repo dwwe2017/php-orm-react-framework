@@ -105,7 +105,7 @@ class MinifyJsHandler extends Minifier
      * @return bool|int
      * @throws MinifyJsException
      */
-    public final function compileAndGet($clearOldFiles = true)
+    public final function compile($clearOldFiles = true)
     {
         if(empty($this->jsContent)){
             return false;

@@ -135,10 +135,11 @@ class DirHelper
     }
 
     /**
-     * @param $allowed_files_types_regex
+     * @param string $allowed_files_types_regex
+     * @param bool $with_http_auth_rewrite
      * @return bool
      */
-    public function addDirectoryRestriction($allowed_files_types_regex = "^|index\.php|\.(js|css|gif|jpeg|jpg|png|woff|svg)")
+    public function addDirectoryRestriction($allowed_files_types_regex = "^|index\.php|\.(js|css|gif|jpeg|jpg|png|woff|svg)", $with_http_auth_rewrite = false)
     {
         FileHelper::init($this->dir)->isWritable(true);
         $htaccess = sprintf("%s/.htaccess", $this->dir);
@@ -149,9 +150,10 @@ class DirHelper
 
         return @file_put_contents($htaccess, sprintf("# Prevent unauthorized access to non-user content
 <IfModule mod_rewrite.c>
-    RewriteEngine On
+    RewriteEngine On%s
     RewriteRule !(%s)$ - [L,R=403]
-</IfModule>", is_array($allowed_files_types_regex)
+</IfModule>", $with_http_auth_rewrite ? "\n\tRewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]" : "",
+                    is_array($allowed_files_types_regex)
                 ? sprintf("\.(%s)", implode("|", $allowed_files_types_regex))
                 : $allowed_files_types_regex)
             ) !== false;

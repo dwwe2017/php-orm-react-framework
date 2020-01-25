@@ -22,12 +22,12 @@
     },
     "config": {
         "platform": {
-            "php": "7.2"
+            "php": "7.4"
         }
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "^7.2 || ^7.3",
+        "php": "^7.4",
         "ext-pdo": "*",
         "ext-json": "*",
         "doctrine/orm": "^2.5.5",

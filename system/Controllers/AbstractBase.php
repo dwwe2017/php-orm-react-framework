@@ -12,6 +12,7 @@ namespace Controllers;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Entities\User;
 use Exceptions\CacheException;
 use Exceptions\DoctrineException;
 use Exceptions\InvalidArgumentException;
@@ -28,13 +29,12 @@ use Handlers\ReactHandler;
 use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
-use Helpers\CacheInitHelper;
 use Interfaces\ControllerInterfaces\XmlControllerInterface;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
+use Mike4ip\HttpAuth;
 use ReflectionClass;
 use ReflectionException;
-use Services\BufferService;
 use Services\CacheService;
 use Throwable;
 use Traits\ControllerTraits\AbstractBaseTrait;
@@ -211,7 +211,6 @@ abstract class AbstractBase
         $this->jsHandler = MinifyJsHandler::init($this->getConfig());
         $this->reactHandler = ReactHandler::init($this, $this->getModuleManager());
 
-
         /**
          * Navigation handler
          * @see AbstractBaseTrait::getNavigationHandler() // !Only available for system
@@ -357,6 +356,7 @@ abstract class AbstractBase
      */
     public function render404(): void
     {
+        $this->contextClear();
         if ($this->getRequestHandler()->isXml()) {
             header(XmlControllerInterface::HEADER_ERROR_404);
             header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
@@ -375,7 +375,26 @@ abstract class AbstractBase
      */
     public function render403($loginRedirect = false): void
     {
-        if ($this->getRequestHandler()->isXml()) {
+        $this->contextClear();
+        if ($this->getRequestHandler()->isApi()) {
+
+            if (isset($_SERVER["HTTP_AUTHORIZATION"]) && !empty($_SERVER["HTTP_AUTHORIZATION"])) {
+                list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+            }
+            
+            $this->getHttpAuthWrapper()
+                ->setRealm("TSI2 API")
+                ->onUnauthorized(function () {
+                    header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
+                    $this->addContext("error", "Forbidden");
+                    die(json_encode($this->getContext()));
+                })
+                ->setCheckFunction(function ($user, $pwd) {
+                    $this->getSessionHandler()->initRegistration($user, $pwd);
+                    return $this->getSessionHandler()->isRegistered();
+                })
+                ->requireAuth();
+        } elseif ($this->getRequestHandler()->isXml()) {
             header(XmlControllerInterface::HEADER_ERROR_403);
             header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
             $this->addContext("error", "Forbidden");
@@ -482,7 +501,7 @@ abstract class AbstractBase
          * CSS vars
          * @see AbstractBaseTrait::getCssHandler()
          */
-        $this->getCssHandler()->compileAndGet();
+        $this->getCssHandler()->compile();
         $this->addContext("minified_css", $this->getCssHandler()
             ->getDefaultMinifyCssFile(true)
         );
@@ -491,7 +510,7 @@ abstract class AbstractBase
          * JS vars
          * @see AbstractBaseTrait::getJsHandler()
          */
-        $this->getJsHandler()->compileAndGet();
+        $this->getJsHandler()->compile();
         $this->addContext("minified_js", $this->getJsHandler()
             ->getDefaultMinifyJsFile(true)
         );

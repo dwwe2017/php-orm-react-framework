@@ -18,7 +18,7 @@ use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
  * Class BufferHandler
- * @package Services
+ * @package Handlers
  */
 class BufferHandler
 {
