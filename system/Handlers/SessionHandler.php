@@ -11,10 +11,10 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Entities\Group;
 use Entities\User;
 use Exception;
-use Exceptions\SessionException;
 use Helpers\EntityHelper;
 use Monolog\Logger;
 use Services\DoctrineService;
@@ -32,43 +32,43 @@ class SessionHandler
     /**
      * @var EntityManager
      */
-    private $em;
+    private EntityManager $em;
 
     /**
      * @var Logger
      */
-    private $loggerService;
+    private Logger $loggerService;
 
     /**
      * @var bool
      */
-    private $registered = false;
+    private bool $registered = false;
 
     /**
      * @var User|null
      */
-    private $user;
+    private ?User $user;
 
     /**
      * @var Group|null
      */
-    private $group;
+    private ?Group $group;
 
     /**
      * @var int
      */
-    private $role = Group::ROLE_ANY;
+    private int $role = Group::ROLE_ANY;
 
     /**
      * @var AnnotationReader
      */
-    private $annotation_reader;
+    private AnnotationReader $annotation_reader;
 
     /**
      * SessionHandler constructor.
      * @param DoctrineService $doctrineService
-     * @param LoggerService $loggerService
-     * @throws SessionException
+     * @param Logger $loggerService
+     * @throws Exception
      */
     private function __construct(DoctrineService $doctrineService, Logger $loggerService)
     {
@@ -99,18 +99,15 @@ class SessionHandler
                 $this->initRegistration($username, $password);
             }
         } catch (Exception $e) {
-            if (!$e instanceof \InvalidArgumentException) {
-                throw new SessionException($e->getMessage(), $e->getCode(), $e->getPrevious());
-            }
             throw $e;
         }
     }
 
     /**
      * @param DoctrineService $doctrineService
-     * @param LoggerService $loggerService
+     * @param Logger $loggerService
      * @return SessionHandler|null
-     * @throws SessionException
+     * @throws Exception
      */
     public static final function init(DoctrineService $doctrineService, Logger $loggerService)
     {
@@ -243,8 +240,8 @@ class SessionHandler
     }
 
     /**
-     * With this call, changes regarding the user can be saved.
      * @throws OptimisticLockException
+     * @throws ORMException
      * @example $this->getUser()->setName("Another"); $this->flush();
      */
     public final function flush()

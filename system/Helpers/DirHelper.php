@@ -17,12 +17,12 @@ class DirHelper
     /**
      * @var string
      */
-    private $dir = "";
+    private string $dir = "";
 
     /**
      * @var string|null
      */
-    private $exceptionClass = null;
+    private ?string $exceptionClass = null;
 
     /**
      * DirHelper constructor.

@@ -3,10 +3,7 @@
 
 namespace Controllers;
 
-use Doctrine\Common\Annotations\AnnotationException;
-use Exceptions\InvalidArgumentException;
 use Interfaces\ControllerInterfaces\RestrictedControllerInterface;
-use ReflectionException;
 use Throwable;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;

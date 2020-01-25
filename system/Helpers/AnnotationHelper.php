@@ -32,7 +32,7 @@ class AnnotationHelper
     /**
      * @var AnnotationReader
      */
-    private $annotationReader;
+    private AnnotationReader $annotationReader;
 
     /**
      * @var string
@@ -42,12 +42,12 @@ class AnnotationHelper
     /**
      * @var bool
      */
-    private $reflectionClass;
+    private bool $reflectionClass;
 
     /**
      * @var bool
      */
-    private $reflectionMethod;
+    private bool $reflectionMethod;
 
     /**
      * @var
@@ -57,7 +57,7 @@ class AnnotationHelper
     /**
      * @var bool
      */
-    private $empty = false;
+    private bool $empty = false;
 
     /**
      * AnnotationHelper constructor.

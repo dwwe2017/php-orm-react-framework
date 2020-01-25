@@ -26,7 +26,7 @@ class AutoloadHandler
     /**
      * @var ClassLoader
      */
-    private $classLoader;
+    private ClassLoader $classLoader;
 
     /**
      * AutoloadHandler constructor.

@@ -38,12 +38,12 @@ class LocaleService implements VendorExtensionServiceInterface
     /**
      * @var GettextTranslator
      */
-    private $modTranslator;
+    private GettextTranslator $modTranslator;
 
     /**
      * @var Translator
      */
-    private $sysTranslator;
+    private Translator $sysTranslator;
 
     /**
      * @var string

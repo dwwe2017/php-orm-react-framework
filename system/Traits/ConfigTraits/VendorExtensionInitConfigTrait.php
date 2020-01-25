@@ -22,15 +22,15 @@ trait VendorExtensionInitConfigTrait
     /**
      * @var ConfigValues
      */
-    private $configValues = null;
+    private ?ConfigValues $configValues = null;
 
     /**
-     * @var DefaultConfig
+     * @var ConfigValues
      */
-    private $config;
+    private ?ConfigValues $config;
 
     /**
-     * VendorExtensionInitConfigTrait constructor.
+     * self constructor.
      * @param DefaultConfig $defaultConfig
      */
     public function __construct(DefaultConfig $defaultConfig)

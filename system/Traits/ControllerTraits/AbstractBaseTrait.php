@@ -54,192 +54,192 @@ trait AbstractBaseTrait
     /**
      * @var string
      */
-    private $baseDir = "";
+    private string $baseDir = "";
 
     /**
      * @var ConfigValues
      */
-    private $config;
+    private ConfigValues $config;
 
     /**
      * @var bool
      */
-    private $debugMode = false;
+    private bool $debugMode = false;
 
     /**
      * @var ModuleManager
      */
-    private $moduleManager;
+    private ModuleManager $moduleManager;
 
     /**
      * @var string
      */
-    private $moduleBaseDir = "";
+    private string $moduleBaseDir = "";
 
     /**
      * @var ServiceManager
      */
-    private $serviceManager;
+    private ServiceManager $serviceManager;
 
     /**
      * @var array
      */
-    private $context = [];
+    private array $context = [];
 
     /**
      * @var TemplateService
      */
-    private $templateService;
+    private TemplateService $templateService;
 
     /**
      * @var BufferHandler
      */
-    private $bufferHandler;
+    private BufferHandler $bufferHandler;
 
     /**
      * @var TemplateWrapper
      */
-    private $template;
+    private TemplateWrapper $template;
 
     /**
      * @var string
      */
-    private $view = "";
+    private string $view = "";
 
     /**
      * @var MinifyCssHandler
      */
-    private $cssHandler;
+    private MinifyCssHandler $cssHandler;
 
     /**
      * @var MinifyJsHandler
      */
-    private $jsHandler;
+    private MinifyJsHandler $jsHandler;
 
     /**
      * @var ReactHandler
      */
-    private $reactHandler;
+    private ReactHandler $reactHandler;
 
     /**
      * @var array
      */
-    private $pureJs = [];
+    private array $pureJs = [];
 
     /**
      * @var SessionHandler
      */
-    private $sessionHandler;
+    private SessionHandler $sessionHandler;
 
     /**
      * @var CacheHandler
      */
-    private $systemCacheHandler;
+    private CacheHandler $systemCacheHandler;
 
     /**
      * @var CacheHandler
      */
-    private $moduleCacheHandler;
+    private CacheHandler $moduleCacheHandler;
 
     /**
      * @var RequestHandler
      */
-    private $requestHandler;
+    private RequestHandler $requestHandler;
 
     /**
      * @var NavigationHandler
      */
-    private $navigationHandler;
+    private NavigationHandler $navigationHandler;
 
     /**
      * @var CacheService
      */
-    private $cacheService;
+    private CacheService $cacheService;
 
     /**
      * @var ExtendedCacheItemPoolInterface
      */
-    private $systemCacheService;
+    private ExtendedCacheItemPoolInterface $systemCacheService;
 
     /**
      * @var bool
      */
-    private $systemCacheServiceHasFallback = false;
+    private bool $systemCacheServiceHasFallback = false;
 
     /**
      * @var ExtendedCacheItemPoolInterface
      */
-    private $moduleCacheService;
+    private ExtendedCacheItemPoolInterface $moduleCacheService;
 
     /**
      * @var bool
      */
-    private $moduleCacheServiceHasFallback = false;
+    private bool $moduleCacheServiceHasFallback = false;
 
     /**
      * @var LocaleService
      */
-    private $localeService;
+    private LocaleService $localeService;
 
     /**
      * @var Translator
      */
-    private $systemLocaleService;
+    private Translator $systemLocaleService;
 
     /**
      * @var GettextTranslator
      */
-    private $moduleLocaleService;
+    private GettextTranslator $moduleLocaleService;
 
     /**
      * @var Logger
      */
-    private $loggerService;
+    private Logger $loggerService;
 
     /**
      * @var DoctrineService
      */
-    private $doctrineService;
+    private DoctrineService $doctrineService;
 
     /**
      * @var DoctrineService
      */
-    private $systemDbService;
+    private DoctrineService $systemDbService;
 
     /**
      * @var DoctrineService
      */
-    private $moduleDbService;
+    private DoctrineService $moduleDbService;
 
     /**
      * @var EntityManager
      */
-    private $entityManager;
+    private EntityManager $entityManager;
 
     /**
      * @var AbsolutePathHelper;
      */
-    private $absolutePathHelper;
+    private AbsolutePathHelper $absolutePathHelper;
 
     /**
      * @var ReflectionClass
      */
-    private $reflectionHelper;
+    private ReflectionClass $reflectionHelper;
 
     /**
      * @var AnnotationReader
      */
-    private $annotationReader;
+    private AnnotationReader $annotationReader;
 
     /**
      * @var EntityViewHelper
      */
-    private $viewHelper;
+    private EntityViewHelper $viewHelper;
 
     /**
      * @var string
      */
-    private $navigationRoute = NavigationHandler::PUBLIC_NAV;
+    private string $navigationRoute = NavigationHandler::PUBLIC_NAV;
 
     /**
      * @return string

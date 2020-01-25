@@ -55,7 +55,7 @@ class CacheConfig implements VendorExtensionConfigInterface
     /**
      * @var string|null
      */
-    private $moduleShortName;
+    private ?string $moduleShortName;
 
     /**
      * CacheConfig constructor.
@@ -94,7 +94,7 @@ class CacheConfig implements VendorExtensionConfigInterface
 
         $cacheModuleOptions = new ConfigValues([]);
 
-        if(!is_null($this->moduleShortName)){
+        if(!empty($this->moduleShortName)){
             /**
              * Build module cache options
              */
@@ -151,7 +151,7 @@ class CacheConfig implements VendorExtensionConfigInterface
     public final function getOptionsDefault(): array
     {
         $isDebug = $this->config->get("debug_mode");
-        $dirName = is_null($this->moduleShortName) ? "system"
+        $dirName = empty($this->moduleShortName) ? "system"
             : sprintf("result/%s", strtolower($this->moduleShortName));
 
         $cacheDir = sprintf("data/cache/%s", $dirName);

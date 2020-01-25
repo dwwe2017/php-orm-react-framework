@@ -19,7 +19,7 @@ class EntityHelper
     /**
      * @var EntityManager
      */
-    private $entityManager;
+    private EntityManager $entityManager;
 
     /**
      * EntityHelper constructor.

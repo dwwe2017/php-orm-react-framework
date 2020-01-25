@@ -13,7 +13,6 @@ namespace Configs;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exceptions\ConfigException;
-use Handlers\NavigationHandler;
 use Helpers\DirHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\ApplicationConfigInterface;
@@ -32,27 +31,27 @@ class DefaultConfig implements ApplicationConfigInterface
     /**
      * @var string
      */
-    private $baseDir = "";
+    private string $baseDir = "";
 
     /**
      * @var string
      */
-    private $moduleBaseDir = "";
+    private string $moduleBaseDir = "";
 
     /**
      * @var string
      */
-    private $moduleName = "";
+    private string $moduleName = "";
 
     /**
      * @var string|null
      */
-    private $moduleShortName = "";
+    private ?string $moduleShortName = "";
 
     /**
      * @var ConfigValues
      */
-    private $configValues = null;
+    private ?ConfigValues $configValues = null;
 
     /**
      * DefaultConfig constructor.

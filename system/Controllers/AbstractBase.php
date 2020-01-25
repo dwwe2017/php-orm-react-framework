@@ -12,13 +12,12 @@ namespace Controllers;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Entities\User;
+use Exception;
 use Exceptions\CacheException;
 use Exceptions\DoctrineException;
 use Exceptions\InvalidArgumentException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
-use Exceptions\SessionException;
 use Handlers\BufferHandler;
 use Handlers\CacheHandler;
 use Handlers\ErrorHandler;
@@ -32,7 +31,6 @@ use Helpers\AbsolutePathHelper;
 use Interfaces\ControllerInterfaces\XmlControllerInterface;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
-use Mike4ip\HttpAuth;
 use ReflectionClass;
 use ReflectionException;
 use Services\CacheService;
@@ -58,7 +56,6 @@ abstract class AbstractBase
      * @throws DoctrineException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws SessionException
      */
     public function __construct(string $baseDir)
     {
@@ -153,9 +150,9 @@ abstract class AbstractBase
 
     /**
      * @throws AnnotationException
-     * @throws ReflectionException
-     * @throws SessionException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws Exception
      */
     private function initHandlers(): void
     {

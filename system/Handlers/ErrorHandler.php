@@ -35,12 +35,12 @@ class ErrorHandler
     /**
      * @var bool
      */
-    private static $registered = false;
+    private static bool $registered = false;
 
     /**
      * @var Logger|null
      */
-    private $logger;
+    private ?Logger $logger;
 
     /**
      * ErrorHandler constructor.

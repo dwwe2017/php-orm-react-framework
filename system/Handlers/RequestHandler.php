@@ -29,52 +29,52 @@ class RequestHandler
     /**
      * @var ConfigValues
      */
-    private $headers;
+    private ConfigValues $headers;
 
     /**
      * @var ConfigValues
      */
-    private $request;
+    private ConfigValues $request;
 
     /**
      * @var ConfigValues
      */
-    private $post;
+    private ConfigValues $post;
 
     /**
      * @var ConfigValues
      */
-    private $query;
+    private ConfigValues $query;
 
     /**
      * @var ConfigValues
      */
-    private $server;
+    private ConfigValues $server;
 
     /**
      * @var string|null
      */
-    private $requestUrl;
+    private ?string $requestUrl;
 
     /**
      * @var bool
      */
-    private $xmlRequest = false;
+    private bool $xmlRequest = false;
 
     /**
      * @var bool
      */
-    private $xml = false;
+    private bool $xml = false;
 
     /**
      * @var bool
      */
-    private $api = false;
+    private bool $api = false;
 
     /**
      * @var string
      */
-    private $baseUrl = "";
+    private string $baseUrl = "";
 
     /**
      * RequestHandler constructor.

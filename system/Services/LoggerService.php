@@ -32,7 +32,7 @@ class LoggerService implements VendorExtensionServiceInterface
     /**
      * @var Logger
      */
-    private $logger;
+    private Logger $logger;
 
     /**
      * LoggerService constructor.

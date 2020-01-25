@@ -15,12 +15,11 @@ use Entities\Group;
 use Exceptions\CacheException;
 use Exceptions\DoctrineException;
 use Exceptions\InvalidArgumentException;
-use Exceptions\SessionException;
+use Exceptions\MinifyCssException;
+use Exceptions\MinifyJsException;
 use Handlers\NavigationHandler;
 use Helpers\AnnotationHelper;
-use Interfaces\ControllerInterfaces\RestrictedControllerInterface;
 use ReflectionException;
-use Throwable;
 use Traits\ControllerTraits\RestrictedControllerTrait;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -40,9 +39,8 @@ class RestrictedController extends AbstractBase
      * @throws AnnotationException
      * @throws CacheException
      * @throws DoctrineException
-     * @throws ReflectionException
      * @throws InvalidArgumentException
-     * @throws SessionException
+     * @throws ReflectionException
      */
     public function __construct(string $baseDir)
     {
@@ -65,8 +63,8 @@ class RestrictedController extends AbstractBase
      * @throws ReflectionException
      * @throws RuntimeError
      * @throws SyntaxError
-     * @throws \Exceptions\MinifyCssException
-     * @throws \Exceptions\MinifyJsException
+     * @throws MinifyCssException
+     * @throws MinifyJsException
      */
     public function betRun(string $action): void
     {

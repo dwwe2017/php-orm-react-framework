@@ -16,7 +16,6 @@ use Exception;
 use Exceptions\InvalidArgumentException;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Helpers\ArrayHelper;
-use Interfaces\EntityInterfaces\CustomEntityInterface;
 
 
 /**
@@ -25,7 +24,7 @@ use Interfaces\EntityInterfaces\CustomEntityInterface;
  * @ORM\Entity
  * @ORM\Table(name="group")
  */
-class Group implements CustomEntityInterface
+class Group
 {
     const ROLE_ROOT = 4;
 
@@ -43,43 +42,43 @@ class Group implements CustomEntityInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer", length=11, nullable=false)
      */
-    protected $id;
+    protected int $id;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=55, nullable=false, options={"default"=""})
      */
-    protected $name = "";
+    protected string $name = "";
 
     /**
      * @var DateTime|null
      * @Gedmo\Timestampable(on="change", field={"group_id"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected $changed;
+    protected ?DateTime $changed;
 
     /**
      * @var DateTime|null
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected $updated;
+    protected ?DateTime $updated;
 
     /**
      * @var DateTime|null
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected $created;
+    protected ?DateTime $created;
 
     /**
      * @var int
      * @ORM\Column(type="integer", length=2, nullable=false, options={"default"=-1})
      */
-    protected $role = self::ROLE_ANY;
+    protected int $role = self::ROLE_ANY;
 
     /**
-     * @var ArrayCollection|null
+     * @var
      * @ORM\OneToMany(targetEntity="User", mappedBy="group")
      * @ORM\JoinColumn(name="group_id", referencedColumnName="id")
      */

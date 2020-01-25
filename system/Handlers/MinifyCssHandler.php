@@ -25,7 +25,7 @@ class MinifyCssHandler
     /**
      * @var string
      */
-    private static $md5checksum = "";
+    private static string $md5checksum = "";
 
     /**
      * @var string
@@ -45,17 +45,17 @@ class MinifyCssHandler
     /**
      * @var string
      */
-    private $defaultMinifyCssFile = "";
+    private string $defaultMinifyCssFile = "";
 
     /**
      * @var array
      */
-    private $cssContent = [];
+    private array $cssContent = [];
 
     /**
      * @var array
      */
-    private $filter = [
+    private array $filter = [
         "ImportImports" => true,
         "RemoveComments" => true,
         "RemoveEmptyRulesets" => true,

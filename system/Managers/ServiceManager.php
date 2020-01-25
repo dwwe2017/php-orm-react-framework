@@ -11,6 +11,7 @@ namespace Managers;
 
 
 use Exceptions\DoctrineException;
+use Monolog\Logger;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Services\CacheService;
 use Services\DoctrineService;
@@ -30,12 +31,12 @@ class ServiceManager
     /**
      * @var DoctrineService
      */
-    private $doctrineService;
+    private ?DoctrineService $doctrineService;
 
     /**
      * @var TemplateService
      */
-    private $templateService;
+    private TemplateService $templateService;
 
     /**
      * @var LoggerService
@@ -48,9 +49,9 @@ class ServiceManager
     private $cacheService;
 
     /**
-     * @var
+     * @var LocaleService
      */
-    private $localeService;
+    private LocaleService $localeService;
 
     /**
      * ServiceManager constructor.
@@ -90,25 +91,25 @@ class ServiceManager
     }
 
     /**
-     * @return null
+     * @return DoctrineService|null
      */
-    public final function getDoctrineService()
+    public final function getDoctrineService(): ?DoctrineService
     {
         return $this->doctrineService;
     }
 
     /**
-     * @return null
+     * @return Logger|null
      */
-    public final function getLoggerService()
+    public final function getLoggerService(): ?Logger
     {
         return $this->loggerService;
     }
 
     /**
-     * @return CacheService
+     * @return CacheService|null
      */
-    public final function getCacheService(): CacheService
+    public final function getCacheService(): ?CacheService
     {
         return $this->cacheService;
     }

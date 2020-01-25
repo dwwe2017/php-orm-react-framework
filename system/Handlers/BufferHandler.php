@@ -27,32 +27,32 @@ class BufferHandler
     /**
      * @var CacheHandler
      */
-    private $cacheHandler;
+    private CacheHandler $cacheHandler;
 
     /**
      * @var Logger
      */
-    private $loggerService;
+    private Logger $loggerService;
 
     /**
      * @var object
      */
-    private $object;
+    private object $object;
 
     /**
      * @var int
      */
-    private $maxLifetime = 300;
+    private int $maxLifetime = 300;
 
     /**
      * @var string
      */
-    private $itemKey = "";
+    private string $itemKey = "";
 
     /**
      * @var ExtendedCacheItemInterface|null
      */
-    private $bufferItem;
+    private ?ExtendedCacheItemInterface $bufferItem;
 
     /**
      * @param CacheHandler $cacheHandler

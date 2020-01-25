@@ -18,51 +18,51 @@ class Navigation
      * @var string
      * @Enum({"sidebar", "top_left", "top_right", "misc"})
      */
-    public $position;
+    public string $position;
 
     /**
      * @var string
      */
-    public $text;
+    public string $text;
 
     /**
      * @var string
      */
-    public $class;
+    public string $class;
 
     /**
      * @var string
      */
-    public $icon = "icon-angle-right";
+    public string $icon = "icon-angle-right";
 
     /**
      * @var string
      */
-    public $title;
+    public string $title;
 
     /**
      * @var bool
      */
-    public $hidden;
+    public bool $hidden;
 
     /**
      * @var string
      */
-    public $style;
+    public string $style;
 
     /**
      * @var string
      */
-    public $description;
+    public string $description;
 
     /**
      * @var string
      */
-    public $href = "javascript:void(0)";
+    public string $href = "javascript:void(0)";
 
     /**
      * @var string
      * @Enum({"_blank", "_self", "_parent"})
      */
-    public $target;
+    public string $target;
 }

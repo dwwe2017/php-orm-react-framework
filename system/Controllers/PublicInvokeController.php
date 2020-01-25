@@ -10,7 +10,6 @@
 namespace Controllers;
 
 
-use Exception;
 use Exceptions\MethodNotFoundException;
 use Interfaces\ControllerInterfaces\InvokeControllerInterface;
 

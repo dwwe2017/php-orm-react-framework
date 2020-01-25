@@ -25,7 +25,7 @@ class MinifyJsHandler extends Minifier
     /**
      * @var string
      */
-    private static $md5checksum = "";
+    private static string $md5checksum = "";
 
     /**
      * @var string
@@ -45,12 +45,12 @@ class MinifyJsHandler extends Minifier
     /**
      * @var string
      */
-    private $defaultMinifyJsFile = "";
+    private string $defaultMinifyJsFile = "";
 
     /**
      * @var array
      */
-    private $jsContent = [];
+    private array $jsContent = [];
 
     /**
      * MinifyJsHandler constructor.

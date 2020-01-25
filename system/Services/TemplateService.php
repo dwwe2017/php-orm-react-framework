@@ -11,8 +11,6 @@ namespace Services;
 
 
 use Configs\PortalConfig;
-use Configula\ConfigValues;
-use Exceptions\TemplateException;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
@@ -34,12 +32,12 @@ class TemplateService implements VendorExtensionServiceInterface
     /**
      * @var FilesystemLoader
      */
-    private $loader;
+    private FilesystemLoader $loader;
 
     /**
      * @var Environment
      */
-    private $environment;
+    private Environment $environment;
 
     /**
      * @var string
@@ -95,22 +93,55 @@ class TemplateService implements VendorExtensionServiceInterface
      */
     public final function getEnvironment(): Environment
     {
+        /**
+         * @see sha1()
+         */
         $this->environment->addFunction(new TwigFunction("sha1", function (string $string){
             return sha1($string);
         }));
 
+        /**
+         * @see md5()
+         */
         $this->environment->addFunction(new TwigFunction("md5", function (string $string){
             return md5($string);
         }));
 
+        /**
+         * @internal For output of user input that should support HTML code
+         * @see inc/helper.inc.php::purify()
+         */
+        $this->environment->addFunction(new TwigFunction("purify", function (string $string){
+            return purify($string);
+        }));
+
+        /**
+         * @internal Default view helper function for user input to be reissued or saved
+         * @see inc/helper.inc.php::clean()
+         */
+        $this->environment->addFunction(new TwigFunction("clean", function (string $string){
+            return clean($string);
+        }));
+
+        /**
+         * @internal Translation (singular)
+         * @see LocaleService::init()
+         */
         $this->environment->addFunction(new TwigFunction("__", function (string $original){
             return __($original);
         }));
 
+        /**
+         * @internal Translation (plural)
+         * @see LocaleService::init()
+         */
         $this->environment->addFunction(new TwigFunction("n__", function (string $original, string $plural, string $value){
             return n__($original, $plural, $value);
         }));
 
+        /**
+         * @example {{ asset("img/logo.png") }}
+         */
         $this->environment->addFunction(new TwigFunction("asset", function (string $file){
             return sprintf("%s%s", $this->assetBaseDir, $file);
         }));

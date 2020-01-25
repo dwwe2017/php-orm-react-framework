@@ -41,12 +41,12 @@ class CacheService implements VendorExtensionServiceInterface
     /**
      * @var ModuleManager
      */
-    private $moduleManager;
+    private ModuleManager $moduleManager;
 
     /**
      * @var bool
      */
-    private $hasFallback = false;
+    private bool $hasFallback = false;
 
     /**
      * CacheService constructor.

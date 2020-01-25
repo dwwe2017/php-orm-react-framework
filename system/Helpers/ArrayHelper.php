@@ -22,7 +22,7 @@ class ArrayHelper
     /**
      * @var array
      */
-    private $array = [];
+    private array $array = [];
 
     /**
      * ArrayHelper constructor.

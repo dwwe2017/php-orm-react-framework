@@ -8,18 +8,18 @@
             {% if(navigation_routes.sidebar != false) %}
                 {% for key, item in navigation_routes.sidebar %}
                     <li class="{% if(item.routes is defined) %}{% if(item.routes != false) %}c-sidebar-nav-dropdown {% if(item.active != false) %}c-show{% endif %}{% else %}c-sidebar-nav-item{% endif %}{% else %}c-sidebar-nav-item{% endif %}"
-                        {% if(item.options.hidden != false) %}style="display: none;"{% endif %}
+                        {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
                     >
-                        <a href="{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}"
-                           title="{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                        <a href="{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}"
+                           title="{% if(item.options.title is defined and item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
                            class="{% if(item.routes is defined) %}{% if(item.routes != false) %}c-sidebar-nav-dropdown-toggle{% else %}c-sidebar-nav-link {% if(item.active != false) %}c-active{% endif %}{% endif %}{% else %}c-sidebar-nav-link {% if(item.active != false) %}c-active{% endif %}{% endif %}"
                         >
-                            {% if(item.options.icon != false) %}
+                            {% if(item.options.icon is defined and item.options.icon != false) %}
                                 <svg class="c-sidebar-nav-icon">
                                     <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ item.options.icon }}"/>
                                 </svg>
                             {% endif %}
-                            {% if(item.options.text != false) %}
+                            {% if(item.options.text is defined and item.options.text != false) %}
                                 {{ item.options.text|trans }}
                             {% endif %}
                         </a>
@@ -28,18 +28,18 @@
                                 <ul class="c-sidebar-nav-dropdown-items">
                                     {% for route in item.routes %}
                                         <li class="c-sidebar-nav-item"
-                                            {% if(route.options.hidden != false) %}style="display: none;"{% endif %}
+                                            {% if(route.options.hidden is defined and route.options.hidden != false) %}style="display: none;"{% endif %}
                                         >
-                                            <a href="{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}"
-                                               title="{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
-                                               class="c-sidebar-nav-link  {% if(route.active != false) %}c-active{% endif %}"
+                                            <a href="{% if(route.options.href is defined and route.options.href != false) %}{{ route.options.href }}{% endif %}"
+                                               title="{% if(route.options.title is defined and route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
+                                               class="c-sidebar-nav-link  {% if(route.active is defined and route.active != false) %}c-active{% endif %}"
                                             >
-                                                {% if(route.options.icon != false) %}
+                                                {% if(route.options.icon is defined and route.options.icon != false) %}
                                                     <svg class="c-sidebar-nav-icon">
                                                         <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ route.options.icon }}"/>
                                                     </svg>
                                                 {% endif %}
-                                                {% if(route.options.text != false) %}
+                                                {% if(route.options.text is defined and route.options.text != false) %}
                                                     {{ route.options.text|trans }}
                                                 {% endif %}
                                             </a>
@@ -61,23 +61,19 @@
  #}
 {% macro top_left(navigation_routes=[]) %}
     <ul class="c-header-nav d-md-down-none">
-        {% if navigation_routes.top_left is defined %}
-            {% if navigation_routes.top_left != false %}
-                {% for item in navigation_routes.top_left %}
-                    <li class="c-header-nav-item px-3">
-                        <a href="{% if(item.options.href is defined) %}{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}"
-                           title="{% if(item.options.title is defined) %}{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}{% endif %}"
-                           class="c-header-nav-link"
-                        >
-                            {% if(item.options.text is defined) %}
-                                {% if(item.options.text != false) %}
-                                    {{ item.options.text|trans }}
-                                {% endif %}
-                            {% endif %}
-                        </a>
-                    </li>
-                {% endfor %}
-            {% endif %}
+        {% if navigation_routes.top_left is defined and navigation_routes.top_left != false %}
+            {% for item in navigation_routes.top_left %}
+                <li class="c-header-nav-item px-3">
+                    <a href="{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}"
+                       title="{% if(item.options.title is defined and item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                       class="c-header-nav-link"
+                    >
+                        {% if(item.options.text is defined and item.options.text != false) %}
+                            {{ item.options.text|trans }}
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
         {% endif %}
     </ul>
 {% endmacro %}
@@ -87,62 +83,56 @@
 @param navigation_routes array
  #}
 {% macro top_right(navigation_routes=[]) %}
-    {% if navigation_routes.user_account is defined %}
-        {% if navigation_routes.user_account != false %}
-            {% if navigation_routes.user_account.avatar is defined %}
-                {% if navigation_routes.user_account.avatar != false %}
-                    <li class="c-header-nav-item dropdown">
-                    <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                       aria-expanded="false">
-                        <div class="c-avatar">
-                            <img class="c-avatar-img" src="{{ navigation_routes.user_account.avatar|raw }}" alt="">
+    {% if navigation_routes.user_account is defined and navigation_routes.user_account != false %}
+        {% if navigation_routes.user_account.avatar is defined and navigation_routes.user_account.avatar != false %}
+            <li class="c-header-nav-item dropdown">
+            <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+               aria-expanded="false">
+                <div class="c-avatar">
+                    <img class="c-avatar-img" src="{{ navigation_routes.user_account.avatar|raw }}" alt="">
+                </div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right pt-0">
+                {% if navigation_routes.top_right is defined and navigation_routes.top_right != false %}
+                    {% for item in navigation_routes.top_right %}
+                        <div class="{% if(item.options.class is defined) %}{% if(item.options.class != false) %}{{ item.options.class }}{% endif %}{% endif %}">
+                            {% if(item.options.icon is defined) %}
+                                {% if(item.options.icon != false) %}
+                                    <i class="c-icon {{ item.options.icon }}"> </i>
+                                {% endif %}
+                            {% endif %}
+                            {% if(item.options.text is defined) %}
+                                {% if(item.options.text != false) %}
+                                    {{ item.options.text|trans }}
+                                {% endif %}
+                            {% endif %}
                         </div>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right pt-0">
-                        {% if navigation_routes.top_right is defined %}
-                            {% if navigation_routes.top_right != false %}
-                                {% for item in navigation_routes.top_right %}
-                                    <div class="{% if(item.options.class is defined) %}{% if(item.options.class != false) %}{{ item.options.class }}{% endif %}{% endif %}">
-                                        {% if(item.options.icon is defined) %}
-                                            {% if(item.options.icon != false) %}
-                                                <i class="c-icon {{ item.options.icon }}"></i>
+                        {% if(item.routes is defined) %}
+                            {% if(item.routes != false) %}
+                                {% for route in item.routes %}
+                                    <a href="{% if(route.options.href is defined) %}{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}{% endif %}"
+                                       title="{% if(route.options.title is defined) %}{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}{% endif %}"
+                                       class="dropdown-item"
+                                    >
+                                        {% if(route.options.icon is defined) %}
+                                            {% if(route.options.icon != false) %}
+                                                <svg class="c-icon mfe-2">
+                                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ route.options.icon }}"/>
+                                                </svg>
                                             {% endif %}
                                         {% endif %}
-                                        {% if(item.options.text is defined) %}
-                                            {% if(item.options.text != false) %}
-                                                {{ item.options.text|trans }}
+                                        {% if(route.options.text is defined) %}
+                                            {% if(route.options.text != false) %}
+                                                {{ route.options.text|trans }}
                                             {% endif %}
                                         {% endif %}
-                                    </div>
-                                    {% if(item.routes is defined) %}
-                                        {% if(item.routes != false) %}
-                                            {% for route in item.routes %}
-                                                <a href="{% if(route.options.href is defined) %}{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}{% endif %}"
-                                                   title="{% if(route.options.title is defined) %}{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}{% endif %}"
-                                                   class="dropdown-item"
-                                                >
-                                                    {% if(route.options.icon is defined) %}
-                                                        {% if(route.options.icon != false) %}
-                                                            <svg class="c-icon mfe-2">
-                                                                <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ route.options.icon }}"/>
-                                                            </svg>
-                                                        {% endif %}
-                                                    {% endif %}
-                                                    {% if(route.options.text is defined) %}
-                                                        {% if(route.options.text != false) %}
-                                                            {{ route.options.text|trans }}
-                                                        {% endif %}
-                                                    {% endif %}
-                                                </a>
-                                            {% endfor %}
-                                        {% endif %}
-                                    {% endif %}
+                                    </a>
                                 {% endfor %}
                             {% endif %}
                         {% endif %}
-                    </div>
+                    {% endfor %}
                 {% endif %}
-            {% endif %}
+            </div>
         {% endif %}
     {% endif %}
 {% endmacro %}

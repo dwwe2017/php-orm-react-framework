@@ -20,12 +20,12 @@ class CacheHandler
     /**
      * @var ExtendedCacheItemPoolInterface
      */
-    private $extendedCacheItemPool;
+    private ExtendedCacheItemPoolInterface $extendedCacheItemPool;
 
     /**
      * @var ExtendedCacheItemInterface
      */
-    private $item;
+    private ExtendedCacheItemInterface $item;
 
     /**
      * CacheHandler constructor.

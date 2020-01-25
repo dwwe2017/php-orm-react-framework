@@ -7,7 +7,6 @@ namespace Handlers;
 use Controllers\AbstractBase;
 use Doctrine\Common\Annotations\AnnotationException;
 use Entities\Group;
-use Entities\User;
 use Exceptions\InvalidArgumentException;
 use Exceptions\NavigationException;
 use Helpers\AnnotationHelper;
@@ -44,17 +43,17 @@ class NavigationHandler
     /**
      * @var SessionHandler
      */
-    private $sessionInstance;
+    private SessionHandler $sessionInstance;
 
     /**
      * @var string
      */
-    private $modulesBaseDir = "";
+    private string $modulesBaseDir = "";
 
     /**
      * @var array
      */
-    private $modulesNamespaces = [];
+    private array $modulesNamespaces = [];
 
     /**
      * @var string
@@ -64,17 +63,17 @@ class NavigationHandler
     /**
      * @var array
      */
-    private $routes = [];
+    private array $routes = [];
 
     /**
      * @var array
      */
-    private $navigation = [];
+    private array $navigation = [];
 
     /**
      * @var array
      */
-    private $breadcrumb_routes = [];
+    private array $breadcrumb_routes = [];
 
     /**
      * NavigationHandler constructor.

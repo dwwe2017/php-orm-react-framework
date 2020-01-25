@@ -29,32 +29,32 @@ class ReactHandler
     /**
      * @var string
      */
-    private $baseDir = "";
+    private string $baseDir = "";
 
     /**
      * @var string
      */
-    private $moduleBaseDir = "";
+    private string $moduleBaseDir = "";
 
     /**
      * @var string
      */
-    private $moduleBaseUrl = "";
+    private string $moduleBaseUrl = "";
 
     /**
      * @var string
      */
-    private $moduleControllerShortName = "";
+    private ?string $moduleControllerShortName = "";
 
     /**
      * @var FileHelper|null
      */
-    private $systemControllerEntryPointFile;
+    private ?FileHelper $systemControllerEntryPointFile;
 
     /**
      * @var ConfigValues
      */
-    private $systemControllerEntryPointConfig;
+    private ConfigValues $systemControllerEntryPointConfig;
 
     /**
      * @var array
@@ -64,37 +64,37 @@ class ReactHandler
     /**
      * @var FileHelper|null
      */
-    private $moduleControllerEntryPointFile;
+    private ?FileHelper $moduleControllerEntryPointFile;
 
     /**
      * @var FileHelper|null
      */
-    private $moduleControllerManifestFile;
+    private ?FileHelper $moduleControllerManifestFile;
 
     /**
      * @var ConfigValues
      */
-    private $moduleControllerEntryPointConfig;
+    private ConfigValues $moduleControllerEntryPointConfig;
 
     /**
      * @var ConfigValues
      */
-    private $moduleControllerManifestConfig;
+    private ConfigValues $moduleControllerManifestConfig;
 
     /**
      * @var array
      */
-    private $moduleControllerJsEntryPoints = [];
+    private array $moduleControllerJsEntryPoints = [];
 
     /**
      * @var array
      */
-    private $moduleControllerCssEntryPoints = [];
+    private array $moduleControllerCssEntryPoints = [];
 
     /**
      * @var string
      */
-    private $moduleControllerAction = "";
+    private string $moduleControllerAction = "";
 
     /**
      * ReactHandler constructor.

@@ -17,41 +17,41 @@ class SubNavigation
     /**
      * @var string
      */
-    public $text;
+    public string $text;
 
     /**
      * @var string
      */
-    public $icon = "icon-angle-right";
+    public string $icon = "icon-angle-right";
 
     /**
      * @var string
      */
-    public $title;
+    public string $title;
 
     /**
      * @var bool
      */
-    public $hidden;
+    public bool $hidden;
 
     /**
      * @var string
      */
-    public $style;
+    public string $style;
 
     /**
      * @var string
      */
-    public $description;
+    public string $description;
 
     /**
      * @var string
      */
-    public $href;
+    public string $href;
 
     /**
      * @var string
      * @Enum({"_blank", "_self", "_parent"})
      */
-    public $target;
+    public string $target;
 }
