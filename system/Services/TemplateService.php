@@ -108,6 +108,14 @@ class TemplateService implements VendorExtensionServiceInterface
         }));
 
         /**
+         * @internal For developement
+         * @see inc/helper.inc.php::print_pre()
+         */
+        $this->environment->addFunction(new TwigFunction("print_pre", function ($mixed){
+            return print_pre($mixed);
+        }));
+
+        /**
          * @internal For output of user input that should support HTML code
          * @see inc/helper.inc.php::purify()
          */

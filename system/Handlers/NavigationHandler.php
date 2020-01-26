@@ -11,6 +11,7 @@ use Exceptions\InvalidArgumentException;
 use Exceptions\NavigationException;
 use Helpers\AnnotationHelper;
 use Helpers\DirHelper;
+use Helpers\ServerHelper;
 use Helpers\StringHelper;
 use ReflectionClass;
 use ReflectionException;
@@ -289,9 +290,17 @@ class NavigationHandler
             $this->routes[self::RESTRICTED_NAV]["crump_bar"] = [
                 [
                     "options" => [
-                        "text" => sprintf("%s (%s)", __("User online"), count($user->getUsers())),
+                        "text" => sprintf("%s", ServerHelper::getVersion()),
+                        "title" => "OS",
                         "href" => "javascript:void(0)",
-                        "icon" => "cil-user"
+                        "icon" => "cil-3d"
+                    ]
+                ],
+                [
+                    "options" => [
+                        "text" => sprintf("PHP %s", phpversion()),
+                        "href" => "javascript:void(0)",
+                        "icon" => "cil-code"
                     ]
                 ],
                 [
