@@ -30,17 +30,17 @@ class ModuleManager
     /**
      * @var ModuleManager|null
      */
-    public static $instance = null;
+    public static ?ModuleManager $instance = null;
 
     /**
      * @var string
      */
-    public static $instanceKey = "";
+    public static string $instanceKey = "";
 
     /**
      * @var string
      */
-    private $baseDir = "";
+    private string $baseDir = "";
 
     /**
      * @var string
@@ -55,7 +55,7 @@ class ModuleManager
     /**
      * @var string
      */
-    private $entryModule = "";
+    private string $entryModule = "";
 
     /**
      * @var string
@@ -65,7 +65,7 @@ class ModuleManager
     /**
      * @var ConfigValues
      */
-    private $config;
+    private ConfigValues $config;
 
     /**
      * @var ConfigValues
@@ -75,22 +75,22 @@ class ModuleManager
     /**
      * @var ConfigValues
      */
-    private $templateConfig;
+    private ConfigValues $templateConfig;
 
     /**
      * @var ConfigValues
      */
-    private $doctrineConfig;
+    private ConfigValues $doctrineConfig;
 
     /**
      * @var ConfigValues
      */
-    private $loggerConfig;
+    private ConfigValues $loggerConfig;
 
     /**
      * @var ConfigValues
      */
-    private $moduleConfig;
+    private ConfigValues $moduleConfig;
 
     /**
      * @var CacheConfig
@@ -100,7 +100,7 @@ class ModuleManager
     /**
      * @var ConfigValues
      */
-    private $portalConfig;
+    private ConfigValues $portalConfig;
 
     /**
      * ModuleManager constructor.
@@ -232,8 +232,7 @@ class ModuleManager
      */
     public final function getBaseUrl($relative = true): string
     {
-        $result = $relative ? str_replace($this->getBaseDir(), "", $this->getModuleBaseDir()) : $this->getModuleBaseDir();
-        return $result;
+        return $relative ? str_replace($this->getBaseDir(), "", $this->getModuleBaseDir()) : $this->getModuleBaseDir();
     }
 
     /**

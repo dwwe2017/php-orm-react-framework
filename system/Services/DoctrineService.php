@@ -15,6 +15,7 @@ use Doctrine\DBAL\Events;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Exception;
 use Exceptions\DoctrineException;
@@ -42,22 +43,22 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     /**
      * @var ModuleManager
      */
-    private $moduleManager;
+    private ModuleManager $moduleManager;
 
     /**
      * @var string|null
      */
-    private $currentConnectionOption;
+    private ?string $currentConnectionOption;
 
     /**
      * @var self
      */
-    private $moduleDoctrineService;
+    private self $moduleDoctrineService;
 
     /**
      * @var self
      */
-    private $systemDoctrineService;
+    private self $systemDoctrineService;
 
     /**
      * @noinspection PhpMissingParentConstructorInspection
@@ -167,6 +168,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
          * executing 'SET NAMES utf8': SQLSTATE[HY000]: General error: 1 near "SET": syntax error
          * @internal SQLite connection is always UTF-8
          * @see http://www.alberton.info/dbms_charset_settings_explained.html
+         * @deprecated
          */
         if (strcasecmp($em->getConnection()->getDriver()->getName(), "pdo_sqlite") == 0
             && $em->getEventManager()->hasListeners(Events::postConnect)) {
@@ -216,6 +218,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * @param null $connectionOption
      * @throws DoctrineException
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     public final function persistAndFlush($entity, $connectionOption = null)
     {

@@ -19,17 +19,17 @@ class FileHelper
     /**
      * @var string
      */
-    private $file = "";
+    private string $file = "";
 
     /**
      * @var string
      */
-    private $fileType = "file";
+    private string $fileType = "file";
 
     /**
      * @var string|null
      */
-    private $exceptionClass = null;
+    private ?string $exceptionClass = null;
 
     /**
      * FileHelper constructor.

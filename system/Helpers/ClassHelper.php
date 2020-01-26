@@ -18,12 +18,12 @@ class ClassHelper
     /**
      * @var ReflectionClass
      */
-    private $reflectionClass;
+    private ReflectionClass $reflectionClass;
 
     /**
      * @var string
      */
-    private $exceptionClass;
+    private ?string $exceptionClass;
 
     /**
      * ClassHelper constructor.

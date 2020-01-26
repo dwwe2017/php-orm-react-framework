@@ -5,7 +5,6 @@ namespace Annotations;
 
 
 use Doctrine\Common\Annotations\Annotation\Enum;
-use Entities\Group;
 
 /**
  * Class Access
@@ -18,5 +17,5 @@ class Access
     /**
      * @Enum({Entities\Group::ROLE_ROOT, Entities\Group::ROLE_ADMIN, Entities\Group::ROLE_RESELLER, Entities\Group::ROLE_USER})
      */
-    public $role;
+    public string $role;
 }

@@ -17,8 +17,10 @@ use Controllers\SettingsController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
 use Gettext\GettextTranslator;
+use Gettext\Translations;
 use Gettext\Translator;
 use Handlers\CacheHandler;
+use Handlers\BufferHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
@@ -27,9 +29,9 @@ use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
 use Helpers\EntityViewHelper;
-use Helpers\StringHelper;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
+use Mike4ip\HttpAuth;
 use Monolog\Logger;
 use Phpfastcache\Core\Pool\ExtendedCacheItemPoolInterface;
 use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
@@ -52,187 +54,192 @@ trait AbstractBaseTrait
     /**
      * @var string
      */
-    private $baseDir = "";
+    private string $baseDir = "";
 
     /**
      * @var ConfigValues
      */
-    private $config;
+    private ConfigValues $config;
 
     /**
      * @var bool
      */
-    private $debugMode = false;
+    private bool $debugMode = false;
 
     /**
      * @var ModuleManager
      */
-    private $moduleManager;
+    private ModuleManager $moduleManager;
 
     /**
      * @var string
      */
-    private $moduleBaseDir = "";
+    private string $moduleBaseDir = "";
 
     /**
      * @var ServiceManager
      */
-    private $serviceManager;
+    private ServiceManager $serviceManager;
 
     /**
      * @var array
      */
-    private $context = [];
+    private array $context = [];
 
     /**
      * @var TemplateService
      */
-    private $templateService;
+    private TemplateService $templateService;
+
+    /**
+     * @var BufferHandler
+     */
+    private BufferHandler $bufferHandler;
 
     /**
      * @var TemplateWrapper
      */
-    private $template;
+    private TemplateWrapper $template;
 
     /**
      * @var string
      */
-    private $view = "";
+    private string $view = "";
 
     /**
      * @var MinifyCssHandler
      */
-    private $cssHandler;
+    private MinifyCssHandler $cssHandler;
 
     /**
      * @var MinifyJsHandler
      */
-    private $jsHandler;
+    private MinifyJsHandler $jsHandler;
 
     /**
      * @var ReactHandler
      */
-    private $reactHandler;
+    private ReactHandler $reactHandler;
 
     /**
      * @var array
      */
-    private $pureJs = [];
+    private array $pureJs = [];
 
     /**
      * @var SessionHandler
      */
-    private $sessionHandler;
+    private SessionHandler $sessionHandler;
 
     /**
      * @var CacheHandler
      */
-    private $systemCacheHandler;
+    private CacheHandler $systemCacheHandler;
 
     /**
      * @var CacheHandler
      */
-    private $moduleCacheHandler;
+    private CacheHandler $moduleCacheHandler;
 
     /**
      * @var RequestHandler
      */
-    private $requestHandler;
+    private RequestHandler $requestHandler;
 
     /**
      * @var NavigationHandler
      */
-    private $navigationHandler;
+    private NavigationHandler $navigationHandler;
 
     /**
      * @var CacheService
      */
-    private $cacheService;
+    private CacheService $cacheService;
 
     /**
      * @var ExtendedCacheItemPoolInterface
      */
-    private $systemCacheService;
+    private ExtendedCacheItemPoolInterface $systemCacheService;
 
     /**
      * @var bool
      */
-    private $systemCacheServiceHasFallback = false;
+    private bool $systemCacheServiceHasFallback = false;
 
     /**
      * @var ExtendedCacheItemPoolInterface
      */
-    private $moduleCacheService;
+    private ExtendedCacheItemPoolInterface $moduleCacheService;
 
     /**
      * @var bool
      */
-    private $moduleCacheServiceHasFallback = false;
+    private bool $moduleCacheServiceHasFallback = false;
 
     /**
      * @var LocaleService
      */
-    private $localeService;
+    private LocaleService $localeService;
 
     /**
      * @var Translator
      */
-    private $systemLocaleService;
+    private Translator $systemLocaleService;
 
     /**
      * @var GettextTranslator
      */
-    private $moduleLocaleService;
+    private GettextTranslator $moduleLocaleService;
 
     /**
      * @var Logger
      */
-    private $loggerService;
+    private Logger $loggerService;
 
     /**
      * @var DoctrineService
      */
-    private $doctrineService;
+    private DoctrineService $doctrineService;
 
     /**
      * @var DoctrineService
      */
-    private $systemDbService;
+    private DoctrineService $systemDbService;
 
     /**
      * @var DoctrineService
      */
-    private $moduleDbService;
+    private DoctrineService $moduleDbService;
 
     /**
      * @var EntityManager
      */
-    private $entityManager;
+    private EntityManager $entityManager;
 
     /**
      * @var AbsolutePathHelper;
      */
-    private $absolutePathHelper;
+    private AbsolutePathHelper $absolutePathHelper;
 
     /**
      * @var ReflectionClass
      */
-    private $reflectionHelper;
+    private ReflectionClass $reflectionHelper;
 
     /**
      * @var AnnotationReader
      */
-    private $annotationReader;
+    private AnnotationReader $annotationReader;
 
     /**
      * @var EntityViewHelper
      */
-    private $viewHelper;
+    private EntityViewHelper $viewHelper;
 
     /**
      * @var string
      */
-    private $navigationRoute = NavigationHandler::PUBLIC_NAV;
+    private string $navigationRoute = NavigationHandler::PUBLIC_NAV;
 
     /**
      * @return string
@@ -273,6 +280,14 @@ trait AbstractBaseTrait
         foreach ($context as $key => $value){
             $this->context[$key] = $value;
         }
+    }
+
+    /**
+     *
+     */
+    protected final function contextClear(): void
+    {
+        $this->context = [];
     }
 
     /**
@@ -494,6 +509,28 @@ trait AbstractBaseTrait
     protected function getBreadcrumbRoutes(): array
     {
         return $this->getNavigationHandler()->getBreadcrumbRoutes();
+    }
+
+    /**
+     * @return BufferHandler
+     * @internal Whole methods and their results can be buffered
+     * @example
+     * $this->getBufferHandler()->setMaxLifetime(60)
+     * $this->getBufferHandler()->setObject($this->getNavigationHandler())->getRoutes(NavigationHandler::RESTRICTED_NAV)
+     * $this->getBufferHandler()->getBufferItem()->getExpirationDate()->format("d.m.Y H:i:s")
+     */
+    protected function getBufferHandler(): BufferHandler
+    {
+        return $this->bufferHandler;
+    }
+
+    /**
+     * @param string|null $localeCode
+     * @return Translations
+     */
+    protected function getTranslations(?string $localeCode = null)
+    {
+        return $this->getLocaleService()->getTranslations($localeCode);
     }
 
     /**
@@ -764,5 +801,17 @@ trait AbstractBaseTrait
 
         $result = call_user_func_array([$object, $method], $args);
         return $result;
+    }
+
+    /**
+     * @return HttpAuth
+     */
+    public function getHttpAuthWrapper()
+    {
+        if (isset($_SERVER["HTTP_AUTHORIZATION"]) && !empty($_SERVER["HTTP_AUTHORIZATION"])) {
+            list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+        }
+
+        return new HttpAuth();
     }
 }

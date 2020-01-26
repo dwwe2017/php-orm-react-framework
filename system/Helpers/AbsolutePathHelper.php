@@ -24,7 +24,7 @@ class AbsolutePathHelper
     /**
      * @var string
      */
-    private $baseDir = "";
+    private string $baseDir = "";
 
     /**
      * AbsolutePathHelper constructor.

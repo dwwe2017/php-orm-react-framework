@@ -24,5 +24,5 @@ trait InstantiationStaticsUtilTrait
     /**
      * @var string
      */
-    private static $instanceKey = "";
+    private static string $instanceKey = "";
 }

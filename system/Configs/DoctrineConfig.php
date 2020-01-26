@@ -17,6 +17,7 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\FilesystemCache;
 use Exceptions\DoctrineException;
 use Helpers\DeclarationHelper;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Services\DoctrineService;
@@ -116,8 +117,13 @@ class DoctrineConfig implements VendorExtensionConfigInterface
                 FileHelper::init($doctrineModuleOptions->get("module.entity_dir"),
                     DoctrineException::class)->isReadable();
 
-                FileHelper::init($doctrineModuleOptions->get("module.proxy_dir"),
-                    DoctrineException::class)->isWritable(true);
+                $doctrineModuleProxyDir = $doctrineModuleOptions->get("module.proxy_dir");
+                FileHelper::init($doctrineModuleProxyDir,DoctrineException::class)->isWritable(true);
+
+                /**
+                 * Check and create directory protection
+                 */
+                DirHelper::init($doctrineModuleProxyDir)->addDirectoryProtection();
             }
         }
 
@@ -138,8 +144,13 @@ class DoctrineConfig implements VendorExtensionConfigInterface
         FileHelper::init($doctrineOptions->get("doctrine_options.system.entity_dir"),
             DoctrineException::class)->isReadable();
 
-        FileHelper::init($doctrineOptions->get("doctrine_options.system.proxy_dir"),
-            DoctrineException::class)->isWritable(true);
+        $doctrineSystemProxyDir = $doctrineOptions->get("doctrine_options.system.proxy_dir");
+        FileHelper::init($doctrineSystemProxyDir,DoctrineException::class)->isWritable(true);
+
+        /**
+         * Check and create directory protection
+         */
+        DirHelper::init($doctrineSystemProxyDir)->addDirectoryProtection();
 
         /**
          * Finished
@@ -164,6 +175,11 @@ class DoctrineConfig implements VendorExtensionConfigInterface
                 if (FileHelper::init($filesystemCacheDir)->isWritable(true)) {
                     $cacheDriver = new FilesystemCache($filesystemCacheDir);
                 }
+
+                /**
+                 * Check and create directory protection
+                 */
+                DirHelper::init($filesystemCacheDir)->addDirectoryProtection();
             }
         }
 

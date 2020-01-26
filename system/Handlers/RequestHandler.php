@@ -13,6 +13,7 @@ namespace Handlers;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
+use Controllers\ApiController;
 use Controllers\PublicXmlController;
 use Controllers\RestrictedXmlController;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -28,47 +29,52 @@ class RequestHandler
     /**
      * @var ConfigValues
      */
-    private $headers;
+    private ConfigValues $headers;
 
     /**
      * @var ConfigValues
      */
-    private $request;
+    private ConfigValues $request;
 
     /**
      * @var ConfigValues
      */
-    private $post;
+    private ConfigValues $post;
 
     /**
      * @var ConfigValues
      */
-    private $query;
+    private ConfigValues $query;
 
     /**
      * @var ConfigValues
      */
-    private $server;
+    private ConfigValues $server;
 
     /**
      * @var string|null
      */
-    private $requestUrl;
+    private ?string $requestUrl;
 
     /**
      * @var bool
      */
-    private $xmlRequest = false;
+    private bool $xmlRequest = false;
 
     /**
      * @var bool
      */
-    private $xml = false;
+    private bool $xml = false;
+
+    /**
+     * @var bool
+     */
+    private bool $api = false;
 
     /**
      * @var string
      */
-    private $baseUrl = "";
+    private string $baseUrl = "";
 
     /**
      * RequestHandler constructor.
@@ -82,22 +88,22 @@ class RequestHandler
         $this->query = ConfigFactory::fromArray($_GET ?? []);
         $this->server = ConfigFactory::fromArray($_SERVER ?? []);
 
-        $this->requestUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+        $this->requestUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
         $this->baseUrl = ($split = explode("/index.php", $_SERVER["REQUEST_URI"])) > 1 ? $split[0] : $_SERVER["REQUEST_URI"];
 
-        if($this->query->get("module", null)){
+        if ($this->query->get("module", null)) {
             $query = $this->query->get("module");
             $query = strpos($query, "/") ? explode("/", $query)[0] : $query;
             $this->baseUrl .= "/index.php?module=" . $query;
         }
 
-        if($this->query->get("controller", null)){
+        if ($this->query->get("controller", null)) {
             $query = $this->query->get("controller");
             $query = strpos($query, "/") ? explode("/", $query)[0] : $query;
             $this->baseUrl .= "&controller=" . $query;
         }
 
-        if($this->query->get("action", null)){
+        if ($this->query->get("action", null)) {
             $query = $this->query->get("action");
             $query = strpos($query, "/") ? explode("/", $query)[0] : $query;
             $this->baseUrl .= "&action=" . $query;
@@ -112,6 +118,8 @@ class RequestHandler
         $this->xml = $controllerInstance instanceof RestrictedXmlController
             || $controllerInstance instanceof PublicXmlController
             || $this->isXmlRequest();
+
+        $this->api = $this->isXml() && $controllerInstance instanceof ApiController;
     }
 
     /**
@@ -139,7 +147,7 @@ class RequestHandler
     /**
      * @return ConfigValues
      */
-    public function getRequest()
+    public function getRequest(): ConfigValues
     {
         return $this->request;
     }
@@ -147,7 +155,7 @@ class RequestHandler
     /**
      * @return ConfigValues
      */
-    public function getPost()
+    public function getPost(): ConfigValues
     {
         return $this->post;
     }
@@ -155,7 +163,7 @@ class RequestHandler
     /**
      * @return ConfigValues
      */
-    public function getQuery()
+    public function getQuery(): ConfigValues
     {
         return $this->query;
     }
@@ -206,7 +214,9 @@ class RequestHandler
      */
     public function doRedirect($default = "?module=dashboard"): void
     {
-        if(($target = $this->getRequest()->get("redirect", $default))){
+        $target = $this->getRequest()->get("redirect", $default);
+
+        if ($target) {
             header("Location: " . trim($target));
             exit();
         }
@@ -218,5 +228,13 @@ class RequestHandler
     public function getBaseUrl(): string
     {
         return $this->baseUrl;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isApi(): bool
+    {
+        return $this->api;
     }
 }

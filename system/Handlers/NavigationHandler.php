@@ -7,11 +7,11 @@ namespace Handlers;
 use Controllers\AbstractBase;
 use Doctrine\Common\Annotations\AnnotationException;
 use Entities\Group;
-use Entities\User;
 use Exceptions\InvalidArgumentException;
 use Exceptions\NavigationException;
 use Helpers\AnnotationHelper;
 use Helpers\DirHelper;
+use Helpers\ServerHelper;
 use Helpers\StringHelper;
 use ReflectionClass;
 use ReflectionException;
@@ -44,17 +44,17 @@ class NavigationHandler
     /**
      * @var SessionHandler
      */
-    private $sessionInstance;
+    private SessionHandler $sessionInstance;
 
     /**
      * @var string
      */
-    private $modulesBaseDir = "";
+    private string $modulesBaseDir = "";
 
     /**
      * @var array
      */
-    private $modulesNamespaces = [];
+    private array $modulesNamespaces = [];
 
     /**
      * @var string
@@ -64,17 +64,17 @@ class NavigationHandler
     /**
      * @var array
      */
-    private $routes = [];
+    private array $routes = [];
 
     /**
      * @var array
      */
-    private $navigation = [];
+    private array $navigation = [];
 
     /**
      * @var array
      */
-    private $breadcrumb_routes = [];
+    private array $breadcrumb_routes = [];
 
     /**
      * NavigationHandler constructor.
@@ -286,61 +286,22 @@ class NavigationHandler
              * @see templates/Controllers/coreui/generic.nav.macro.lib.twig::macro top_right
              */
             $this->routes[self::RESTRICTED_NAV]["user_account"]["avatar"] = $user->getAvatar();
-            $this->routes[self::RESTRICTED_NAV]["top_right"] = [
-                [
-                    "options" => [
-                        "class" => "dropdown-header bg-light py-2",
-                        "text" => __("Account"),
-                        "href" => "javascript:void(0)"
-                    ],
-                    "routes" => [
-                        [
-                            "options" => [
-                                /**
-                                 * @see AbstractBaseTrait::getSystemLocaleService()
-                                 */
-                                "text" => __("My Profile"),
-                                "href" => sprintf("index.php?controller=restricted&action=profile"),
-                                "icon" => "cil-user"
-                            ]
-                        ],
-                        [
-                            "options" => [
-                                /**
-                                 * @see AbstractBaseTrait::getSystemLocaleService()
-                                 */
-                                "text" => __("Logout"),
-                                "href" => sprintf("index.php?controller=restrictedInvoke&action=signOut"),
-                                "icon" => "cil-account-logout"
-                            ]
-                        ]
-                    ]
-                ]
-            ];
-
-            $routes = [];
-            foreach ($this->getSessionInstance()->getUsers() as $childUser) {
-                if (!$childUser instanceof User) {
-                    continue;
-                }
-
-                $routes[] = [
-                    "options" => [
-                        "text" => $childUser->getName() . "/" . $childUser->getGroup()->getName(),
-                        "href" => "javascript:void(0)",
-                        "icon" => "icon-user"
-                    ]
-                ];
-            }
 
             $this->routes[self::RESTRICTED_NAV]["crump_bar"] = [
                 [
                     "options" => [
-                        "text" => sprintf("%s (%s)", __("User online"), count($user->getUsers())),
+                        "text" => sprintf("%s", ServerHelper::getVersion()),
+                        "title" => "OS",
                         "href" => "javascript:void(0)",
-                        "icon" => "cil-user"
-                    ],
-                    "routes" => $routes,
+                        "icon" => "cil-3d"
+                    ]
+                ],
+                [
+                    "options" => [
+                        "text" => sprintf("PHP %s", phpversion()),
+                        "href" => "javascript:void(0)",
+                        "icon" => "cil-code"
+                    ]
                 ],
                 [
                     "options" => [

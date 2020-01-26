@@ -41,4 +41,13 @@ class PublicInvokeController extends PublicController implements InvokeControlle
             throw new MethodNotFoundException(sprintf("Method %s in class %s was not found or could not be loaded", $methodName, get_class($this)));
         }
     }
+
+    /**
+     *
+     */
+    public final function signOutAction(): void
+    {
+        $this->getSessionHandler()->signOut();
+        $this->redirect(null, "publicFront", "login");
+    }
 }

@@ -35,12 +35,12 @@ class CacheInitHelper
     /**
      * @var ExtendedCacheItemPoolInterface
      */
-    private $cacheInstance;
+    private ExtendedCacheItemPoolInterface $cacheInstance;
 
     /**
      * @var bool
      */
-    private $hasFallback = false;
+    private bool $hasFallback = false;
 
     /**
      * CacheHelper constructor.

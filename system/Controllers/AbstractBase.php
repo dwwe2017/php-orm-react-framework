@@ -12,12 +12,13 @@ namespace Controllers;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Exception;
 use Exceptions\CacheException;
 use Exceptions\DoctrineException;
 use Exceptions\InvalidArgumentException;
 use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
-use Exceptions\SessionException;
+use Handlers\BufferHandler;
 use Handlers\CacheHandler;
 use Handlers\ErrorHandler;
 use Handlers\MinifyCssHandler;
@@ -55,7 +56,6 @@ abstract class AbstractBase
      * @throws DoctrineException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws SessionException
      */
     public function __construct(string $baseDir)
     {
@@ -150,9 +150,9 @@ abstract class AbstractBase
 
     /**
      * @throws AnnotationException
-     * @throws ReflectionException
-     * @throws SessionException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws Exception
      */
     private function initHandlers(): void
     {
@@ -171,8 +171,9 @@ abstract class AbstractBase
 
         /**
          * Session handler
+         * @see AbstractBaseTrait::getSessionHandler() // Available in modules
          */
-        $this->sessionHandler = SessionHandler::init($this->getSystemDbService());
+        $this->sessionHandler = SessionHandler::init($this->getSystemDbService(), $this->getLoggerService());
 
         /**
          * @see RequestHandler::isXml()
@@ -191,6 +192,13 @@ abstract class AbstractBase
         $this->moduleCacheHandler = CacheHandler::init($this->getModuleCacheService());
 
         /**
+         * Buffering handler
+         * @author https://www.dwwe.de
+         * @see AbstractBaseTrait::getBufferHandler() // Available in modules
+         */
+        $this->bufferHandler = BufferHandler::init($this->getSystemCacheHandler(), $this->getLoggerService());
+
+        /**
          * Asset handlers
          * @see AbstractBaseTrait::getCssHandler() // !Only available for system
          * @see AbstractBaseTrait::getJsHandler() // !Only available for system
@@ -199,7 +207,6 @@ abstract class AbstractBase
         $this->cssHandler = MinifyCssHandler::init($this->getConfig());
         $this->jsHandler = MinifyJsHandler::init($this->getConfig());
         $this->reactHandler = ReactHandler::init($this, $this->getModuleManager());
-
 
         /**
          * Navigation handler
@@ -213,11 +220,13 @@ abstract class AbstractBase
      */
     private function initSettings()
     {
-        $userSession = $this->getSessionHandler()->getUser();
+        if ($this->getSessionHandler()->isRegistered()) {
+            $userSession = $this->getSessionHandler()->getUser();
 
-        if ($userSession) {
-            $this->getLocaleService()->setLanguage($userSession->getLocale());
-            $this->getModuleLocaleService()->setLanguage($userSession->getLocale());
+            if ($userSession) {
+                $this->getLocaleService()->setLanguage($userSession->getLocale());
+                $this->getModuleLocaleService()->setLanguage($userSession->getLocale());
+            }
         }
     }
 
@@ -346,13 +355,14 @@ abstract class AbstractBase
      */
     public function render404(): void
     {
+        $this->contextClear();
         if ($this->getRequestHandler()->isXml()) {
             header(XmlControllerInterface::HEADER_ERROR_404);
             header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
             $this->addContext("error", "Not Found");
             die(json_encode($this->getContext()));
         } else {
-            header('HTTP/1.0 404 Not Found');
+            header(XmlControllerInterface::HEADER_ERROR_404);
             /** @noinspection PhpIncludeInspection */
             $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error404.php");
             exit($html ?? "Not Found");
@@ -364,13 +374,27 @@ abstract class AbstractBase
      */
     public function render403($loginRedirect = false): void
     {
-        if ($this->getRequestHandler()->isXml()) {
+        $this->contextClear();
+        if ($this->getRequestHandler()->isApi()) {
+            $this->getHttpAuthWrapper()
+                ->setRealm("TSI2 API")
+                ->onUnauthorized(function () {
+                    header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
+                    $this->addContext("error", "Forbidden");
+                    die(json_encode($this->getContext()));
+                })
+                ->setCheckFunction(function ($user, $pwd) {
+                    $this->getSessionHandler()->initRegistration($user, $pwd);
+                    return $this->getSessionHandler()->isRegistered();
+                })
+                ->requireAuth();
+        } elseif ($this->getRequestHandler()->isXml()) {
             header(XmlControllerInterface::HEADER_ERROR_403);
             header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
             $this->addContext("error", "Forbidden");
             die(json_encode($this->getContext()));
         } elseif (!$loginRedirect) {
-            header('HTTP/1.0 403 Forbidden');
+            header(XmlControllerInterface::HEADER_ERROR_403);
             /** @noinspection PhpIncludeInspection */
             $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error403.php");
             exit($html ?? "Forbidden");
@@ -378,7 +402,7 @@ abstract class AbstractBase
             /**
              * @see PublicController::loginAction()
              */
-            $this->redirect(null, "public", "login", array(
+            $this->redirect(null, "publicFront", "login", array(
                 "redirect" => urlencode($this->getRequestHandler()->getRequestUrl())
             ));
         }
@@ -471,7 +495,7 @@ abstract class AbstractBase
          * CSS vars
          * @see AbstractBaseTrait::getCssHandler()
          */
-        $this->getCssHandler()->compileAndGet();
+        $this->getCssHandler()->compile();
         $this->addContext("minified_css", $this->getCssHandler()
             ->getDefaultMinifyCssFile(true)
         );
@@ -480,7 +504,7 @@ abstract class AbstractBase
          * JS vars
          * @see AbstractBaseTrait::getJsHandler()
          */
-        $this->getJsHandler()->compileAndGet();
+        $this->getJsHandler()->compile();
         $this->addContext("minified_js", $this->getJsHandler()
             ->getDefaultMinifyJsFile(true)
         );

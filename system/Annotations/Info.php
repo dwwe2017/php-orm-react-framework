@@ -15,20 +15,20 @@ class Info
     /**
      * @var string
      */
-    public $author;
+    public string $author;
 
     /**
      * @var string
      */
-    public $email;
+    public string $email;
 
     /**
      * @var string
      */
-    public $website;
+    public string $website;
 
     /**
      * @var string
      */
-    public $description;
+    public string $description;
 }

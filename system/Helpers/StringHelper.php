@@ -23,7 +23,7 @@ class StringHelper
     /**
      * @var string
      */
-    private $string = "";
+    private string $string = "";
 
     /**
      * StringHelper constructor.

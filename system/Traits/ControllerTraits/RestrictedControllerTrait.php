@@ -16,17 +16,17 @@ trait RestrictedControllerTrait
     /**
      * @var bool
      */
-    private $registered = false;
+    private bool $registered = false;
 
     /**
      * @var User|null
      */
-    private $user;
+    private ?User $user;
 
     /**
      * @var Group|null
      */
-    private $group;
+    private ?Group $group;
 
     /**
      * @return User|null

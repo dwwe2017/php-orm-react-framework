@@ -37,17 +37,6 @@ class RestrictedXmlController extends RestrictedController implements XmlControl
     /**
      *
      */
-    public final function render404(): void
-    {
-        header(self::HEADER_ERROR_404);
-        header(self::HEADER_CONTENT_TYPE_JSON);
-        $this->addContext("error", "Not Found");
-        die(json_encode($this->getContext()));
-    }
-
-    /**
-     *
-     */
     public final function render(): void
     {
         header(self::HEADER_CONTENT_TYPE_JSON);

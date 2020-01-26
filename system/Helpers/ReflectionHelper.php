@@ -25,17 +25,17 @@ class ReflectionHelper
     /**
      * @var object
      */
-    private $object;
+    private object $object;
 
     /**
      * @var array
      */
-    private $attributes = [];
+    private array $attributes = [];
 
     /**
      * @var array
      */
-    private $methods = [];
+    private array $methods = [];
 
     /**
      * ReflectionHelper constructor.

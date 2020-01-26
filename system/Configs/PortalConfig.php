@@ -11,8 +11,6 @@ namespace Configs;
 
 
 use Configula\ConfigFactory;
-use Exceptions\TemplateException;
-use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Services\TemplateService;
 use Traits\ConfigTraits\VendorExtensionInitConfigTrait;

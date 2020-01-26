@@ -22,22 +22,22 @@ class DeclarationHelper
     /**
      * @var string|null
      */
-    private $extension;
+    private ?string $extension;
 
     /**
      * @var string|null
      */
-    private $class;
+    private ?string $class;
 
     /**
      * @var string|null
      */
-    private $function;
+    private ?string $function;
 
     /**
      * @var string|null
      */
-    private $exceptionClass = null;
+    private ?string $exceptionClass = null;
 
     /**
      * DeclarationHelper constructor.

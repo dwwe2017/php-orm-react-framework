@@ -13,6 +13,7 @@ namespace Handlers;
 use Configula\ConfigValues;
 use Exception;
 use Exceptions\MinifyJsException;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use JShrink\Minifier;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -24,7 +25,7 @@ class MinifyJsHandler extends Minifier
     /**
      * @var string
      */
-    private static $md5checksum = "";
+    private static string $md5checksum = "";
 
     /**
      * @var string
@@ -44,12 +45,12 @@ class MinifyJsHandler extends Minifier
     /**
      * @var string
      */
-    private $defaultMinifyJsFile = "";
+    private string $defaultMinifyJsFile = "";
 
     /**
      * @var array
      */
-    private $jsContent = [];
+    private array $jsContent = [];
 
     /**
      * MinifyJsHandler constructor.
@@ -63,6 +64,11 @@ class MinifyJsHandler extends Minifier
 
         FileHelper::init($this->defaultMinifyJsDir, MinifyJsException::class)
             ->isWritable(true);
+
+        /**
+         * Check and create directory restriction
+         */
+        DirHelper::init($this->defaultMinifyJsDir)->addDirectoryRestriction(["js"]);
     }
 
     /**
@@ -99,7 +105,7 @@ class MinifyJsHandler extends Minifier
      * @return bool|int
      * @throws MinifyJsException
      */
-    public final function compileAndGet($clearOldFiles = true)
+    public final function compile($clearOldFiles = true)
     {
         if(empty($this->jsContent)){
             return false;

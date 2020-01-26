@@ -11,12 +11,14 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Entities\Group;
 use Entities\User;
 use Exception;
-use Exceptions\SessionException;
 use Helpers\EntityHelper;
+use Monolog\Logger;
 use Services\DoctrineService;
+use Services\LoggerService;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
 /**
@@ -30,39 +32,45 @@ class SessionHandler
     /**
      * @var EntityManager
      */
-    private $em;
+    private EntityManager $em;
+
+    /**
+     * @var Logger
+     */
+    private Logger $loggerService;
 
     /**
      * @var bool
      */
-    private $registered = false;
+    private bool $registered = false;
 
     /**
      * @var User|null
      */
-    private $user;
+    private ?User $user;
 
     /**
      * @var Group|null
      */
-    private $group;
+    private ?Group $group;
 
     /**
      * @var int
      */
-    private $role = Group::ROLE_ANY;
+    private int $role = Group::ROLE_ANY;
 
     /**
      * @var AnnotationReader
      */
-    private $annotation_reader;
+    private AnnotationReader $annotation_reader;
 
     /**
      * SessionHandler constructor.
      * @param DoctrineService $doctrineService
-     * @throws SessionException
+     * @param Logger $loggerService
+     * @throws Exception
      */
-    public function __construct(DoctrineService $doctrineService)
+    private function __construct(DoctrineService $doctrineService, Logger $loggerService)
     {
         try {
             /**
@@ -73,114 +81,38 @@ class SessionHandler
             $this->em = $doctrineService->getEntityManager();
 
             /**
-             * @internal Get the parameters either from the login process or from the cookies, if any
+             * @see LoggerService::getLogger()
              */
-            $username = $_POST["username"] ?? $_COOKIE["TSI2usr"] ?? null;
-            $password = $_POST["password"] ?? $_COOKIE["TSI2pwd"] ?? null;
-            $remember = isset($_POST["remember"]);
-
-            /**
-             * @internal Check if already logged in
-             */
-            $uid = $_SESSION["uid"] ?? null;
+            $this->loggerService = $loggerService;
 
             /**
              * @internal If the uid of the user exists in the session
              * or if the parameters of the login process exist
              */
-            if ($uid || ($username && $password)) {
-
-                /**
-                 * @see User
-                 */
-                $repo = $this->em->getRepository("Entities\User");
-
-                if ($uid) {
-                    /**
-                     * @internal If already logged in..
-                     */
-                    $user = $repo->find($uid);
-                    if ($user && $user instanceof User) {
-                        $this->initRegistration($user);
-                    }
-
-                } elseif ($password && $username) {
-
-                    $keepalive = false;
-                    $passphrase = $_COOKIE["TSI2hash"] ?? null;
-                    if (isset($_COOKIE["TSI2usr"]) && isset($_COOKIE["TSI2pwd"]) && $passphrase) {
-                        $username = CryptoJSAES::decrypt($username, $passphrase);
-                        $password = CryptoJSAES::decrypt($password, $passphrase);
-                        $keepalive = true;
-                    }
-
-                    /**
-                     * Get user from database
-                     * @see User::getName()
-                     */
-                    $user = $repo->findOneBy(["name" => $username]);
-
-                    /**
-                     * Check if user exists and password is valid
-                     * @see User::isValidPassword()
-                     */
-                    if ($user && $user instanceof User && $user->isValidPassword($password)) {
-
-                        /**
-                         * @internal Declare variables and set the session uid
-                         */
-                        $this->initRegistration($user);
-
-                        if ($remember) {
-
-                            $passphrase = bin2hex(random_bytes(16));
-                            $username = CryptoJSAES::encrypt($username, $passphrase);
-                            $password = CryptoJSAES::encrypt($password, $passphrase);
-
-                            /**
-                             * @internal If the post parameter "remember" exists, further cookies will be created
-                             */
-                            $expire = (new DateTime)->modify("+1 year")->getTimestamp();
-                            @setcookie('TSI2usr', $username, $expire, "/", "", false, true);
-                            @setcookie('TSI2pwd', $password, $expire, "/", "", false, true);
-                            @setcookie('TSI2hash', $passphrase, $expire, "/", "", false, true);
-
-                        } elseif(!$keepalive) {
-
-                            /**
-                             * @internal If parameter "remember" not exists, cookies will be deleted
-                             */
-                            $expire = (new DateTime)->modify("-1 year")->getTimestamp();
-                            if (isset($_COOKIE["TSI2usr"])) {
-                                @setcookie('TSI2usr', "", $expire, "/", "", false, true);
-                            }
-                            if (isset($_COOKIE["TSI2pwd"])) {
-                                @setcookie('TSI2pwd', "", $expire, "/", "", false, true);
-                            }
-                            if (isset($_COOKIE["TSI2hash"])) {
-                                @setcookie('TSI2hash', "", $expire, "/", "", false, true);
-                            }
-                        }
-                    }
-                }
+            if (isset($_SESSION["uid"])) {
+                $this->sessionRenew($_SESSION["uid"]);
+            } elseif (isset($_POST["username"]) && isset($_POST["password"])) {
+                $this->initRegistration($_POST["username"], $_POST["password"]);
+            } elseif (isset($_COOKIE["TSI2usr"]) && isset($_COOKIE["TSI2pwd"]) && isset($_COOKIE["TSI2hash"])) {
+                $username = CryptoJSAES::decrypt($_COOKIE["TSI2usr"], $_COOKIE["TSI2hash"]);
+                $password = CryptoJSAES::decrypt($_COOKIE["TSI2pwd"], $_COOKIE["TSI2hash"]);
+                $this->initRegistration($username, $password);
             }
         } catch (Exception $e) {
-            if (!$e instanceof \InvalidArgumentException) {
-                throw new SessionException($e->getMessage(), $e->getCode(), $e->getPrevious());
-            }
             throw $e;
         }
     }
 
     /**
      * @param DoctrineService $doctrineService
+     * @param Logger $loggerService
      * @return SessionHandler|null
-     * @throws SessionException
+     * @throws Exception
      */
-    public static final function init(DoctrineService $doctrineService)
+    public static final function init(DoctrineService $doctrineService, Logger $loggerService)
     {
         if (is_null(self::$instance)) {
-            self::$instance = new self($doctrineService);
+            self::$instance = new self($doctrineService, $loggerService);
         }
 
         return self::$instance;
@@ -188,7 +120,6 @@ class SessionHandler
 
     /**
      * @param null $redirect
-     * @throws Exception
      */
     public final function signOut($redirect = null): void
     {
@@ -199,24 +130,39 @@ class SessionHandler
             unset($_SESSION["uid"]);
             $_SESSION = array();
 
+            $this->clearCookies();
+        }
+
+        if (!is_null($redirect)) {
+            header("Location: " . $redirect);
+            exit();
+        }
+    }
+
+    /**
+     *
+     */
+    public final function clearCookies(): void
+    {
+        try {
             /**
              * @internal Set expiration date in the past for deleting the cookies if any
              */
             $expire = (new DateTime)->modify("-1 year")->getTimestamp();
 
             if (isset($_COOKIE["TSI2usr"])) {
-                @setcookie('TSI2usr', "", $expire);
+                setcookie('TSI2usr', "", $expire, "/", "", false, true);
             }
 
             if (isset($_COOKIE["TSI2pwd"])) {
-                @setcookie('TSI2pwd', "", $expire);
+                setcookie('TSI2pwd', "", $expire, "/", "", false, true);
             }
 
-            if (isset($_COOKIE["TSI2key"])) {
-                @setcookie('TSI2key', "", $expire);
+            if (isset($_COOKIE["TSI2hash"])) {
+                setcookie('TSI2hash', "", $expire, "/", "", false, true);
             }
-
-            is_null($redirect) || header("Location: " . $redirect);
+        } catch (Exception $e) {
+            $this->loggerService->error($e->getMessage(), $e->getTrace());
         }
     }
 
@@ -294,8 +240,8 @@ class SessionHandler
     }
 
     /**
-     * With this call, changes regarding the user can be saved.
      * @throws OptimisticLockException
+     * @throws ORMException
      * @example $this->getUser()->setName("Another"); $this->flush();
      */
     public final function flush()
@@ -376,9 +322,67 @@ class SessionHandler
     }
 
     /**
+     * @param $username
+     * @param $password
+     */
+    public final function initRegistration($username, $password)
+    {
+        $repo = $this->em->getRepository("Entities\User");
+
+        /**
+         * Get user from database
+         * @see User::getName()
+         */
+        $user = $repo->findOneBy(["name" => $username]);
+
+        /**
+         * Check if user exists and password is valid
+         * @see User::isValidPassword()
+         */
+        if ($user && $user instanceof User && $user->isValidPassword($password)) {
+
+            /**
+             * @internal Declare variables and set the session uid
+             */
+            $this->sessionCreate($user);
+
+            if (isset($_POST["remember"])) {
+                try {
+                    $passphrase = bin2hex(random_bytes(16));
+                    $username = CryptoJSAES::encrypt($_POST["username"], $passphrase);
+                    $password = CryptoJSAES::encrypt($_POST["password"], $passphrase);
+
+                    /**
+                     * @internal If the post parameter "remember" exists, further cookies will be created
+                     */
+                    $expire = (new DateTime)->modify("+1 year")->getTimestamp();
+                    setcookie('TSI2hash', $passphrase, $expire, "/", "", false, true);
+                    setcookie('TSI2usr', $username, $expire, "/", "", false, true);
+                    setcookie('TSI2pwd', $password, $expire, "/", "", false, true);
+
+                } catch (Exception $e) {
+                    $this->loggerService->error($e->getMessage(), $e->getTrace());
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $uid
+     */
+    private function sessionRenew($uid)
+    {
+        $repo = $this->em->getRepository("Entities\User");
+        $user = $repo->find($uid);
+        if ($user && $user instanceof User) {
+            $this->sessionCreate($user);
+        }
+    }
+
+    /**
      * @param User $user
      */
-    private function initRegistration(User $user)
+    private function sessionCreate(User $user)
     {
         $this->user = $user;
         $this->group = $this->getUser()->getGroup();

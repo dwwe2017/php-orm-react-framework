@@ -14,6 +14,7 @@ use Configula\ConfigValues;
 use CssMin;
 use Exception;
 use Exceptions\MinifyCssException;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 
@@ -24,7 +25,7 @@ class MinifyCssHandler
     /**
      * @var string
      */
-    private static $md5checksum = "";
+    private static string $md5checksum = "";
 
     /**
      * @var string
@@ -44,17 +45,17 @@ class MinifyCssHandler
     /**
      * @var string
      */
-    private $defaultMinifyCssFile = "";
+    private string $defaultMinifyCssFile = "";
 
     /**
      * @var array
      */
-    private $cssContent = [];
+    private array $cssContent = [];
 
     /**
      * @var array
      */
-    private $filter = [
+    private array $filter = [
         "ImportImports" => true,
         "RemoveComments" => true,
         "RemoveEmptyRulesets" => true,
@@ -77,6 +78,11 @@ class MinifyCssHandler
 
         FileHelper::init($this->defaultMinifyCssDir, MinifyCssException::class)
             ->isWritable(true);
+
+        /**
+         * Check and create directory restriction
+         */
+        DirHelper::init($this->defaultMinifyCssDir)->addDirectoryRestriction(["css"]);
     }
 
     /**
@@ -113,7 +119,7 @@ class MinifyCssHandler
      * @return bool|int
      * @throws MinifyCssException
      */
-    public final function compileAndGet($clearOldFiles = true)
+    public final function compile($clearOldFiles = true)
     {
         if(empty($this->cssContent)){
             return false;
