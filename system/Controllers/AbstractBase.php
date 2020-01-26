@@ -220,11 +220,13 @@ abstract class AbstractBase
      */
     private function initSettings()
     {
-        $userSession = $this->getSessionHandler()->getUser();
+        if ($this->getSessionHandler()->isRegistered()) {
+            $userSession = $this->getSessionHandler()->getUser();
 
-        if ($userSession) {
-            $this->getLocaleService()->setLanguage($userSession->getLocale());
-            $this->getModuleLocaleService()->setLanguage($userSession->getLocale());
+            if ($userSession) {
+                $this->getLocaleService()->setLanguage($userSession->getLocale());
+                $this->getModuleLocaleService()->setLanguage($userSession->getLocale());
+            }
         }
     }
 
