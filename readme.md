@@ -31,11 +31,7 @@ The benefit of Doctrine for the programmer is the ability to focus on the object
 This documentation is targeted to explain structures like file and directories, template, 
 CSS and JavaScript or how you can configure the template
 
-[http://tsi2.dwwe.de/docs/ui/](http://tsi2.dwwe.de/docs/ui/)
-
-Since this template is build on top of the excellent Bootstrap 3 framework, you main source of documentation is here 
-
-[http://getbootstrap.com/css/](http://getbootstrap.com/css/)
+[https://coreui.io/docs/getting-started/introduction/](https://coreui.io/docs/getting-started/introduction/)
 
 ***
 
@@ -43,7 +39,7 @@ Since this template is build on top of the excellent Bootstrap 3 framework, you 
 
 Here you can get an overview of all available elements and get an impression of the way of representation above
 
-[http://tsi2.dwwe.de/docs/template/](http://tsi2.dwwe.de/docs/template/)
+[https://coreui.io/demo/3.0-alpha.1/dark/#main.html](https://coreui.io/demo/3.0-alpha.1/dark/#main.html)
 
 ***
 
