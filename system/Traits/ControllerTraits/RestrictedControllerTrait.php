@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Traits\ControllerTraits;
 
 

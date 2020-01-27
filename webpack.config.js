@@ -1,9 +1,10 @@
-var Encore = require('@symfony/webpack-encore');
+let Encore = require('@symfony/webpack-encore');
 
+/*
 Encore
     .setOutputPath('./views')
     .setPublicPath('/')
-    .addEntry('RestrictedController/profileAction', './.fronted/RestrictedController/profileAction/index.js')
+    .addEntry('ExampleController/exampleAction', './.fronted/ExampleController/exampleAction/index.js')
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
     .enableBuildNotifications()
@@ -18,3 +19,4 @@ Encore
 ;
 
 module.exports = Encore.getWebpackConfig();
+*/

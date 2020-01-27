@@ -1,6 +1,7 @@
 /.less
 /.idea
 /.todo
+/.coreUI
 /config/*
 !/config/default-config.php.dist
 !/config/portal-config.php.dist
@@ -12,7 +13,5 @@
 /vendor
 /meta
 **/node_modules/**
-!assets/js/node_modules/
-**/package-lock.json
-/modules/**
+/package-lock.json
 /yarn-error.log
