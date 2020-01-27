@@ -1,4 +1,17 @@
 {
+    "name": "dwwe/php-orm-react-framework",
+    "description": "PHP & React JS efficiently combined",
+    "keywords": ["php74","php-framework","react","framwork", "javascript"],
+    "homepage": "https://github.com/dwwe2017/php-orm-react-framework",
+    "license": "MIT",
+    "type": "project",
+    "authors": [
+        {
+            "name": "DW </> Web-Engineering",
+            "email": "daniel@dwwe.de",
+            "homepage": "https://dwwe.de"
+        }
+    ],
     "autoload": {
         "psr-0": {
             "Annotations": "./system/",

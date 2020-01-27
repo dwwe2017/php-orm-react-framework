@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Controllers;
 
 use Interfaces\ControllerInterfaces\SettingsControllerInterface;
