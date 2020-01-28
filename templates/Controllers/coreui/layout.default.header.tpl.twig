@@ -2,25 +2,27 @@
     {% import "generic.nav.macro.lib.twig" as navigation %}
 
     <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
-        <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show"><span class="c-header-toggler-icon"></span></button><a class="c-header-brand d-sm-none" href="#"><img class="c-header-brand-full c-d-dark-none" src="assets/img/logo.png" width="29" height="21" alt="TSI2F Logo"><img class="c-header-brand-minimized c-d-dark-none" src="assets/img/logo.png" width="29" height="21" alt="TSI2F Logo"><img class="c-header-brand-full c-d-light-none" src="assets/img/logo.png" width="29" height="21" alt="TSI2F Logo"><img class="c-header-brand-minimized c-d-light-none" src="assets/img/logo.png" width="29" height="21" alt="TSI2F Logo"></a>
-        <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true"><span class="c-header-toggler-icon"></span></button>
+        <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show"><span class="c-header-toggler-icon"> </span></button><a class="c-header-brand d-sm-none" href="#"><img class="c-header-brand-full c-d-dark-none" src="assets/img/logo.png" width="29" height="21" alt="TSI2F Logo"><img class="c-header-brand-minimized c-d-dark-none" src="assets/img/logo.png" width="29" height="21" alt="TSI2F Logo"><img class="c-header-brand-full c-d-light-none" src="assets/img/logo.png" width="29" height="21" alt="TSI2F Logo"><img class="c-header-brand-minimized c-d-light-none" src="assets/img/logo.png" width="29" height="21" alt="TSI2F Logo"></a>
+        <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true"><span class="c-header-toggler-icon"> </span></button>
 
         <!-- Top Left Menu -->
         {{ navigation.top_left(navigation_routes) }}
         <!-- /Top Left Menu -->
 
-        <ul class="c-header-nav mfs-auto">
-            <li class="c-header-nav-item px-3">
-                <button class="c-class-toggler c-header-nav-btn" type="button" id="header-tooltip" data-target="body" data-class="c-dark-theme" data-toggle="c-tooltip" data-placement="bottom" title="Toggle Light/Dark Mode">
-                    <svg class="c-icon c-d-dark-none">
-                        <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-moon"/>
-                    </svg>
-                    <svg class="c-icon c-d-light-none">
-                        <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-sun"/>
-                    </svg>
-                </button>
-            </li>
-        </ul>
+        {% if(b_core_ui_pro is defined and b_core_ui_pro != false) %}
+            <ul class="c-header-nav mfs-auto">
+                <li class="c-header-nav-item px-3">
+                    <button class="c-class-toggler c-header-nav-btn" type="button" id="header-tooltip" data-target="body" data-class="c-dark-theme" data-toggle="c-tooltip" data-placement="bottom" title="Toggle Light/Dark Mode">
+                        <svg class="c-icon c-d-dark-none">
+                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-moon"/>
+                        </svg>
+                        <svg class="c-icon c-d-light-none">
+                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-sun"/>
+                        </svg>
+                    </button>
+                </li>
+            </ul>
+        {% endif %}
 
         <ul class="c-header-nav">
             {% block layout_header_notifications %}
@@ -42,13 +44,15 @@
             {{ navigation.top_right(navigation_routes) }}
             <!-- Top Right User Menu -->
 
-            <li class="c-header-nav-item px-3">
-                <button class="c-class-toggler c-header-nav-btn" type="button" data-target="#aside" data-class="c-sidebar-show">
-                    <svg class="c-icon c-icon-lg mfe-md-2">
-                        <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-applications-settings"/>
-                    </svg>
-                </button>
-            </li>
+            {% if(b_core_ui_pro is defined and b_core_ui_pro != false) %}
+                <li class="c-header-nav-item px-3">
+                    <button class="c-class-toggler c-header-nav-btn" type="button" data-target="#aside" data-class="c-sidebar-show">
+                        <svg class="c-icon c-icon-lg mfe-md-2">
+                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-applications-settings"/>
+                        </svg>
+                    </button>
+                </li>
+            {% endif %}
 
             <!-- Top Right Menu -->
             {#{ navigation.top_right(navigation_routes) }#}

@@ -14,6 +14,8 @@
 $config = [
     //Portal configuration
     "portal_options" => [
+        //CoreUI Pro
+        "b_core_ui_pro" => false,
         //Default or dark layout
         "b_dark_layout" => false,
         //Any visitor can register themselves
