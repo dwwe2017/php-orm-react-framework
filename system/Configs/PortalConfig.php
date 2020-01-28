@@ -75,12 +75,25 @@ class PortalConfig implements VendorExtensionConfigInterface
             "portal_options" => [
                 //DOM HTML attribute
                 "s_html_lang" => $htmlLang,
+                //CoreUI or CoreUI Pro
+                "b_core_ui_pro" => false,
                 //Default or dark layout
                 "b_dark_layout" => false,
                 //Any visitor can register themselves
                 "b_allow_registration" => false,
                 //When logging in, users can select the option to remain permanently logged on
                 "b_allow_stay_logged_in" => true,
+                //Array of Js files that should not be minimized and permanently integrated
+                "a_non_minified_js" => [
+                    "assets/vendors/pace-progress/js/pace.min.js",
+                    "assets/vendors/@coreui/coreui/js/coreui.bundle.min.js"
+                ],
+                //Array of CSS files that should not be minimized and permanently integrated
+                "a_non_minified_css" => [
+                    "assets/css/coreui/coreui.min.css",
+                    "assets/vendors/pace-progress/css/pace.min.css",
+                    "assets/vendors/@coreui/icons/css/free.min.css"
+                ],
             ]
         ];
     }

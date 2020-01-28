@@ -153,7 +153,7 @@ class TemplateConfig implements VendorExtensionConfigInterface
                 "optimizations" => $isDebug ? 0 : -1,
             ],
             "default_js" => [],
-            "default_css" => [],
+            "default_css" => []
         ];
     }
 }
