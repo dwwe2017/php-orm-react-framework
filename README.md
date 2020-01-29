@@ -56,7 +56,7 @@ CoreUI is an Open Source Bootstrap Admin Template. But CoreUI is not just anothe
 
 [https://github.com/coreui/coreui-free-react-admin-template](https://github.com/coreui/coreui-free-react-admin-template)
 
-###### Please note that we use both CoreUI and CoreUI Pro in our framwork. We have acquired a valid license for CoreUI Pro. If you want to use the Pro version of the CoreUI template in your project, you will most likely need to purchase a license. You can find more information at https://coreui.io/pro/.
+#### Please note that we use both CoreUI and CoreUI Pro in our framwork. We have acquired a valid license for CoreUI Pro. If you want to use the Pro version of the CoreUI template in your project, you will most likely need to purchase a license. You can find more information at https://coreui.io/pro/.
 
 ***
 
