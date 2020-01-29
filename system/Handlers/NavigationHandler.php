@@ -1,4 +1,27 @@
 <?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2020 DW Web-Engineering
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 namespace Handlers;
 
@@ -26,19 +49,24 @@ class NavigationHandler
     use InstantiationStaticsUtilTrait;
 
     /**
-     * @var string
+     * @internal Routes of this type are only output at levels based on a RestrictedController
      */
     const RESTRICTED_NAV = "restrictedFront";
 
     /**
-     * @var string
+     * @internal Routes of this type are only output at levels based on a PublicController
      */
     const PUBLIC_NAV = "publicFront";
 
     /**
-     * @var string
+     * @internal Routes of this type are only output at levels based on a SettingsController
      */
     const SETTINGS_NAV = "settingsFront";
+
+    /**
+     * @internal Routes of this kind are displayed at every level
+     */
+    const ANY_NAV = "anyFront";
 
     /**
      * @var SessionHandler
@@ -249,8 +277,17 @@ class NavigationHandler
                             }
 
                             if (!$methodSubNavigationAnnotation->get("href")) {
-                                $methodSubNavigationAnnotation->set("href", sprintf("index.php?module=%s&controller=%s&action=%s",
-                                    $moduleShortNameFromMethod, $controllerShortNameFromMethod, $actionShortNameFromMethod));
+                                if (strcasecmp($controllerShortNameFromMethod, "index") == 0
+                                    && strcasecmp($actionShortNameFromMethod, "index") == 0) {
+                                    $methodSubNavigationAnnotation->set("href", sprintf("index.php?module=%s",
+                                        $moduleShortNameFromMethod));
+                                } elseif (strcasecmp($actionShortNameFromMethod, "index") == 0) {
+                                    $methodSubNavigationAnnotation->set("href", sprintf("index.php?module=%s&controller=%s",
+                                        $moduleShortNameFromMethod, $controllerShortNameFromMethod));
+                                } else {
+                                    $methodSubNavigationAnnotation->set("href", sprintf("index.php?module=%s&controller=%s&action=%s",
+                                        $moduleShortNameFromMethod, $controllerShortNameFromMethod, $actionShortNameFromMethod));
+                                }
                             }
 
                             $methodInfoAnnotation = AnnotationHelper::init($method, "Info");
@@ -285,32 +322,32 @@ class NavigationHandler
              * @see templates/Controllers/coreui/generic.nav.macro.lib.twig::macro top_right
              */
             $this->routes[self::RESTRICTED_NAV]["user_account"]["avatar"] = $user->getAvatar();
-
-            $this->routes[self::RESTRICTED_NAV]["crump_bar"] = [
-                [
-                    "options" => [
-                        "text" => sprintf("%s", ServerHelper::getVersion()),
-                        "title" => "OS",
-                        "href" => "javascript:void(0)",
-                        "icon" => "cil-3d"
-                    ]
-                ],
-                [
-                    "options" => [
-                        "text" => sprintf("PHP %s", phpversion()),
-                        "href" => "javascript:void(0)",
-                        "icon" => "cil-code"
-                    ]
-                ],
-                [
-                    "options" => [
-                        "text" => date("d.m.Y"),
-                        "href" => "javascript:void(0)",
-                        "icon" => "cil-calendar"
-                    ]
-                ]
-            ];
         }
+
+        $this->routes[self::ANY_NAV]["crump_bar"] = [
+            [
+                "options" => [
+                    "text" => sprintf("%s", ServerHelper::getVersion()),
+                    "title" => "OS",
+                    "href" => "javascript:void(0)",
+                    "icon" => "cil-3d"
+                ]
+            ],
+            [
+                "options" => [
+                    "text" => sprintf("PHP %s", phpversion()),
+                    "href" => "javascript:void(0)",
+                    "icon" => "cil-code"
+                ]
+            ],
+            [
+                "options" => [
+                    "text" => date("d.m.Y"),
+                    "href" => "javascript:void(0)",
+                    "icon" => "cil-calendar"
+                ]
+            ]
+        ];
     }
 
     /**
@@ -321,14 +358,14 @@ class NavigationHandler
         if (isset($_GET["module"]) && !empty($_GET["module"])) {
             $this->breadcrumb_routes[] = [
                 "current" => !isset($_GET["controller"]),
-                "text" => StringHelper::init($_GET["module"])->decamelize()->ucFirst()->getString(),
+                "text" => StringHelper::init($_GET["module"])->decamelize()->ucFirst()->replace("_", " ")->getString(),
                 "href" => isset($_GET["controller"]) ? sprintf("index.php?module=%s", $_GET["module"]) : "javascript:void(0)"
             ];
 
             if (isset($_GET["controller"]) && !empty($_GET["controller"])) {
                 $this->breadcrumb_routes[] = [
                     "current" => !isset($_GET["action"]),
-                    "text" => StringHelper::init($_GET["controller"])->decamelize()->ucFirst()->getString(),
+                    "text" => StringHelper::init($_GET["controller"])->decamelize()->ucFirst()->replace("_", " ")->getString(),
                     "href" => isset($_GET["action"]) ? sprintf("index.php?module=%s&controller=%s", $_GET["module"], $_GET["controller"]) : "javascript:void(0)"
                 ];
             }
@@ -336,7 +373,7 @@ class NavigationHandler
             if (isset($_GET["controller"]) && !empty($_GET["controller"])) {
                 $this->breadcrumb_routes[] = [
                     "current" => !isset($_GET["action"]),
-                    "text" => StringHelper::init($_GET["controller"])->decamelize()->ucFirst()->getString(),
+                    "text" => StringHelper::init($_GET["controller"])->decamelize()->ucFirst()->replace("_", " ")->getString(),
                     "href" => isset($_GET["action"]) ? sprintf("index.php?controller=%s", $_GET["controller"]) : "javascript:void(0)"
                 ];
             }
@@ -374,6 +411,10 @@ class NavigationHandler
             $result = $this->routes[$classSiteAccessLevel];
         }
 
+        if(key_exists(self::ANY_NAV, $this->routes)){
+            $result = array_merge($result, $this->routes[self::ANY_NAV]);
+        }
+
         return $result;
     }
 
@@ -393,7 +434,6 @@ class NavigationHandler
     {
         if (is_array($accessRoleConstant)) {
             $result = [];
-
             foreach ($accessRoleConstant as $key => $item) {
                 switch ($item) {
                     case Group::ROLE_ROOT:
@@ -415,6 +455,7 @@ class NavigationHandler
             }
 
             return $result;
+
         } else {
             switch ($accessRoleConstant) {
                 case Group::ROLE_ROOT:

@@ -1,11 +1,19 @@
 {% block layout_css %}
 
-    <!--=== CoreUI ===-->
-    <link href="assets/css/style.min.css" rel="stylesheet">
-    <link href="assets/vendors/pace-progress/css/pace.min.css" rel="stylesheet">
-    <link href="assets/vendors/@coreui/icons/css/free.min.css" rel="stylesheet">
+    {# @internal
+    Non minified CSS
+    @see PortalConfig::getOptionsDefault() ["a_non_minified_css"]
+    #}
+    {% if(a_non_minified_css is defined and a_non_minified_css != false) %}
+        {% for non_minified_css in a_non_minified_css %}
+            <link href="{{ non_minified_css|e }}" rel="stylesheet">
+        {% endfor %}
+    {% endif %}
 
-    <!--=== CSS ===-->
+    {# @internal
+    Minified CSS
+    @see TemplateConfig::getOptionsDefault() ["default_css"]
+    #}
     {% if minified_css != false %}
         <!--=== Minified ===-->
         <link href="{{ minified_css }}" rel="stylesheet" type="text/css">

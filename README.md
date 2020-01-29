@@ -1,10 +1,10 @@
-# DWWE - Php ORM React Framework (PhOrmR)
+# DWWE - Php ORM React Framework (PhOrm RF)
 PHP & React JS efficiently combined
 
 ## General informations
 
 Why we develop our own framework when there are many others? Quite simply, to tailor it to the needs that are needed.
-The PhOrmR Framework offers a professional possibility to develop completely detached from the core.
+The PhOrm React Framework offers a professional possibility to develop completely detached from the core.
 
 Below you may find some useful links that lead to necessary documentations!
 
@@ -55,6 +55,8 @@ Here you can get an overview of all available elements and get an impression of 
 CoreUI is an Open Source Bootstrap Admin Template. But CoreUI is not just another Admin Template. It goes way beyond hitherto admin templates thanks to transparent code and file structure. And if that's not enough, let’s just add that CoreUI consists bunch of unique features and over 1000 high quality icons. In the folder ```src/views/``` you will find a lot of examples of how an implementation with React can look like. 
 
 [https://github.com/coreui/coreui-free-react-admin-template](https://github.com/coreui/coreui-free-react-admin-template)
+
+#### Please note that we use both CoreUI and CoreUI Pro in our framwork. We have acquired a valid license for CoreUI Pro. If you want to use the Pro version of the CoreUI template in your project, you will most likely need to purchase a license. You can find more information at https://coreui.io/pro/.
 
 ***
 

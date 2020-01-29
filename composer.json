@@ -36,7 +36,8 @@
     "config": {
         "platform": {
             "php": "7.4"
-        }
+        },
+        "optimize-autoloader": true
     },
     "minimum-stability": "stable",
     "require": {

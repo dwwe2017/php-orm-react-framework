@@ -36,10 +36,20 @@
         {% endif %}
     {% endif %}
 
-    <script src="assets/vendors/pace-progress/js/pace.min.js" type="text/javascript"></script>
-    <script src="assets/vendors/@coreui/coreui-pro/js/coreui.bundle.min.js" type="text/javascript"></script>
+    {# @internal
+    Non minified JS
+    @see PortalConfig::getOptionsDefault() ["a_non_minified_js"]
+    #}
+    {% if(a_non_minified_js is defined and a_non_minified_js != false) %}
+        {% for non_minified_js in a_non_minified_js %}
+            <script src="{{ non_minified_js|e }}" type="text/javascript"></script>
+        {% endfor %}
+    {% endif %}
 
-    <!--=== JavaScript ===-->
+    {# @internal
+    Minified JS
+    @see TemplateConfig::getOptionsDefault() ["default_js"]
+    #}
     {% if minified_js != false %}
         <script type="text/javascript" src="{{ minified_js }}"></script>
     {% endif %}
