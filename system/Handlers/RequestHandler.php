@@ -43,6 +43,11 @@ class RequestHandler
     use InstantiationStaticsUtilTrait;
 
     /**
+     * @var AbstractBase
+     */
+    private AbstractBase $controllerInstance;
+
+    /**
      * @var ConfigValues
      */
     private ConfigValues $headers;
@@ -98,6 +103,8 @@ class RequestHandler
      */
     public function __construct(AbstractBase $controllerInstance)
     {
+        $this->controllerInstance = $controllerInstance;
+
         $this->headers = ConfigFactory::fromArray(getallheaders() ?? []);
         $this->request = ConfigFactory::fromArray($_REQUEST ?? []);
         $this->post = ConfigFactory::fromArray($_POST ?? []);
@@ -131,11 +138,11 @@ class RequestHandler
         /**
          * @see RequestHandler::isXml()
          */
-        $this->xml = $controllerInstance instanceof RestrictedXmlController
-            || $controllerInstance instanceof PublicXmlController
+        $this->xml = $this->controllerInstance instanceof RestrictedXmlController
+            || $this->controllerInstance instanceof PublicXmlController
             || $this->isXmlRequest();
 
-        $this->api = $this->isXml() && $controllerInstance instanceof ApiController;
+        $this->api = $this->isXml() && $this->controllerInstance instanceof ApiController;
     }
 
     /**
@@ -226,11 +233,13 @@ class RequestHandler
     }
 
     /**
-     * @param string $default
+     * @param string|null $default
      */
-    public function doRedirect($default = "?module=dashboard"): void
+    public function doRedirect(?string $default = null): void
     {
-        $target = $this->getRequest()->get("redirect", $default);
+        $target = $this->getRequest()->get("redirect", $default
+            ?? $this->controllerInstance->renderEntry()
+        );
 
         if ($target) {
             header("Location: " . trim($target));

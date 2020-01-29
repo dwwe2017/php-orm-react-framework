@@ -35,6 +35,7 @@ use Configs\TemplateConfig;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 
 /**
@@ -165,9 +166,11 @@ class ModuleManager
         /**
          * Correct entry point if specified module does not exist or an error exists
          */
-        if(strcasecmp($this->getEntryModule(), "Dashboard") !== 0
-        && !class_exists(sprintf("Modules\\%s\\Controllers\\IndexController", ucfirst($this->getEntryModule())))){
-            $this->entryModule = "Dashboard";
+        if(!class_exists(sprintf("Modules\\%s\\Controllers\\IndexController", ucfirst($this->getEntryModule())))){
+            foreach (DirHelper::init($this->getModulesDir())->getScan() as $moduleDir){
+                $this->entryModule = $moduleDir;
+                break;
+            }
         }
     }
 

@@ -427,9 +427,9 @@ abstract class AbstractBase
     /**
      *
      */
-    protected final function renderEntry()
+    public final function renderEntry()
     {
-        $this->redirect($this->getModuleManager()->getEntryModule(), "index", "index");
+        $this->redirect($this->getModuleManager()->getEntryModule());
     }
 
     /**

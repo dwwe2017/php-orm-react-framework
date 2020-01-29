@@ -29,7 +29,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>500 | Tea(m)speak Interface</title>
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/coreui/coreui.min.css" rel="stylesheet">
     <link href="assets/vendors/pace-progress/css/pace.min.css" rel="stylesheet">
 </head>
 <body class="c-app flex-row align-items-center">
@@ -53,6 +53,6 @@
     </div>
 </div>
 <script src="assets/vendors/pace-progress/js/pace.min.js"></script>
-<script src="assets/vendors/@coreui/coreui-pro/js/coreui.bundle.min.js"></script>
+<script src="assets/vendors/@coreui/coreui/js/coreui.bundle.min.js"></script>
 </body>
 </html>
