@@ -5,13 +5,20 @@
     "homepage": "https://github.com/dwwe2017/php-orm-react-framework",
     "license": "MIT",
     "type": "project",
+    "readme": "README.md",
     "authors": [
         {
             "name": "DW </> Web-Engineering",
             "email": "daniel@dwwe.de",
-            "homepage": "https://dwwe.de"
+            "homepage": "https://dwwe.de",
+            "role": "Developer"
         }
     ],
+    "support": {
+        "source": "https://github.com/dwwe2017/php-orm-react-framework",
+        "issues": "https://github.com/dwwe2017/php-orm-react-framework/issues",
+        "wiki": "https://github.com/dwwe2017/php-orm-react-framework/wiki"
+    },
     "autoload": {
         "psr-0": {
             "Annotations": "./system/",
