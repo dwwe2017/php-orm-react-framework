@@ -50,11 +50,12 @@ Here you can get an overview of all available elements and get an impression of 
 
 ***
 
-## CoreUI Free React Admin Template v2
+## CoreUI Free React and Bootstrap Admin Template v2/3
 
 CoreUI is an Open Source Bootstrap Admin Template. But CoreUI is not just another Admin Template. It goes way beyond hitherto admin templates thanks to transparent code and file structure. And if that's not enough, let’s just add that CoreUI consists bunch of unique features and over 1000 high quality icons. In the folder ```src/views/``` you will find a lot of examples of how an implementation with React can look like. 
 
-[https://github.com/coreui/coreui-free-react-admin-template](https://github.com/coreui/coreui-free-react-admin-template)
+- Bootstrap: [https://github.com/coreui/coreui-free-bootstrap-admin-template/tree/v3-next](https://github.com/coreui/coreui-free-bootstrap-admin-template/tree/v3-next)
+- React: [https://github.com/coreui/coreui-free-react-admin-template](https://github.com/coreui/coreui-free-react-admin-template)
 
 #### Please note that we use both CoreUI and CoreUI Pro in our framwork. We have acquired a valid license for CoreUI Pro. If you want to use the Pro version of the CoreUI template in your project, you will most likely need to purchase a license. You can find more information at https://coreui.io/pro/.
 
