@@ -44,6 +44,7 @@ use Handlers\ReactHandler;
 use Handlers\RequestHandler;
 use Handlers\SessionHandler;
 use Helpers\AbsolutePathHelper;
+use Helpers\AnnotationHelper;
 use Interfaces\ControllerInterfaces\XmlControllerInterface;
 use Managers\ModuleManager;
 use Managers\ServiceManager;
@@ -287,9 +288,12 @@ abstract class AbstractBase
 
     /**
      * @param string $action
+     * @throws AnnotationException
+     * @throws InvalidArgumentException
      * @throws LoaderError
      * @throws MinifyCssException
      * @throws MinifyJsException
+     * @throws ReflectionException
      * @throws RuntimeError
      * @throws SyntaxError
      */
@@ -309,9 +313,12 @@ abstract class AbstractBase
 
     /**
      * @param string $action
+     * @throws AnnotationException
+     * @throws InvalidArgumentException
      * @throws LoaderError
      * @throws MinifyCssException
      * @throws MinifyJsException
+     * @throws ReflectionException
      * @throws RuntimeError
      * @throws SyntaxError
      */
@@ -326,15 +333,47 @@ abstract class AbstractBase
 
     /**
      * @param string $action
+     * @throws AnnotationException
+     * @throws InvalidArgumentException
      * @throws LoaderError
      * @throws MinifyCssException
      * @throws MinifyJsException
+     * @throws ReflectionException
      * @throws RuntimeError
      * @throws SyntaxError
      */
     protected function postRun(string $action): void
     {
         $methodName = sprintf("%sAction", $action);
+
+        try {
+            /**
+             * @see Redirect
+             */
+            $selfReflection = $this->getReflectionHelper();
+            $methodAccess = AnnotationHelper::init($selfReflection->getMethod($methodName), "Redirect");
+            if (!$methodAccess->isEmpty()) {
+                $this->redirect(
+                    $methodAccess->get("module", null),
+                    $methodAccess->get("controller", null),
+                    $methodAccess->get("action", null),
+                    $methodAccess->get("querys", []),
+                    $methodAccess->get("tab", "")
+                );
+            }
+        } catch (AnnotationException|InvalidArgumentException|ReflectionException $e) {
+            /**
+             * @internal If an error occurs here, the entire system should not crash during live operation
+             */
+            if ($this->isDebugMode()) {
+                throw $e;
+            }
+
+            /**
+             * @internal When debug mode is active, however, an exception should be thrown as normal
+             */
+            $this->getLoggerService()->error($e->getMessage(), $e->getTrace());
+        }
 
         /**
          * @internal Here also the correct view is automatically set
