@@ -51,6 +51,7 @@ class Redirect
 
     /**
      * @var array
+     * @example {"param": "value", "param2": "value2", ...}
      */
     public array $querys = [];
 
