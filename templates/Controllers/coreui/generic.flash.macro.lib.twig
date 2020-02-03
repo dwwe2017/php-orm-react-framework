@@ -1,0 +1,29 @@
+{#
+@macro message
+@param messages array
+@example types = primary, secondary, success, danger, warning, info, light, dark
+ #}
+{% macro message(messages=[], type="info") %}
+
+    {% if type == "error" %}
+        {% set type="danger" %}
+    {% endif %}
+
+    {% if messages|length > 1 %}
+        <div class="alert alert-{{ type }}" role="alert">
+            {% if type == "danger" %}
+                <h4 class="alert-heading">{% trans %}ERROR{% endtrans %}</h4>
+            {% else %}
+                <h4 class="alert-heading">{{ type|upper|trans }}</h4>
+            {% endif %}
+            <hr>
+            {% for msg in messages %}
+                <p class="mb-0">{{ msg }}</p>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% for msg in messages %}
+            <div class="alert alert-{{ type }}" role="alert">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}

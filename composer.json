@@ -72,6 +72,8 @@
         "gettext/gettext": "^4.6",
         "twig/extensions": "^1.5",
         "blocktrail/cryptojs-aes-php": "^0.1.0",
-        "mikechip/php-httpauth": "1.0.0"
+        "mikechip/php-httpauth": "1.0.0",
+        "slim/flash": "^0.4.0",
+        "kanellov/slim-twig-flash": "^0.2.0"
     }
 }

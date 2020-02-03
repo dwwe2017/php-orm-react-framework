@@ -37,6 +37,7 @@ use Exceptions\MinifyJsException;
 use Handlers\BufferHandler;
 use Handlers\CacheHandler;
 use Handlers\ErrorHandler;
+use Handlers\FlashHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
@@ -179,6 +180,12 @@ abstract class AbstractBase
          * !Not dynamically modifiable
          */
         ErrorHandler::init($this->getConfig(), $this->getLoggerService());
+
+        /**
+         * Flash message handler
+         * @see AbstractBaseTrait::getFlashHandler() // Available in modules
+         */
+        $this->flashHandler = FlashHandler::init();
 
         /**
          * Request handler
@@ -376,11 +383,6 @@ abstract class AbstractBase
         }
 
         /**
-         * @internal Here also the correct view is automatically set
-         */
-        $this->setTemplate($methodName);
-
-        /**
          * @internal Auto-inclusion for Javascript
          * @see ModuleManager::getJsAssetsPath()
          * @see ModuleManager::getMethodJsAction()
@@ -398,6 +400,11 @@ abstract class AbstractBase
          * Run method
          */
         $this->{$methodName}();
+
+        /**
+         * @internal Here also the correct view is automatically set
+         */
+        $this->setTemplate($methodName);
 
         /**
          * Render template and views

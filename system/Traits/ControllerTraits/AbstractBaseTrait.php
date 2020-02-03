@@ -37,6 +37,7 @@ use Gettext\Translations;
 use Gettext\Translator;
 use Handlers\CacheHandler;
 use Handlers\BufferHandler;
+use Handlers\FlashHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
@@ -156,6 +157,11 @@ trait AbstractBaseTrait
      * @var CacheHandler
      */
     private CacheHandler $moduleCacheHandler;
+
+    /**
+     * @var FlashHandler
+     */
+    private FlashHandler $flashHandler;
 
     /**
      * @var RequestHandler
@@ -449,6 +455,15 @@ trait AbstractBaseTrait
         }
 
         $this->getJsHandler()->setJsContent($files);
+    }
+
+    /**
+     * @return FlashHandler
+     * @example $this->getFlashHandler()->addSuccess("Success!")
+     */
+    protected final function getFlashHandler(): FlashHandler
+    {
+        return $this->flashHandler;
     }
 
     /**

@@ -28,7 +28,9 @@ namespace Services;
 
 use Configs\PortalConfig;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
+use Knlv\Slim\Views\TwigMessages;
 use Managers\ModuleManager;
+use Slim\Flash\Messages;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Twig\Environment;
@@ -109,6 +111,12 @@ class TemplateService implements VendorExtensionServiceInterface
      */
     public final function getEnvironment(): Environment
     {
+        /**
+         * @author https://github.com/kanellov/slim-twig-flash
+         * @internal In templates use flash() or flash('some_key') to fetch messages from Flash service
+         */
+        $this->environment->addExtension(new TwigMessages(new Messages()));
+
         /**
          * @see sha1()
          */
