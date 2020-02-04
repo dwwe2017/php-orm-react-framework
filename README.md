@@ -14,6 +14,12 @@ To create a new Phorm RF project using Composer you can use the create-project c
 
 ```composer create-project dwwe/php-orm-react-framework project-dir```
 
+After the project has been successfully created, install the npm library, change to the project directory and use the command 
+
+```yarn install```
+
+Repeat the same step again in the ```assets/js``` directory, when that's done you can get started!
+
 ***
 
 ## React
