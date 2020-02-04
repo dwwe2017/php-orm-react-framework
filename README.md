@@ -1,12 +1,20 @@
-# DWWE - Php ORM React Framework (PhOrm RF)
+# DWWE - Php ORM React Framework (Phorm RF)
 PHP & React JS efficiently combined
 
 ## General informations
 
 Why we develop our own framework when there are many others? Quite simply, to tailor it to the needs that are needed.
-The PhOrm React Framework offers a professional possibility to develop completely detached from the core.
+The Phorm React Framework offers a professional possibility to develop completely detached from the core.
 
 Below you may find some useful links that lead to necessary documentations!
+
+## Installation
+
+To create a new Phorm RF project using Composer you can use the create-project command. Pass the package name, and the directory to create the project in. You can also provide a version as third argument, otherwise the latest version is used.
+
+```composer create-project dwwe/php-orm-react-framework project-dir```
+
+***
 
 ## React
 

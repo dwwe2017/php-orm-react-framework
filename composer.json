@@ -60,7 +60,6 @@
         "phpfastcache/couchdb": "^1.0",
         "phpfastcache/riak-client": "^3.4",
         "predis/predis": "^1.1",
-        "mongodb/mongodb": "^1.4",
         "ezyang/htmlpurifier": "^4.11",
         "guzzlehttp/guzzle": "^6.3",
         "twig/twig": "^2.11",
@@ -75,5 +74,8 @@
         "mikechip/php-httpauth": "1.0.0",
         "slim/flash": "^0.4.0",
         "kanellov/slim-twig-flash": "^0.2.0"
+    },
+    "suggest": {
+        "mongodb/mongodb": "^1.4"
     }
 }
