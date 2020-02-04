@@ -120,7 +120,7 @@ class ReactHandler
     private final function __construct(AbstractBase $controllerInstance, ModuleManager $moduleManager)
     {
         $this->baseDir = $controllerInstance->getBaseDir();
-        $this->systemControllerEntryPointFile = FileHelper::init(sprintf("%s/assets/js/react/entrypoints.json", $this->baseDir));
+        $this->systemControllerEntryPointFile = FileHelper::init(sprintf("%s/assets/react/entrypoints.json", $this->baseDir));
         $this->systemControllerEntryPointConfig = $this->systemControllerEntryPointFile->isReadable()
             ? new ConfigValues(json_decode($this->systemControllerEntryPointFile->getContents("[]"), true)) : new ConfigValues([]);
 
@@ -164,7 +164,7 @@ class ReactHandler
      */
     public function addRelativeBaseAssetJsReactPath($file)
     {
-        return sprintf("assets/js/react%s", $file);
+        return sprintf("assets/react%s", $file);
     }
 
     /**

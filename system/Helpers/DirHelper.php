@@ -79,11 +79,12 @@ class DirHelper
      */
     public function getScan(array $filter = [], array $withOut = [".", ".."])
     {
-        if ($this->exceptionClass) {
-            FileHelper::init($this->dir, $this->exceptionClass)->isReadable();
+        $result = [];
+
+        if (!FileHelper::init($this->dir, $this->exceptionClass)->isReadable()) {
+            return $result;
         }
 
-        $result = [];
         foreach (scandir($this->dir) as $item) {
             if (in_array($item, $withOut)) {
                 continue;
@@ -138,8 +139,8 @@ class DirHelper
         FileHelper::init($this->dir)->isWritable(true);
         $htaccess = sprintf("%s/.htaccess", $this->dir);
 
-        if(file_exists($htaccess)){
-           return true;
+        if (file_exists($htaccess)) {
+            return true;
         }
 
         return @file_put_contents($htaccess, "# Apache 2.2
@@ -166,7 +167,7 @@ class DirHelper
         FileHelper::init($this->dir)->isWritable(true);
         $htaccess = sprintf("%s/.htaccess", $this->dir);
 
-        if(file_exists($htaccess) || empty($allowed_files_types_regex)){
+        if (file_exists($htaccess) || empty($allowed_files_types_regex)) {
             return true;
         }
 
@@ -176,8 +177,8 @@ class DirHelper
     RewriteRule !(%s)$ - [L,R=403]
 </IfModule>", $with_http_auth_rewrite ? "\n\tRewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]" : "",
                     is_array($allowed_files_types_regex)
-                ? sprintf("\.(%s)", implode("|", $allowed_files_types_regex))
-                : $allowed_files_types_regex)
+                        ? sprintf("\.(%s)", implode("|", $allowed_files_types_regex))
+                        : $allowed_files_types_regex)
             ) !== false;
     }
 }

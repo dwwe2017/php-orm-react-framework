@@ -5,13 +5,20 @@
     "homepage": "https://github.com/dwwe2017/php-orm-react-framework",
     "license": "MIT",
     "type": "project",
+    "readme": "README.md",
     "authors": [
         {
             "name": "DW </> Web-Engineering",
             "email": "daniel@dwwe.de",
-            "homepage": "https://dwwe.de"
+            "homepage": "https://dwwe.de",
+            "role": "Developer"
         }
     ],
+    "support": {
+        "source": "https://github.com/dwwe2017/php-orm-react-framework",
+        "issues": "https://github.com/dwwe2017/php-orm-react-framework/issues",
+        "wiki": "https://github.com/dwwe2017/php-orm-react-framework/wiki"
+    },
     "autoload": {
         "psr-0": {
             "Annotations": "./system/",
@@ -53,7 +60,6 @@
         "phpfastcache/couchdb": "^1.0",
         "phpfastcache/riak-client": "^3.4",
         "predis/predis": "^1.1",
-        "mongodb/mongodb": "^1.4",
         "ezyang/htmlpurifier": "^4.11",
         "guzzlehttp/guzzle": "^6.3",
         "twig/twig": "^2.11",
@@ -65,6 +71,11 @@
         "gettext/gettext": "^4.6",
         "twig/extensions": "^1.5",
         "blocktrail/cryptojs-aes-php": "^0.1.0",
-        "mikechip/php-httpauth": "1.0.0"
+        "mikechip/php-httpauth": "1.0.0",
+        "slim/flash": "^0.4.0",
+        "kanellov/slim-twig-flash": "^0.2.0"
+    },
+    "suggest": {
+        "mongodb/mongodb": "^1.4"
     }
 }

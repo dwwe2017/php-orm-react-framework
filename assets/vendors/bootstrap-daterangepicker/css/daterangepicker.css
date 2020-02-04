@@ -1,4 +1,15 @@
 :root {
+  --primary-legacy-theme: #321fdb;
+  --secondary-legacy-theme: #ced2d8;
+  --success-legacy-theme: #2eb85c;
+  --info-legacy-theme: #39f;
+  --warning-legacy-theme: #f9b115;
+  --danger-legacy-theme: #e55353;
+  --light-legacy-theme: #ebedef;
+  --dark-legacy-theme: #636f83;
+}
+
+:root {
   --primary-dark-theme: #4638c2;
   --secondary-dark-theme: #4c4f54;
   --success-dark-theme: #45a164;
@@ -35,7 +46,7 @@
   border-color: #181924;
 }
 
-.c-app:not(.c-dark-theme) .daterangepicker {
+.c-app:not(.c-legacy-theme):not(.c-dark-theme) .daterangepicker {
   border: 0;
   box-shadow: 0 4px 5px 0 rgba(60, 75, 100, .14), 0 1px 10px 0 rgba(60, 75, 100, .12), 0 2px 4px -1px rgba(60, 75, 100, .20);
 }
@@ -172,6 +183,10 @@
   background-color: #4799eb;
 }
 
+.c-legacy-theme .daterangepicker td.active {
+  background-color: #39f;
+}
+
 .daterangepicker td.active:hover {
   background-color: #39f;
   border-color: transparent;
@@ -180,6 +195,10 @@
 
 .c-dark-theme .daterangepicker td.active:hover {
   background-color: #4799eb;
+}
+
+.c-legacy-theme .daterangepicker td.active:hover {
+  background-color: #39f;
 }
 
 .daterangepicker th.month {
@@ -329,6 +348,10 @@
 
 .c-dark-theme .daterangepicker .ranges li.active {
   background-color: #4799eb;
+}
+
+.c-legacy-theme .daterangepicker .ranges li.active {
+  background-color: #39f;
 }
 
 /*  Larger Screen Styling */

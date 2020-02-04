@@ -10,7 +10,7 @@ msgstr ""
 "X-Generator: Poedit 2.2.4\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Last-Translator: Daniel Welzl <daniel@dwwe.de>\n"
+"Last-Translator: DW Web-Engineering <daniel@dwwe.de>\n"
 "Language: de_DE\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 

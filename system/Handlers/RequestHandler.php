@@ -237,9 +237,8 @@ class RequestHandler
      */
     public function doRedirect(?string $default = null): void
     {
-        $target = $this->getRequest()->get("redirect", $default
-            ?? $this->controllerInstance->renderEntry()
-        );
+        $target = $this->getRequest()->get("redirect", $default)
+            ?? $this->controllerInstance->renderEntry();
 
         if ($target) {
             header("Location: " . trim($target));

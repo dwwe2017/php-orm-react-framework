@@ -90,7 +90,7 @@ class PortalConfig implements VendorExtensionConfigInterface
                 ],
                 //Array of CSS files that should not be minimized and permanently integrated
                 "a_non_minified_css" => [
-                    "assets/css/coreui/coreui.min.css",
+                    "assets/vendors/@coreui/coreui/css/coreui.min.css",
                     "assets/vendors/pace-progress/css/pace.min.css",
                     "assets/vendors/@coreui/icons/css/free.min.css"
                 ],
