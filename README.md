@@ -18,7 +18,7 @@ After the project has been successfully created, install the npm library, change
 
 ```yarn install```
 
-Repeat the same step again in the ```assets/js``` directory, when that's done you can get started!
+Repeat the same step again in the ```assets``` directory, when that's done you can get started!
 If you have not installed yarn and npm you can do this here [https://classic.yarnpkg.com/en/docs/install](https://classic.yarnpkg.com/en/docs/install)
 
 ***
