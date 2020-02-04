@@ -28,6 +28,7 @@ Encore
     .setOutputPath('./react')
     .setPublicPath('/')
     .addEntry('RestrictedController', './react/.components/RestrictedController/index.js')
+    .addEntry('PublicController', './react/.components/PublicController/index.js')
     .disableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
     .enableSourceMaps(!Encore.isProduction())

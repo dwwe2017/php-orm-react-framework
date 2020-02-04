@@ -2,8 +2,20 @@
     {% import "generic.nav.macro.lib.twig" as navigation %}
 
     <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
-        <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show"><span class="c-header-toggler-icon"> </span></button><a class="c-header-brand d-sm-none" href="#"><img class="c-header-brand-full c-d-dark-none" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo"><img class="c-header-brand-minimized c-d-dark-none" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo"><img class="c-header-brand-full c-d-default-none" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo"><img class="c-header-brand-minimized c-d-default-nonee" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo"></a>
-        <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true"><span class="c-header-toggler-icon"> </span></button>
+        <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show">
+            <span class="c-header-toggler-icon"> </span>
+        </button>
+        <a class="c-header-brand d-sm-none" href="#">
+            {% if(b_core_ui_pro is defined and b_core_ui_pro != false) %}
+                <img class="c-header-brand-full c-d-dark-none" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
+                <img class="c-header-brand-minimized c-d-dark-none" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
+            {% endif %}
+            <img class="c-header-brand-full c-d-default-none" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
+            <img class="c-header-brand-minimized c-d-default-nonee" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
+        </a>
+        <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
+            <span class="c-header-toggler-icon"> </span>
+        </button>
 
         <!-- Top Left Menu -->
         {{ navigation.top_left(navigation_routes) }}
