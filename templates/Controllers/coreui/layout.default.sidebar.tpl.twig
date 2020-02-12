@@ -1,18 +1,20 @@
 {% block layout_sidebar %}
     {% import "generic.nav.macro.lib.twig" as navigation %}
 
-    <!-- Sidebar -->
-    <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
-        <div class="c-sidebar-brand">
-            <img class="c-sidebar-brand-full" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
-            <img class="c-sidebar-brand-minimized" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
+    {% if(navigation_routes is defined and navigation_routes.sidebar is defined) %}
+        <!-- Sidebar -->
+        <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
+            <div class="c-sidebar-brand">
+                <img class="c-sidebar-brand-full" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
+                <img class="c-sidebar-brand-minimized" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
+            </div>
+
+            {{ navigation.sidebar(navigation_routes) }}
+
+            <button class="c-sidebar-minimizer c-brand-minimizer" type="button"> </button>
         </div>
-
-        {{ navigation.sidebar(navigation_routes) }}
-
-        <button class="c-sidebar-minimizer c-brand-minimizer" type="button"> </button>
-    </div>
-    <!-- /Sidebar -->
+        <!-- /Sidebar -->
+    {% endif %}
 
 {% block layout_sidebar_aside %}
     {# block layout_sidebar_aside #}

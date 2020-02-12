@@ -4,11 +4,6 @@
       "js": [
         "/RestrictedController.js"
       ]
-    },
-    "PublicController": {
-      "js": [
-        "/PublicController.js"
-      ]
     }
   }
 }

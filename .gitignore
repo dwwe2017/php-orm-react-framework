@@ -6,7 +6,6 @@
 !/config/default-config.php.dist
 !/config/portal-config.php.dist
 !/config/.htaccess
-/docs
 /log/*
 !/log/.htaccess
 **/*.sqlite
