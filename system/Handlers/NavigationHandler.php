@@ -382,7 +382,7 @@ class NavigationHandler
         if (isset($_GET["action"]) && !empty($_GET["action"])) {
             $this->breadcrumb_routes[] = [
                 "current" => true,
-                "text" => StringHelper::init($_GET["action"])->decamelize()->ucFirst()->getString(),
+                "text" => StringHelper::init($_GET["action"])->decamelize()->ucFirst()->replace("_", " ")->getString(),
                 "href" => "javascript:void(0)"
             ];
         }

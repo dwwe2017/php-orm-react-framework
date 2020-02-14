@@ -27,11 +27,16 @@ let Encore = require('@symfony/webpack-encore');
 Encore
     .setOutputPath('./react')
     .setPublicPath('/')
+
+    /**
+     * Controllers
+     */
     .addEntry('RestrictedController', './react/.components/RestrictedController/index.js')
     .disableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
     .enableSourceMaps(!Encore.isProduction())
     .enableReactPreset()
+    .enableSassLoader()
 ;
 
 module.exports = Encore.getWebpackConfig();

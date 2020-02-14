@@ -73,6 +73,11 @@ class RequestHandler
     private ConfigValues $server;
 
     /**
+     * @var ConfigValues
+     */
+    private ConfigValues $axios;
+
+    /**
      * @var string|null
      */
     private ?string $requestUrl;
@@ -110,6 +115,13 @@ class RequestHandler
         $this->post = ConfigFactory::fromArray($_POST ?? []);
         $this->query = ConfigFactory::fromArray($_GET ?? []);
         $this->server = ConfigFactory::fromArray($_SERVER ?? []);
+
+        /**
+         * @see https://www.quora.com/How-do-I-post-form-data-to-a-PHP-script-using-Axios
+         */
+        $raw_input = @file_get_contents("php://input");
+        $raw_array = @json_decode($raw_input, true);
+        $this->axios = ConfigFactory::fromArray(is_array($raw_array) ? $raw_array["data"] : []);
 
         $this->requestUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
         $this->baseUrl = ($split = explode("/index.php", $_SERVER["REQUEST_URI"])) > 1 ? $split[0] : $_SERVER["REQUEST_URI"];
@@ -181,6 +193,14 @@ class RequestHandler
     public function getPost(): ConfigValues
     {
         return $this->post;
+    }
+
+    /**
+     * @return ConfigValues
+     */
+    public function getAxios(): ConfigValues
+    {
+        return $this->axios;
     }
 
     /**
