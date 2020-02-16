@@ -28,20 +28,48 @@ import LayoutHeaderTasks from "./LayoutHeaderTasks";
 import LayoutHeaderNotifications from "./LayoutHeaderNotifications";
 import LayoutHeaderMessages from "./LayoutHeaderMessages";
 
+
+/**
+ * The following DOM element is the task menu in the header area of the UI
+ * @type {HTMLElement}
+ * @private
+ */
 let _layout_header_tasks_react_entry = document.getElementById('_layout_header_tasks_react_entry');
 
+/**
+ * Render task menu
+ * @see assets/react/.components/RestrictedController/LayoutHeaderTasks
+ */
 if (_layout_header_tasks_react_entry) {
     ReactDOM.render(<LayoutHeaderTasks/>, document.getElementById('_layout_header_tasks_react_entry'));
 }
 
+/**
+ * The following DOM element is the notification menu in the header area of the UI
+ * @type {HTMLElement}
+ * @private
+ */
 let _layout_header_notifications_react_entry = document.getElementById('_layout_header_notifications_react_entry');
 
+/**
+ * Render notifications menu
+ * @see assets/react/.components/RestrictedController/LayoutHeaderNotifications
+ */
 if (_layout_header_notifications_react_entry) {
     ReactDOM.render(<LayoutHeaderNotifications/>, document.getElementById('_layout_header_notifications_react_entry'));
 }
 
+/**
+ * The following DOM element is the messages menu in the header area of the UI
+ * @type {HTMLElement}
+ * @private
+ */
 let _layout_header_messages_react_entry = document.getElementById('_layout_header_messages_react_entry');
 
+/**
+ * Render messages menu
+ * @see assets/react/.components/RestrictedController/LayoutHeaderMessages
+ */
 if (_layout_header_messages_react_entry) {
     ReactDOM.render(<LayoutHeaderMessages/>, document.getElementById('_layout_header_messages_react_entry'));
 }
