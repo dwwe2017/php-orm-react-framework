@@ -2,6 +2,7 @@
 /.idea
 /.todo
 /.coreUI
+/assets/js/.scripts
 /config/*
 !/config/default-config.php.dist
 !/config/portal-config.php.dist
