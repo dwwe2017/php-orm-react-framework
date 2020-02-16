@@ -79,6 +79,8 @@ class PortalConfig implements VendorExtensionConfigInterface
                 "b_core_ui_pro" => false,
                 //Default or dark layout
                 "b_dark_layout" => false,
+                //Sidebar folded in by default
+                "b_sidebar_unfoldable" => false,
                 //Any visitor can register themselves
                 "b_allow_registration" => false,
                 //When logging in, users can select the option to remain permanently logged on
