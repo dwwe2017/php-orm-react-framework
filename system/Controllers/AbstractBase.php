@@ -26,6 +26,8 @@
 namespace Controllers;
 
 
+use Annotations\Navigation;
+use Annotations\SubNavigation;
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Exception;
@@ -354,20 +356,47 @@ abstract class AbstractBase
         $methodName = sprintf("%sAction", $action);
 
         try {
+            $selfReflection = $this->getReflectionHelper();
+
             /**
+             * Check for required GET parameters of the current controller
+             * @see Navigation::$requiredGetParams
+             */
+            $classNavigation = AnnotationHelper::init($selfReflection, "Navigation");
+            $classNavigationRequiredGetParams = $classNavigation->get("requiredGetParams", []);
+            if (!empty($classNavigationRequiredGetParams)) {
+                foreach ($classNavigationRequiredGetParams as $getParam) {
+                    key_exists($getParam, $_GET) || $this->historyBack();
+                }
+            }
+
+            /**
+             * Check for required GET parameters of the current action
+             * @see SubNavigation::$requiredGetParams
+             */
+            $methodSubNavigation = AnnotationHelper::init($selfReflection->getMethod($methodName), "SubNavigation");
+            $methodSubNavigationRequiredGetParams = $methodSubNavigation->get("requiredGetParams", []);
+            if (!empty($methodSubNavigationRequiredGetParams)) {
+                foreach ($methodSubNavigationRequiredGetParams as $getParam) {
+                    key_exists($getParam, $_GET) || $this->historyBack();
+                }
+            }
+
+            /**
+             * Implementation of redirect annotation
              * @see Redirect
              */
-            $selfReflection = $this->getReflectionHelper();
-            $methodAccess = AnnotationHelper::init($selfReflection->getMethod($methodName), "Redirect");
-            if (!$methodAccess->isEmpty()) {
+            $methodRedirect = AnnotationHelper::init($selfReflection->getMethod($methodName), "Redirect");
+            if (!$methodRedirect->isEmpty()) {
                 $this->redirect(
-                    $methodAccess->get("module", null),
-                    $methodAccess->get("controller", null),
-                    $methodAccess->get("action", null),
-                    $methodAccess->get("querys", []),
-                    $methodAccess->get("tab", "")
+                    $methodRedirect->get("module", null),
+                    $methodRedirect->get("controller", null),
+                    $methodRedirect->get("action", null),
+                    $methodRedirect->get("querys", []),
+                    $methodRedirect->get("tab", "")
                 );
             }
+
         } catch (AnnotationException|InvalidArgumentException|ReflectionException $e) {
             /**
              * @internal If an error occurs here, the entire system should not crash during live operation
@@ -513,6 +542,19 @@ abstract class AbstractBase
 
         header('Location: index.php' . $to . $tab);
         exit;
+    }
+
+    /**
+     *
+     */
+    protected function historyBack(): void
+    {
+        if (isset($_SERVER["HTTP_REFERER"])) {
+            header("Location: " . $_SERVER["HTTP_REFERER"]);
+            exit;
+        } else {
+            $this->render404();
+        }
     }
 
     /**

@@ -33,7 +33,7 @@ use Controllers\PublicFrontController;
 /**
  * Class ExampleController
  * @package Modules\Example\Controllers
- * @Navigation(text="ExampleModule", position="sidebar")
+ * @Navigation(text="Example Page Without Sidebar", position="top_left")
  */
 class IndexController extends PublicFrontController
 {

@@ -13,9 +13,11 @@
             <img class="c-header-brand-full c-d-default-none" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
             <img class="c-header-brand-minimized c-d-default-nonee" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
         </a>
-        <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
-            <span class="c-header-toggler-icon"> </span>
-        </button>
+        {% if(navigation_routes is defined and navigation_routes.sidebar is defined) %}
+            <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
+                <span class="c-header-toggler-icon"> </span>
+            </button>
+        {% endif %}
 
         <!-- Top Left Menu -->
         {{ navigation.top_left(navigation_routes) }}

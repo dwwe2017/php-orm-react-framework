@@ -215,6 +215,18 @@ class NavigationHandler
                         $classNavigationAnnotation->set("text", ucfirst($key));
                     }
 
+                    $reflectionClassRequiredGetParams = $classNavigationAnnotation->get("requiredGetParams", []);
+                    $reflectionClassPropertyIsDisabled = false;
+
+                    if(!empty($reflectionClassRequiredGetParams)){
+                        foreach ($reflectionClassRequiredGetParams as $getParam){
+                            if(!key_exists($getParam, $_GET)){
+                                $reflectionClassPropertyIsDisabled = true;
+                                break;
+                            }
+                        }
+                    }
+
                     $reflectionClassPosition = $classNavigationAnnotation->get("position");
                     $positions = is_array($reflectionClassPosition) ? $reflectionClassPosition : [$reflectionClassPosition];
 
@@ -238,6 +250,7 @@ class NavigationHandler
                             "required_user_group_role_name" => $this->getRolesConvertedIntoReadableTerms($reflectionClassAccessRole),
                             "required_user_group_role_level" => $reflectionClassAccessRole,
                             "active" => $reflectionClassPropertyIsActive,
+                            "disabled" => $reflectionClassPropertyIsDisabled,
                             "options" => $classNavigationAnnotation->toArray(),
                             "info" => $classInfoAnnotation->toArray()
                         ];
@@ -290,12 +303,25 @@ class NavigationHandler
                                 }
                             }
 
+                            $reflectionMethodRequiredGetParams = $methodSubNavigationAnnotation->get("requiredGetParams", []);
+                            $reflectionMethodPropertyIsDisabled = false;
+
+                            if(!empty($reflectionMethodRequiredGetParams)){
+                                foreach ($reflectionMethodRequiredGetParams as $getParam){
+                                    if(!key_exists($getParam, $_GET)){
+                                        $reflectionMethodPropertyIsDisabled = true;
+                                        break;
+                                    }
+                                }
+                            }
+
                             $methodInfoAnnotation = AnnotationHelper::init($method, "Info");
 
                             $this->addRoute($classSiteAccessLevel, $position, $key, [
                                 "required_user_group_role_name" => $this->getRolesConvertedIntoReadableTerms($accessRoleChild),
                                 "required_user_group_role_level" => $accessRoleChild,
                                 "active" => $this->getCurrentAction() === lcfirst($actionShortNameFromMethod),
+                                "disabled" => $reflectionMethodPropertyIsDisabled,
                                 "options" => $methodSubNavigationAnnotation->toArray(),
                                 "info" => $methodInfoAnnotation->toArray(),
                                 "module" => $moduleShortNameFromMethod,
