@@ -183,9 +183,9 @@ class NavigationHandler
 
                 $key = strtolower($key);
 
-                foreach ($modulesNamespace as $item) {
+                foreach ($modulesNamespace as $namespace) {
 
-                    $reflectionClass = new ReflectionClass($item);
+                    $reflectionClass = new ReflectionClass($namespace);
                     $classNavigationAnnotation = AnnotationHelper::init($reflectionClass, "Navigation");
 
                     if ($classNavigationAnnotation->isEmpty() || !$classNavigationAnnotation->get("position")) {
@@ -245,7 +245,7 @@ class NavigationHandler
                          */
                         $reflectionClassPropertyIsActive = get_class($controllerInstance) === $reflectionClassName;
 
-                        $this->routes[$classSiteAccessLevel][$position][$key] = [
+                        $this->routes[$classSiteAccessLevel][$position][$key][$namespace] = [
                             "controller_access" => $classSiteAccessLevel,
                             "required_user_group_role_name" => $this->getRolesConvertedIntoReadableTerms($reflectionClassAccessRole),
                             "required_user_group_role_level" => $reflectionClassAccessRole,
@@ -317,7 +317,7 @@ class NavigationHandler
 
                             $methodInfoAnnotation = AnnotationHelper::init($method, "Info");
 
-                            $this->addRoute($classSiteAccessLevel, $position, $key, [
+                            $this->addRoute($classSiteAccessLevel, $position, $key, $namespace, [
                                 "required_user_group_role_name" => $this->getRolesConvertedIntoReadableTerms($accessRoleChild),
                                 "required_user_group_role_level" => $accessRoleChild,
                                 "active" => $this->getCurrentAction() === lcfirst($actionShortNameFromMethod),
@@ -418,11 +418,12 @@ class NavigationHandler
      * @param $classSiteAccessLevel
      * @param $position
      * @param $key
+     * @param $namespace
      * @param array $navigationRoutes
      */
-    public final function addRoute($classSiteAccessLevel, $position, $key, array $navigationRoutes)
+    public final function addRoute($classSiteAccessLevel, $position, $key, $namespace, array $navigationRoutes)
     {
-        $this->routes[$classSiteAccessLevel][$position][$key]["routes"][] = $navigationRoutes;
+        $this->routes[$classSiteAccessLevel][$position][$key][$namespace]["routes"][] = $navigationRoutes;
     }
 
     /**

@@ -73,6 +73,22 @@ class SubNavigation
     public array $requiredGetParams;
 
     /**
+     * @var bool
+     */
+    public bool $isLabel;
+
+    /**
+     * @var string
+     * @Enum({"info", "success", "warning", "danger"})
+     */
+    public string $labelClass;
+
+    /**
+     * @var string
+     */
+    public string $labelIcon;
+
+    /**
      * @var string
      */
     public string $style;
