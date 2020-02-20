@@ -79,7 +79,7 @@ class SubNavigation
 
     /**
      * @var string
-     * @Enum({"info", "success", "warning", "danger"})
+     * @Enum({"info","success","warning","danger"})
      */
     public string $labelClass;
 
