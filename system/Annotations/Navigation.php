@@ -43,6 +43,11 @@ class Navigation
     public string $position;
 
     /**
+     * @var array
+     */
+    public array $positions;
+
+    /**
      * @var string
      */
     public string $text;

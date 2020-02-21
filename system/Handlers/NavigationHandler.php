@@ -188,7 +188,7 @@ class NavigationHandler
                     $reflectionClass = new ReflectionClass($namespace);
                     $classNavigationAnnotation = AnnotationHelper::init($reflectionClass, "Navigation");
 
-                    if ($classNavigationAnnotation->isEmpty() || !$classNavigationAnnotation->get("position")) {
+                    if ($classNavigationAnnotation->isEmpty() || (!$classNavigationAnnotation->get("position") && !$classNavigationAnnotation->get("positions"))) {
                         continue;
                     }
 
@@ -228,6 +228,7 @@ class NavigationHandler
                     }
 
                     $reflectionClassPosition = $classNavigationAnnotation->get("position");
+                    $reflectionClassPosition = $reflectionClassPosition ?? $classNavigationAnnotation->get("positions");
                     $positions = is_array($reflectionClassPosition) ? $reflectionClassPosition : [$reflectionClassPosition];
 
                     foreach ($positions as $position) {
