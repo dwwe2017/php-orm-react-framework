@@ -783,14 +783,6 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @return array
-     */
-    private function getNavigationRoutes(): array
-    {
-        return $this->getNavigationHandler()->getRoutes($this->getNavigationRoute());
-    }
-
-    /**
      * @return bool
      */
     private function isDebugMode(): bool
