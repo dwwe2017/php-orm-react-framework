@@ -386,8 +386,6 @@ class NavigationHandler
                 }
             }
         }
-
-        print_pre($this->routes);
     }
 
     /**
