@@ -22,12 +22,12 @@
                             {{ _self.sidebar_sub(item) }}
                         </li>
                     {% else %}
-                        <li class="{% if(item.routes is defined) %}{% if(item.routes != false) %}c-sidebar-nav-dropdown {% if(item.active != false) %}c-show{% endif %}{% else %}c-sidebar-nav-item{% endif %}{% else %}c-sidebar-nav-item{% endif %}"
+                        <li class="{% if(item.routes is defined and item.routes != false) %}c-sidebar-nav-dropdown {% if(item.active is defined and item.active != false) %}c-show{% endif %}{% else %}c-sidebar-nav-item{% endif %}"
                             {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
                         >
                             <a href="{% if(item.disabled is defined and item.disabled != false or item.routes is defined and item.routes != false) %}javascript:void(0){% else %}{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}"
                                title="{% if(item.options.title is defined and item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
-                               class="{% if(item.disabled is defined and item.disabled != false) %}disabled{% endif %} {% if(item.disabled is defined and item.disabled != false) %}c-sidebar-nav-link{% else %}{% if(item.routes is defined) %}{% if(item.routes != false) %}c-sidebar-nav-dropdown-toggle{% else %}c-sidebar-nav-link{% if(item.active != false) %}c-active{% endif %}{% endif %}{% else %}c-sidebar-nav-link{% if(item.active != false) %}c-active{% endif %}{% endif %}{% endif %}"
+                               class="{% if(item.disabled is defined and item.disabled != false) %}disabled{% endif %} {% if(item.disabled is defined and item.disabled != false) %}c-sidebar-nav-link{% else %}{% if(item.routes is defined) %}{% if(item.routes != false) %}c-sidebar-nav-dropdown-toggle{% else %}c-sidebar-nav-link{% if(item.active is defined and item.active != false) %} c-active{% endif %}{% endif %}{% else %}c-sidebar-nav-link{% if(item.active is defined and item.active != false) %} c-active{% endif %}{% endif %}{% endif %}"
                                {% if(item.disabled is defined and item.disabled != false) %}style="opacity: 0.5;"{% endif %}
                                     {% if(item.disabled is defined and item.disabled != false) %}disabled="disabled"{% endif %}
                             >
@@ -44,7 +44,7 @@
                                 {% endif %}
                             </a>
                             {% if(item.disabled is not defined or item.disabled == false) %}
-                                {{ _self.sidebar_sub(item, true) }}
+                                {{ _self.sidebar_sub(item, "true") }}
                             {% endif %}
                         </li>
                     {% endif %}
@@ -59,48 +59,52 @@
 @param navigation_sub_routes array
 @param ul bool
  #}
-{% macro sidebar_sub(navigation_sub_routes=[], ul=false) %}
+{% macro sidebar_sub(navigation_sub_routes=[], ul="") %}
     {% if(navigation_sub_routes.routes is defined) %}
         {% if(navigation_sub_routes.routes != false) %}
             {% if(ul != false) %}
                 <ul class="c-sidebar-nav-dropdown-items">
             {% endif %}
-            {% for route in navigation_sub_routes.routes %}
-                {% if(route.options.isLabel is defined and route.options.isLabel != false) %}
+            {% for item in navigation_sub_routes.routes %}
+                {% if(item.options.isLabel is defined and item.options.isLabel != false) %}
                     <li class="c-sidebar-nav-item c-d-compact-none c-d-minimized-none"
-                        {% if(route.options.hidden is defined and route.options.hidden != false) %}style="display: none;"{% endif %}
+                        {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
                     >
-                        <a class="c-sidebar-nav-label" href="{% if(route.disabled is defined and route.disabled != false) %}javascript:void(0){% else %}{% if(route.options.href is defined and route.options.href != false) %}{{ route.options.href }}{% endif %}{% endif %}">
-                            <svg class="c-sidebar-nav-icon {% if(route.options.labelClass is defined and route.options.labelClass != false) %}text-{{ route.options.labelClass }}{% endif %}">
-                                <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{% if(route.options.labelIcon is defined and route.options.labelIcon != false) %}{{ route.options.labelIcon }}{% else %}cil-bookmark{% endif %}"/>
+                        <a class="c-sidebar-nav-label" href="{% if(item.disabled is defined and item.disabled != false) %}javascript:void(0){% else %}{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}">
+                            <svg class="c-sidebar-nav-icon {% if(item.options.labelClass is defined and item.options.labelClass != false) %}text-{{ item.options.labelClass }}{% endif %}">
+                                <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{% if(item.options.labelIcon is defined and item.options.labelIcon != false) %}{{ item.options.labelIcon }}{% else %}cil-bookmark{% endif %}"/>
                             </svg>
-                            {% if(route.options.text is defined and route.options.text != false) %}
-                                {{ route.options.text|trans }}
+                            {% if(item.options.text is defined and item.options.text != false) %}
+                                {{ item.options.text|trans }}
                             {% endif %}
                         </a>
+                        {{ _self.sidebar_sub(item, ul) }}
                     </li>
                 {% else %}
-                    <li class="c-sidebar-nav-item"
-                        {% if(route.options.hidden is defined and route.options.hidden != false) %}style="display: none;"{% endif %}
+                    <li class="{% if(item.routes is defined and item.routes != false) %}c-sidebar-nav-dropdown {% if(item.active is defined and item.active != false) %}c-show{% endif %}{% else %}c-sidebar-nav-item{% endif %}"
+                        {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
                     >
-                        <a href="{% if(route.disabled is defined and route.disabled != false) %}javascript:void(0){% else %}{% if(route.options.href is defined and route.options.href != false) %}{{ route.options.href }}{% endif %}{% endif %}"
-                           title="{% if(route.options.title is defined and route.options.title != false) %}{{ route.options.title|trans }}{% endif %}"
-                           class="c-sidebar-nav-link {% if(route.disabled is defined and route.disabled != false) %}disabled{% endif %} {% if(route.active is defined and route.active != false) %}c-active{% endif %}"
-                           {% if(route.disabled is defined and route.disabled != false) %}style="opacity: 0.5;"{% endif %}
-                                {% if(route.disabled is defined and route.disabled != false) %}disabled{% endif %}
+                        <a href="{% if(item.disabled is defined and item.disabled != false or item.routes is defined and item.routes != false) %}javascript:void(0){% else %}{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}"
+                           title="{% if(item.options.title is defined and item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                           class="{% if(item.disabled is defined and item.disabled != false) %}disabled{% endif %} {% if(item.disabled is defined and item.disabled != false) %}c-sidebar-nav-link{% else %}{% if(item.routes is defined) %}{% if(item.routes != false) %}c-sidebar-nav-dropdown-toggle{% else %}c-sidebar-nav-link{% if(item.active is defined and item.active != false) %} c-active{% endif %}{% endif %}{% else %}c-sidebar-nav-link{% if(item.active is defined and item.active != false) %} c-active{% endif %}{% endif %}{% endif %}"
+                           {% if(item.disabled is defined and item.disabled != false) %}style="opacity: 0.5;"{% endif %}
+                                {% if(item.disabled is defined and item.disabled != false) %}disabled="disabled"{% endif %}
                         >
-                            {% if(route.options.icon is defined and route.options.icon != false) %}
+                            {% if(item.options.icon is defined and item.options.icon != false) %}
                                 <svg class="c-sidebar-nav-icon">
-                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ route.options.icon }}"/>
+                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ item.options.icon }}"/>
                                 </svg>
                             {% endif %}
-                            {% if(route.options.text is defined and route.options.text != false) %}
-                                {{ route.options.text|trans }}
+                            {% if(item.options.text is defined and item.options.text != false) %}
+                                {{ item.options.text|trans }}
                             {% endif %}
-                            {% if(route.options.badge is defined and route.options.badge != false) %}
-                                <span class="badge {% if(route.options.badgeClass is defined and route.options.badgeClass != false) %}badge-{{ route.options.badgeClass }}{% endif %}">{{ route.options.badge|trans }}</span>
+                            {% if(item.options.badge is defined and item.options.badge != false) %}
+                                <span class="badge {% if(item.options.badgeClass is defined and item.options.badgeClass != false) %}badge-{{ item.options.badgeClass }}{% endif %}">{{ item.options.badge|trans }}</span>
                             {% endif %}
                         </a>
+                        {% if(item.disabled is not defined or item.disabled == false) %}
+                            {{ _self.sidebar_sub(item, ul) }}
+                        {% endif %}
                     </li>
                 {% endif %}
             {% endfor %}

@@ -26,6 +26,12 @@
 namespace Handlers;
 
 
+use Annotations\Access;
+use Annotations\Info;
+use Annotations\Navigation;
+use Annotations\SubNavigation;
+use Annotations\SubRoute;
+use Annotations\SubRoutes;
 use Controllers\AbstractBase;
 use Doctrine\Common\Annotations\AnnotationException;
 use Entities\Group;
@@ -218,9 +224,9 @@ class NavigationHandler
                     $reflectionClassRequiredGetParams = $classNavigationAnnotation->get("requiredGetParams", []);
                     $reflectionClassPropertyIsDisabled = false;
 
-                    if(!empty($reflectionClassRequiredGetParams)){
-                        foreach ($reflectionClassRequiredGetParams as $getParam){
-                            if(!key_exists($getParam, $_GET)){
+                    if (!empty($reflectionClassRequiredGetParams)) {
+                        foreach ($reflectionClassRequiredGetParams as $getParam) {
+                            if (!key_exists($getParam, $_GET)) {
                                 $reflectionClassPropertyIsDisabled = true;
                                 break;
                             }
@@ -246,6 +252,9 @@ class NavigationHandler
                          */
                         $reflectionClassPropertyIsActive = get_class($controllerInstance) === $reflectionClassName;
 
+                        /**
+                         * @see Navigation
+                         */
                         $this->routes[$classSiteAccessLevel][$position][$key][$namespace] = [
                             "controller_access" => $classSiteAccessLevel,
                             "required_user_group_role_name" => $this->getRolesConvertedIntoReadableTerms($reflectionClassAccessRole),
@@ -262,6 +271,9 @@ class NavigationHandler
                                 continue;
                             }
 
+                            /**
+                             * @see SubNavigation
+                             */
                             $methodSubNavigationAnnotation = AnnotationHelper::init($method, "SubNavigation");
 
                             if ($methodSubNavigationAnnotation->isEmpty()) {
@@ -270,6 +282,7 @@ class NavigationHandler
 
                             /**
                              * @internal Check access !Root always has access to everything and everywhere
+                             * @see Access
                              */
                             $accessAnnotationsChild = AnnotationHelper::init($method, "Access");
                             $accessRoleChild = $this->getAtLeastParentRole($reflectionClassAccessRole, $accessAnnotationsChild->getAnnotationInstance());
@@ -307,33 +320,74 @@ class NavigationHandler
                             $reflectionMethodRequiredGetParams = $methodSubNavigationAnnotation->get("requiredGetParams", []);
                             $reflectionMethodPropertyIsDisabled = false;
 
-                            if(!empty($reflectionMethodRequiredGetParams)){
-                                foreach ($reflectionMethodRequiredGetParams as $getParam){
-                                    if(!key_exists($getParam, $_GET)){
+                            if (!empty($reflectionMethodRequiredGetParams)) {
+                                foreach ($reflectionMethodRequiredGetParams as $getParam) {
+                                    if (!key_exists($getParam, $_GET)) {
                                         $reflectionMethodPropertyIsDisabled = true;
                                         break;
                                     }
                                 }
                             }
 
+                            /**
+                             * @see Info
+                             */
                             $methodInfoAnnotation = AnnotationHelper::init($method, "Info");
 
+                            /**
+                             * SubRoutes
+                             * @see SubRoutes
+                             * @see SubRoute
+                             */
+                            $methodSubRoutes = [];
+                            $methodSubRoutesAnnotation = AnnotationHelper::init($method, "SubRoutes");
+                            $actionIsActive = $this->getCurrentAction() === lcfirst($actionShortNameFromMethod);
+                            $onlyWhenActive = $methodSubRoutesAnnotation->get("onlyWhenActive", false);
+                            $allowSubRoutes = ($actionIsActive && $onlyWhenActive) || !$onlyWhenActive;
+
+                            if($methodSubRoutesAnnotation && $allowSubRoutes){
+                                $methodSubRoutesFromAnnotation = $methodSubRoutesAnnotation->get("routes", []);
+                                if ($methodSubRoutesFromAnnotation) {
+                                    foreach ($methodSubRoutesFromAnnotation as $item) {
+                                        if (empty($item) || !$item instanceof SubRoute) {
+                                            continue;
+                                        }
+
+                                        $route = [
+                                            "options" => [],
+                                        ];
+
+                                        foreach ($item as $itemKey => $value) {
+                                            $route["options"][$itemKey] = $value;
+                                        }
+
+                                        $methodSubRoutes[] = $route;
+                                    }
+                                }
+                            }
+
+                            /**
+                             * @see SubNavigation
+                             */
                             $this->addRoute($classSiteAccessLevel, $position, $key, $namespace, [
                                 "required_user_group_role_name" => $this->getRolesConvertedIntoReadableTerms($accessRoleChild),
                                 "required_user_group_role_level" => $accessRoleChild,
-                                "active" => $this->getCurrentAction() === lcfirst($actionShortNameFromMethod),
+                                "active" => $actionIsActive,
                                 "disabled" => $reflectionMethodPropertyIsDisabled,
                                 "options" => $methodSubNavigationAnnotation->toArray(),
                                 "info" => $methodInfoAnnotation->toArray(),
                                 "module" => $moduleShortNameFromMethod,
                                 "controller" => $controllerShortNameFromMethod,
-                                "action" => $actionShortNameFromMethod
+                                "action" => $actionShortNameFromMethod,
+                                "routes" => $methodSubRoutes
                             ]);
                         }
                     }
                 }
             }
         }
+
+        print_pre($this->routes);
     }
 
     /**
@@ -439,7 +493,7 @@ class NavigationHandler
             $result = $this->routes[$classSiteAccessLevel];
         }
 
-        if(key_exists(self::ANY_NAV, $this->routes)){
+        if (key_exists(self::ANY_NAV, $this->routes)) {
             $result = array_merge($result, $this->routes[self::ANY_NAV]);
         }
 
