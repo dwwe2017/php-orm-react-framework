@@ -38,6 +38,10 @@ class SubRoutes
 {
     /**
      * @var array
+     * @example @SubRoutes(routes={
+     *      @SubRoute(text="Example1", ...),
+     *      @SubRoute(text="Example2", ...)
+     * }, onlyWhenActive=false)
      */
     public array $routes;
 

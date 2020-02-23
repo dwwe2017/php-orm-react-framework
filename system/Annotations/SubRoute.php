@@ -33,6 +33,10 @@ use Doctrine\Common\Annotations\Annotation\Enum;
  * @package Annotations
  * @Annotation
  * @Target("ALL")
+ * @example @SubRoutes(routes={
+ *      @SubRoute(text="Example1", ...),
+ *      @SubRoute(text="Example2", ...)
+ * }, onlyWhenActive=false)
  */
 class SubRoute
 {
