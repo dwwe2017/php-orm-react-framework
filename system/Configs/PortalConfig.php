@@ -87,13 +87,13 @@ class PortalConfig implements VendorExtensionConfigInterface
                 "b_allow_stay_logged_in" => true,
                 //Array of Js files that should not be minimized and permanently integrated
                 "a_non_minified_js" => [
-                    "assets/vendors/pace-progress/js/pace.min.js",
                     "assets/vendors/@coreui/coreui/js/coreui.bundle.min.js"
                 ],
                 //Array of CSS files that should not be minimized and permanently integrated
                 "a_non_minified_css" => [
                     "assets/vendors/@coreui/coreui/css/coreui.min.css",
-                    "assets/vendors/pace-progress/css/pace.min.css",
+                    "assets/vendors/@coreui/icons/css/brand.min.css",
+                    "assets/vendors/@coreui/icons/css/flag.min.css",
                     "assets/vendors/@coreui/icons/css/free.min.css"
                 ],
             ]
