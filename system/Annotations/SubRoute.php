@@ -34,8 +34,8 @@ use Doctrine\Common\Annotations\Annotation\Enum;
  * @Annotation
  * @Target("ALL")
  * @example @SubRoutes(routes={
- *      @SubRoute(text="Example1", ...),
- *      @SubRoute(text="Example2", ...)
+ * @SubRoute(text="Example1", ...),
+ * @SubRoute(text="Example2", ...)
  * }, onlyWhenActive=false)
  */
 class SubRoute
@@ -106,6 +106,7 @@ class SubRoute
      * @internal Here the link can be easily expanded
      * @var array
      * @example ({"param1": "test", "pararm2": "test2", ...})
+     * @see http_build_query()
      */
     public array $hrefQueryAddition;
 
