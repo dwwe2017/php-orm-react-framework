@@ -355,10 +355,20 @@ class NavigationHandler
 
                                         $route = [
                                             "options" => [],
+                                            "info" => $methodInfoAnnotation->toArray(),
+                                            "module" => $moduleShortNameFromMethod,
+                                            "controller" => $controllerShortNameFromMethod,
+                                            "action" => $actionShortNameFromMethod
                                         ];
 
                                         foreach ($item as $itemKey => $value) {
                                             $route["options"][$itemKey] = $value;
+                                        }
+
+                                        if(key_exists("hrefQueryAddition", $route["options"])){
+                                            $route["options"]["href"] = sprintf("%s&%s", $methodSubNavigationAnnotation->get("href"), http_build_query($route["options"]["hrefQueryAddition"]));
+                                        }elseif(!key_exists("href", $route["options"])){
+                                            $route["options"]["href"] = $methodSubNavigationAnnotation->get("href");
                                         }
 
                                         $methodSubRoutes[] = $route;

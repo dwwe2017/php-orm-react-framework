@@ -103,6 +103,13 @@ class SubRoute
     public string $href;
 
     /**
+     * @internal Here the link can be easily expanded
+     * @var array
+     * @example ({"param1": "test", "pararm2": "test2", ...})
+     */
+    public array $hrefQueryAddition;
+
+    /**
      * @var string
      * @Enum({"_blank", "_self", "_parent"})
      */
