@@ -59,6 +59,38 @@ class SubNavigation
     /**
      * @var string
      */
+    public string $badge;
+
+    /**
+     * @var string
+     * @Enum({"info","success","warning","danger"})
+     */
+    public string $badgeClass;
+
+    /**
+     * @var array
+     */
+    public array $requiredGetParams;
+
+    /**
+     * @var bool
+     */
+    public bool $isLabel;
+
+    /**
+     * @var string
+     * @Enum({"info","success","warning","danger"})
+     */
+    public string $labelClass;
+
+    /**
+     * @var string
+     */
+    public string $labelIcon;
+
+    /**
+     * @var string
+     */
     public string $style;
 
     /**

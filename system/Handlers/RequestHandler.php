@@ -121,7 +121,7 @@ class RequestHandler
          */
         $raw_input = @file_get_contents("php://input");
         $raw_array = @json_decode($raw_input, true);
-        $this->axios = ConfigFactory::fromArray(is_array($raw_array) ? $raw_array["data"] : []);
+        $this->axios = ConfigFactory::fromArray(is_array($raw_array) ? $raw_array : []);
 
         $this->requestUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
         $this->baseUrl = ($split = explode("/index.php", $_SERVER["REQUEST_URI"])) > 1 ? $split[0] : $_SERVER["REQUEST_URI"];

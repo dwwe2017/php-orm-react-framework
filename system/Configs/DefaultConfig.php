@@ -154,8 +154,11 @@ class DefaultConfig implements ApplicationConfigInterface
         return [
             //General properties
             "debug_mode" => false,
+            //Path of the main directory
             "base_dir" => $this->baseDir,
+            //Preset language
             "language" => "en_US",
+            //Entry module for page view without parameters
             "entry_module" => "Dashboard",
             //Database configuration
             "connection_options" => [],

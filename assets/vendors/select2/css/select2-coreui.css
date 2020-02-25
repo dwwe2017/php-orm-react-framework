@@ -60,7 +60,7 @@
 }
 
 .c-dark-theme .select2-search--dropdown .select2-search__field {
-  border-color: #2c2c34;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .select2-results__message {
@@ -85,8 +85,8 @@
 }
 
 .c-dark-theme .select2-container--coreui .select2-selection--multiple .select2-selection__rendered .select2-search__field {
-  background-color: #2c2c34;
-  color: #ebedef;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #e1e1e1;
 }
 
 .select2-container--coreui .select2-selection--multiple .select2-selection__choice {
@@ -103,7 +103,7 @@
 }
 
 .c-dark-theme .select2-container--coreui .select2-selection--multiple .select2-selection__choice {
-  color: #ebedef;
+  color: #e1e1e1;
 }
 
 .c-dark-theme .select2-container--coreui .select2-selection--multiple .select2-selection__choice {
@@ -183,8 +183,8 @@
 }
 
 .c-dark-theme .select2-container--coreui .select2-selection {
-  background-color: #2c2c34;
-  border-color: #2c2c34;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .select2-container--coreui.select2-container--focus .select2-selection {
@@ -206,8 +206,8 @@
 }
 
 .c-dark-theme .select2-container--coreui.select2-container--disabled .select2-selection, .c-dark-theme .select2-container--coreui.select2-container--disabled.select2-container--focus .select2-selection {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: #2c2c34;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .select2-container--coreui.select2-container--disabled .select2-search__field, .select2-container--coreui.select2-container--disabled.select2-container--focus .select2-search__field {
@@ -231,8 +231,8 @@ select.is-valid ~ .select2-container--coreui .select2-selection {
 }
 
 .c-dark-theme .select2-container--coreui .select2-dropdown {
-  background-color: #2c2c34;
-  border-color: #2c2c34;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .c-app:not(.c-legacy-theme):not(.c-dark-theme) .select2-container--coreui .select2-dropdown {
@@ -248,7 +248,7 @@ select.is-valid ~ .select2-container--coreui .select2-selection {
 }
 
 .c-dark-theme .select2-container--coreui .select2-dropdown.select2-dropdown--above {
-  border-color: #2c2c34;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .select2-container--coreui .select2-dropdown .select2-results__option[aria-selected=true] {
@@ -256,7 +256,7 @@ select.is-valid ~ .select2-container--coreui .select2-selection {
 }
 
 .c-dark-theme .select2-container--coreui .select2-dropdown .select2-results__option[aria-selected=true] {
-  background-color: #202126;
+  background-color: rgba(242, 242, 242, 0.1);
 }
 
 .select2-container--coreui .select2-results__option--highlighted,

@@ -3,7 +3,7 @@
 
     {% if(navigation_routes is defined and navigation_routes.sidebar is defined) %}
         <!-- Sidebar -->
-        <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
+        <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show {% if(b_sidebar_unfoldable is defined and b_sidebar_unfoldable != false) %}c-sidebar-unfoldable{% endif %}" id="sidebar">
             <div class="c-sidebar-brand">
                 <img class="c-sidebar-brand-full" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
                 <img class="c-sidebar-brand-minimized" src="assets/img/logo.png" width="29" height="29" alt="Phorm RF Logo">
@@ -11,7 +11,7 @@
 
             {{ navigation.sidebar(navigation_routes) }}
 
-            <button class="c-sidebar-minimizer c-brand-minimizer" type="button"> </button>
+            <button class="c-sidebar-minimizer c-class-toggler" data-target="_parent" data-class="c-sidebar-unfoldable" type="button"> </button>
         </div>
         <!-- /Sidebar -->
     {% endif %}

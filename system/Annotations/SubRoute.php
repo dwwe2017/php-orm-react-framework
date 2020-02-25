@@ -32,30 +32,18 @@ use Doctrine\Common\Annotations\Annotation\Enum;
  * Class Access
  * @package Annotations
  * @Annotation
- * @Target("CLASS")
+ * @Target("ALL")
+ * @example @SubRoutes(routes={
+ * @SubRoute(text="Example1", ...),
+ * @SubRoute(text="Example2", ...)
+ * }, onlyWhenActive=false)
  */
-class Navigation
+class SubRoute
 {
-    /**
-     * @var string
-     * @Enum({"sidebar", "top_left", "top_right", "misc"})
-     */
-    public string $position;
-
-    /**
-     * @var array
-     */
-    public array $positions;
-
     /**
      * @var string
      */
     public string $text;
-
-    /**
-     * @var string
-     */
-    public string $class;
 
     /**
      * @var string
@@ -82,11 +70,6 @@ class Navigation
      * @Enum({"info","success","warning","danger"})
      */
     public string $badgeClass;
-
-    /**
-     * @var array
-     */
-    public array $requiredGetParams;
 
     /**
      * @var bool
@@ -117,7 +100,15 @@ class Navigation
     /**
      * @var string
      */
-    public string $href = "javascript:void(0)";
+    public string $href;
+
+    /**
+     * @internal Here the link can be easily expanded
+     * @var array
+     * @example ({"param1": "test", "pararm2": "test2", ...})
+     * @see http_build_query()
+     */
+    public array $hrefQueryAddition;
 
     /**
      * @var string

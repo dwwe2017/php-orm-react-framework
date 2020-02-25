@@ -10347,4 +10347,3 @@
   return index_umd;
 
 })));
-//# sourceMappingURL=coreui.bundle.js.map

@@ -527,7 +527,7 @@
 }
 
 .c-dark-theme .ql-snow .ql-toolbar.snow, .c-dark-theme .ql-snow .ql-stroke {
-  stroke: #ebedef;
+  stroke: #e1e1e1;
 }
 
 .ql-snow .ql-stroke-mitter {
@@ -538,7 +538,7 @@
 }
 
 .c-dark-theme .ql-snow .ql-stroke-mitter {
-  stroke: #ebedef;
+  stroke: #e1e1e1;
 }
 
 .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill {
@@ -546,7 +546,7 @@
 }
 
 .c-dark-theme .ql-snow .ql-fill, .c-dark-theme .ql-snow .ql-stroke.ql-fill {
-  fill: #ebedef;
+  fill: #e1e1e1;
 }
 
 .ql-snow .ql-empty {
@@ -614,7 +614,7 @@
 }
 
 .c-dark-theme .ql-snow .ql-editor blockquote {
-  border-color: #2c2c34;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .ql-snow .ql-editor code {
@@ -664,7 +664,7 @@
 }
 
 .c-dark-theme .ql-snow .ql-picker {
-  color: #ebedef;
+  color: #e1e1e1;
 }
 
 .ql-snow .ql-picker-label {
@@ -919,7 +919,7 @@
 }
 
 .c-dark-theme .ql-toolbar.ql-snow {
-  border-color: #2c2c34;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .ql-toolbar.ql-snow .ql-formats {
@@ -940,7 +940,7 @@
 }
 
 .c-dark-theme .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label, .c-dark-theme .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
-  border-color: #2c2c34;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .ql-toolbar.ql-snow .ql-color-picker .ql-picker-item.ql-selected, .ql-toolbar.ql-snow .ql-color-picker .ql-picker-item:hover {
@@ -963,7 +963,7 @@
 }
 
 .c-dark-theme .ql-snow .ql-tooltip {
-  border-color: #2c2c34;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .ql-snow .ql-tooltip::before {
@@ -984,7 +984,7 @@
 }
 
 .c-dark-theme .ql-snow .ql-tooltip input[type=text] {
-  border-color: #2c2c34;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .ql-snow .ql-tooltip a {
@@ -1008,7 +1008,7 @@
 }
 
 .c-dark-theme .ql-snow .ql-tooltip a.ql-action::after {
-  border-color: #2c2c34;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .ql-snow .ql-tooltip a.ql-remove::before {
@@ -1052,5 +1052,5 @@
 }
 
 .c-dark-theme .ql-container.ql-snow {
-  border-color: #2c2c34;
+  border-color: rgba(255, 255, 255, 0.15);
 }

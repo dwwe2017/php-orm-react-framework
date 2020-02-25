@@ -79,19 +79,21 @@ class PortalConfig implements VendorExtensionConfigInterface
                 "b_core_ui_pro" => false,
                 //Default or dark layout
                 "b_dark_layout" => false,
+                //Sidebar folded in by default
+                "b_sidebar_unfoldable" => false,
                 //Any visitor can register themselves
                 "b_allow_registration" => false,
                 //When logging in, users can select the option to remain permanently logged on
                 "b_allow_stay_logged_in" => true,
                 //Array of Js files that should not be minimized and permanently integrated
                 "a_non_minified_js" => [
-                    "assets/vendors/pace-progress/js/pace.min.js",
                     "assets/vendors/@coreui/coreui/js/coreui.bundle.min.js"
                 ],
                 //Array of CSS files that should not be minimized and permanently integrated
                 "a_non_minified_css" => [
                     "assets/vendors/@coreui/coreui/css/coreui.min.css",
-                    "assets/vendors/pace-progress/css/pace.min.css",
+                    "assets/vendors/@coreui/icons/css/brand.min.css",
+                    "assets/vendors/@coreui/icons/css/flag.min.css",
                     "assets/vendors/@coreui/icons/css/free.min.css"
                 ],
             ]
