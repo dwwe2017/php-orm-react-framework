@@ -153,8 +153,9 @@
                         <img class="c-avatar-img" src="{{ navigation_routes.user_account.avatar|raw }}" alt="">
                     </div>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right pt-0">
-                    {% if navigation_routes.top_right is defined and navigation_routes.top_right != false %}
+                {% if navigation_routes.top_right is defined and navigation_routes.top_right != false %}
+                    <div class="dropdown-menu dropdown-menu-right pt-0">
+
                         {% for top_right_navigation in navigation_routes.top_right %}
                             {% for key, item in top_right_navigation %}
                                 <div class="{% if(item.options.class is defined) %}{% if(item.options.class != false) %}{{ item.options.class }}{% endif %}{% endif %}">
@@ -194,8 +195,8 @@
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             </li>
         {% endif %}
     {% endif %}
