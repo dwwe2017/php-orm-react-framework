@@ -1,18 +1,37 @@
 <?php
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2019. DW Web-Engineering
-// https://www.teamspeak-interface.de
-// Developer: Daniel W.
-//
-// License Informations: This program may only be used in conjunction with a valid license.
-// To purchase a valid license please visit the website www.teamspeak-interface.de
+/**
+ * MIT License
+ *
+ * Copyright (c) 2020 DW Web-Engineering
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 namespace Services;
 
 
 use Doctrine\DBAL\Event\Listeners\MysqlSessionInit;
-use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Events;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Exception;
 use Exceptions\DoctrineException;
@@ -22,7 +41,6 @@ use Helpers\FileHelper;
 use Helpers\StringHelper;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
 use Managers\ModuleManager;
-use PDO;
 use Traits\ControllerTraits\AbstractBaseTrait;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -41,22 +59,22 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     /**
      * @var ModuleManager
      */
-    private $moduleManager;
+    private ModuleManager $moduleManager;
 
     /**
      * @var string|null
      */
-    private $currentConnectionOption;
+    private ?string $currentConnectionOption;
 
     /**
      * @var self
      */
-    private $moduleDoctrineService;
+    private self $moduleDoctrineService;
 
     /**
      * @var self
      */
-    private $systemDoctrineService;
+    private self $systemDoctrineService;
 
     /**
      * @noinspection PhpMissingParentConstructorInspection
@@ -129,10 +147,23 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     }
 
     /**
+     * @param $repositoryName
+     * @param null $connectionOption
+     * @return EntityRepository
+     * @throws DoctrineException
+     */
+    public final function getRepository($repositoryName, $connectionOption = null)
+    {
+        $entity_namespace = $this->getOption("entity_namespace");
+        return $this->getEntityManager($connectionOption)->getRepository(
+            sprintf("%s\\%s", $entity_namespace, $repositoryName)
+        );
+    }
+
+    /**
      * @param null $connectionOption
      * @return EntityManager
      * @throws DoctrineException
-     * @example $this->getModuleDbService()->getEntityManager("module");
      */
     public final function getEntityManager($connectionOption = null)
     {
@@ -153,10 +184,35 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
          * executing 'SET NAMES utf8': SQLSTATE[HY000]: General error: 1 near "SET": syntax error
          * @internal SQLite connection is always UTF-8
          * @see http://www.alberton.info/dbms_charset_settings_explained.html
+         * @deprecated
          */
         if (strcasecmp($em->getConnection()->getDriver()->getName(), "pdo_sqlite") == 0
             && $em->getEventManager()->hasListeners(Events::postConnect)) {
             $this->removeEventListener($em, Events::postConnect, MysqlSessionInit::class);
+        }
+
+        $checksum = DirHelper::init($this->getOption("entity_dir"))->getMd5CheckSum([".php"], [".", "..", ".checksum"]);
+        $csFile = FileHelper::init(sprintf("%s/.checksum", $this->getOption("entity_dir")));
+
+        /**
+         * @internal Here is a checksum from the entities formed to learn changes or initialization.
+         * For changes to the DB schema, an automatic adjustment is made here.
+         * @see https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/tools.html#database-schema-generation
+         */
+        if($csFile->getContents() !== $checksum)
+        {
+            try {
+                $tool = new SchemaTool($em);
+                $schemas = $this->getEntitySchemas($em);
+                if (!empty($schemas)) {
+                    $tool->updateSchema($schemas);
+                }
+
+                $csFile->putContents($checksum);
+
+            } catch (Exception $e) {
+                throw new DoctrineException($e->getMessage(), $e->getCode(), $e);
+            }
         }
 
         return $em;
@@ -171,6 +227,20 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     public final function getSystemDoctrineService(): DoctrineService
     {
         return $this->systemDoctrineService;
+    }
+
+    /**
+     * @param $entity
+     * @param null $connectionOption
+     * @throws DoctrineException
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
+    public final function persistAndFlush($entity, $connectionOption = null)
+    {
+        $em = $this->getEntityManager($connectionOption);
+        $em->persist($entity);
+        $em->flush($entity);
     }
 
     /**
@@ -193,6 +263,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
         /**
          * @internal Both for the system and for modules, if the default driver "pdo_sqlite"
          * is selected, the database is automatically created if it does not exist.
+         * @see https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/tools.html#database-schema-generation
          */
         if (strcasecmp($options->get("driver", false), "pdo_sqlite") == 0) {
             $sqLitePath = $options->get("path", false);
@@ -205,15 +276,8 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
                         return;
                     }
 
-                    /**
-                     * @internal SQLite connection is always UTF-8
-                     * @see http://www.alberton.info/dbms_charset_settings_explained.html
-                     */
-                    $pdo = new PDO(sprintf("sqlite:%s", $sqLitePath));
-                    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    foreach ($tool->getCreateSchemaSql($schemas) as $query) {
-                        $pdo->exec($query);
-                    }
+                    $tool->createSchema($schemas);
+
                 } catch (Exception $e) {
                     throw new DoctrineException($e->getMessage(), $e->getCode(), $e);
                 }

@@ -1,0 +1,284 @@
+{#
+@macro nav_sidebar
+@param navigation_routes array
+ #}
+{% macro sidebar(navigation_routes=[]) %}
+    <ul class="c-sidebar-nav" data-drodpown-accordion="true">
+        {% if navigation_routes.sidebar is defined and navigation_routes.sidebar != false %}
+            {% for sidebar_navigation in navigation_routes.sidebar %}
+                {% for key, item in sidebar_navigation %}
+                    {% if(item.options.isLabel is defined and item.options.isLabel != false) %}
+                        <li class="c-sidebar-nav-item c-d-compact-none c-d-minimized-none"
+                            {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
+                        >
+                            <a class="c-sidebar-nav-label" href="{% if(item.disabled is defined and item.disabled != false) %}javascript:void(0){% else %}{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}">
+                                <svg class="c-sidebar-nav-icon {% if(item.options.labelClass is defined and item.options.labelClass != false) %}text-{{ item.options.labelClass }}{% endif %}">
+                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{% if(item.options.labelIcon is defined and item.options.labelIcon != false) %}{{ item.options.labelIcon }}{% else %}cil-bookmark{% endif %}"/>
+                                </svg>
+                                {% if(item.options.text is defined and item.options.text != false) %}
+                                    {{ item.options.text|trans }}
+                                {% endif %}
+                            </a>
+                            {{ _self.sidebar_sub(item) }}
+                        </li>
+                    {% else %}
+                        <li class="{% if(item.routes is defined and item.routes != false) %}c-sidebar-nav-dropdown {% if(item.active is defined and item.active != false) %}c-show{% endif %}{% else %}c-sidebar-nav-item{% endif %}"
+                            {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
+                        >
+                            <a href="{% if(item.disabled is defined and item.disabled != false or item.routes is defined and item.routes != false) %}javascript:void(0){% else %}{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}"
+                               title="{% if(item.options.title is defined and item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                               class="{% if(item.disabled is defined and item.disabled != false) %}disabled{% endif %} {% if(item.disabled is defined and item.disabled != false) %}c-sidebar-nav-link{% else %}{% if(item.routes is defined) %}{% if(item.routes != false) %}c-sidebar-nav-dropdown-toggle{% else %}c-sidebar-nav-link{% if(item.active is defined and item.active != false) %} c-active{% endif %}{% endif %}{% else %}c-sidebar-nav-link{% if(item.active is defined and item.active != false) %} c-active{% endif %}{% endif %}{% endif %}"
+                               {% if(item.disabled is defined and item.disabled != false) %}style="opacity: 0.5;"{% endif %}
+                                    {% if(item.disabled is defined and item.disabled != false) %}disabled="disabled"{% endif %}
+                            >
+                                {% if(item.options.icon is defined and item.options.icon != false) %}
+                                    <svg class="c-sidebar-nav-icon">
+                                        <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ item.options.icon }}"/>
+                                    </svg>
+                                {% endif %}
+                                {% if(item.options.text is defined and item.options.text != false) %}
+                                    {{ item.options.text|trans }}
+                                {% endif %}
+                                {% if(item.options.badge is defined and item.options.badge != false) %}
+                                    <span class="badge {% if(item.options.badgeClass is defined and item.options.badgeClass != false) %}badge-{{ item.options.badgeClass }}{% endif %}">{{ item.options.badge|trans }}</span>
+                                {% endif %}
+                            </a>
+                            {% if(item.disabled is not defined or item.disabled == false) %}
+                                {{ _self.sidebar_sub(item, "true") }}
+                            {% endif %}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    </ul>
+{% endmacro %}
+
+{#
+@macro sidebar_sub
+@param navigation_sub_routes array
+@param ul bool
+ #}
+{% macro sidebar_sub(navigation_sub_routes=[], ul="") %}
+    {% if(navigation_sub_routes.routes is defined) %}
+        {% if(navigation_sub_routes.routes != false) %}
+            {% if(ul != false) %}
+                <ul class="c-sidebar-nav-dropdown-items">
+            {% endif %}
+            {% for item in navigation_sub_routes.routes %}
+                {% if(item.options.isLabel is defined and item.options.isLabel != false) %}
+                    <li class="c-sidebar-nav-item c-d-compact-none c-d-minimized-none"
+                        {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
+                    >
+                        <a class="c-sidebar-nav-label" href="{% if(item.disabled is defined and item.disabled != false) %}javascript:void(0){% else %}{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}">
+                            <svg class="c-sidebar-nav-icon {% if(item.options.labelClass is defined and item.options.labelClass != false) %}text-{{ item.options.labelClass }}{% endif %}">
+                                <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{% if(item.options.labelIcon is defined and item.options.labelIcon != false) %}{{ item.options.labelIcon }}{% else %}cil-bookmark{% endif %}"/>
+                            </svg>
+                            {% if(item.options.text is defined and item.options.text != false) %}
+                                {{ item.options.text|trans }}
+                            {% endif %}
+                        </a>
+                        {{ _self.sidebar_sub(item, ul) }}
+                    </li>
+                {% else %}
+                    <li class="{% if(item.routes is defined and item.routes != false) %}c-sidebar-nav-dropdown {% if(item.active is defined and item.active != false) %}c-show{% endif %}{% else %}c-sidebar-nav-item{% endif %}"
+                        {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
+                    >
+                        <a href="{% if(item.disabled is defined and item.disabled != false or item.routes is defined and item.routes != false) %}javascript:void(0){% else %}{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}"
+                           title="{% if(item.options.title is defined and item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                           class="{% if(item.disabled is defined and item.disabled != false) %}disabled{% endif %} {% if(item.disabled is defined and item.disabled != false) %}c-sidebar-nav-link{% else %}{% if(item.routes is defined) %}{% if(item.routes != false) %}c-sidebar-nav-dropdown-toggle{% else %}c-sidebar-nav-link{% if(item.active is defined and item.active != false) %} c-active{% endif %}{% endif %}{% else %}c-sidebar-nav-link{% if(item.active is defined and item.active != false) %} c-active{% endif %}{% endif %}{% endif %}"
+                           {% if(item.disabled is defined and item.disabled != false) %}style="opacity: 0.5;"{% endif %}
+                                {% if(item.disabled is defined and item.disabled != false) %}disabled="disabled"{% endif %}
+                        >
+                            {% if(item.options.icon is defined and item.options.icon != false) %}
+                                <svg class="c-sidebar-nav-icon">
+                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ item.options.icon }}"/>
+                                </svg>
+                            {% endif %}
+                            {% if(item.options.text is defined and item.options.text != false) %}
+                                {{ item.options.text|trans }}
+                            {% endif %}
+                            {% if(item.options.badge is defined and item.options.badge != false) %}
+                                <span class="badge {% if(item.options.badgeClass is defined and item.options.badgeClass != false) %}badge-{{ item.options.badgeClass }}{% endif %}">{{ item.options.badge|trans }}</span>
+                            {% endif %}
+                        </a>
+                        {% if(item.disabled is not defined or item.disabled == false) %}
+                            {{ _self.sidebar_sub(item, ul) }}
+                        {% endif %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% if(ul != false) %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{#
+@macro top_left
+@param navigation_routes array
+ #}
+{% macro top_left(navigation_routes=[]) %}
+    <ul class="c-header-nav d-md-down-none">
+        {% if navigation_routes.top_left is defined and navigation_routes.top_left != false %}
+            {% for top_left_navigation in navigation_routes.top_left %}
+                {% for key, item in top_left_navigation %}
+                    <li class="c-header-nav-item px-3">
+                        <a href="{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}"
+                           title="{% if(item.options.title is defined and item.options.title != false) %}{{ item.options.title|trans }}{% endif %}"
+                           class="c-header-nav-link"
+                        >
+                            {% if(item.options.text is defined and item.options.text != false) %}
+                                {{ item.options.text|trans }}
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    </ul>
+{% endmacro %}
+
+{#
+@macro top_right
+@param navigation_routes array
+ #}
+{% macro top_right(navigation_routes=[]) %}
+    {% if navigation_routes.user_account is defined and navigation_routes.user_account != false %}
+        {% if navigation_routes.user_account.avatar is defined and navigation_routes.user_account.avatar != false %}
+            <li class="c-header-nav-item dropdown">
+                <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <div class="c-avatar">
+                        <img class="c-avatar-img" src="{{ navigation_routes.user_account.avatar|raw }}" alt="">
+                    </div>
+                </a>
+                {% if navigation_routes.top_right is defined and navigation_routes.top_right != false %}
+                    <div class="dropdown-menu dropdown-menu-right pt-0">
+
+                        {% for top_right_navigation in navigation_routes.top_right %}
+                            {% for key, item in top_right_navigation %}
+                                <div class="{% if(item.options.class is defined) %}{% if(item.options.class != false) %}{{ item.options.class }}{% endif %}{% endif %}">
+                                    {% if(item.options.icon is defined) %}
+                                        {% if(item.options.icon != false) %}
+                                            <i class="c-icon {{ item.options.icon }}"> </i>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if(item.options.text is defined) %}
+                                        {% if(item.options.text != false) %}
+                                            {{ item.options.text|trans }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                {% if(item.routes is defined) %}
+                                    {% if(item.routes != false) %}
+                                        {% for route in item.routes %}
+                                            <a href="{% if(route.options.href is defined) %}{% if(route.options.href != false) %}{{ route.options.href }}{% endif %}{% endif %}"
+                                               title="{% if(route.options.title is defined) %}{% if(route.options.title != false) %}{{ route.options.title|trans }}{% endif %}{% endif %}"
+                                               class="dropdown-item"
+                                            >
+                                                {% if(route.options.icon is defined) %}
+                                                    {% if(route.options.icon != false) %}
+                                                        <svg class="c-icon mfe-2">
+                                                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ route.options.icon }}"/>
+                                                        </svg>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if(route.options.text is defined) %}
+                                                    {% if(route.options.text != false) %}
+                                                        {{ route.options.text|trans }}
+                                                    {% endif %}
+                                                {% endif %}
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </li>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{#
+@macro crump_bar
+@param navigation_routes array
+ #}
+{% macro crump_bar(navigation_routes=[]) %}
+    <div class="c-header-nav d-md-down-none mfe-2">
+        {% if navigation_routes.crump_bar is defined %}
+            {% if navigation_routes.crump_bar != false %}
+                {% for item in navigation_routes.crump_bar %}
+                    <a href="{% if(item.options.href is defined) %}{% if(item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}"
+                       title="{% if(item.options.title is defined) %}{% if(item.options.title != false) %}{{ item.options.title|trans }}{% endif %}{% endif %}"
+                       class="c-header-nav-link"
+                    >
+                        {% if(item.options.icon is defined) %}
+                            {% if(item.options.icon != false) %}
+                                <svg class="c-icon">
+                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ item.options.icon }}"/>
+                                </svg>
+                            {% endif %}
+                        {% endif %}
+                        {% if(item.options.text is defined) %}
+                            {% if(item.options.text != false) %}
+                                &nbsp;{{ item.options.text|trans }}
+                            {% endif %}
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{#
+@macro breadcrumbs
+@param breadcrumb_routes array
+ #}
+{% macro breadcrumbs(breadcrumb_routes=[]) %}
+    {% if breadcrumb_routes != false %}
+        <ol class="breadcrumb border-0 m-0 px-0 px-md-3">
+            {% for breadcrumb in breadcrumb_routes %}
+                <li class="breadcrumb-item">
+                    {% if(breadcrumb.icon is defined) %}
+                        {% if(breadcrumb.icon != false) %}
+                            <i class="{{ breadcrumb.icon }}"> </i>
+                        {% endif %}
+                    {% endif %}
+                    {% if(breadcrumb.current is defined) %}
+                        {% if(breadcrumb.current != false) %}
+                            {% if(breadcrumb.text is defined) %}
+                                {% if(breadcrumb.text != false) %}
+                                    {{ breadcrumb.text|trans }}
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            <a href="{% if(breadcrumb.href is defined) %}{% if(breadcrumb.href != false) %}{{ breadcrumb.href }}{% endif %}{% endif %}"
+                               title="{% if(breadcrumb.title is defined) %}{% if(breadcrumb.title != false) %}{{ breadcrumb.title|trans }}{% endif %}{% endif %}"
+                            >
+                                {% if(breadcrumb.text is defined) %}
+                                    {% if(breadcrumb.text != false) %}
+                                        {{ breadcrumb.text|trans }}
+                                    {% endif %}
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% if(breadcrumb.href is defined) %}{% if(breadcrumb.href != false) %}{{ breadcrumb.href }}{% endif %}{% endif %}"
+                           title="{% if(breadcrumb.title is defined) %}{% if(breadcrumb.title != false) %}{{ breadcrumb.title|trans }}{% endif %}{% endif %}"
+                        >
+                            {% if(breadcrumb.text is defined) %}
+                                {% if(breadcrumb.text != false) %}
+                                    {{ breadcrumb.text|trans }}
+                                {% endif %}
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+{% endmacro breadcrumbs %}

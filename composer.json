@@ -1,6 +1,27 @@
 {
+    "name": "dwwe/php-orm-react-framework",
+    "description": "PHP & React JS efficiently combined",
+    "keywords": ["php74","php-framework","react","framework", "javascript"],
+    "homepage": "https://github.com/dwwe2017/php-orm-react-framework",
+    "license": "MIT",
+    "type": "project",
+    "readme": "README.md",
+    "authors": [
+        {
+            "name": "DW </> Web-Engineering",
+            "email": "daniel@dwwe.de",
+            "homepage": "https://dwwe.de",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/dwwe2017/php-orm-react-framework",
+        "issues": "https://github.com/dwwe2017/php-orm-react-framework/issues",
+        "wiki": "https://github.com/dwwe2017/php-orm-react-framework/wiki"
+    },
     "autoload": {
         "psr-0": {
+            "Annotations": "./system/",
             "Configs": "./system/",
             "Configs\\Helpers": "./system/Configs/",
             "Controllers": "./system/",
@@ -21,24 +42,24 @@
     },
     "config": {
         "platform": {
-            "php": "7.2"
-        }
+            "php": "7.4"
+        },
+        "optimize-autoloader": true
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "^7.2 || ^7.3",
+        "php": "^7.4",
         "ext-pdo": "*",
         "ext-json": "*",
-        "doctrine/orm": "^2.5.5",
-        "gedmo/doctrine-extensions": "^2.4.24",
-        "webmasters/doctrine-extensions": "^5.3.0",
+        "doctrine/orm": "^2.6.4",
+        "gedmo/doctrine-extensions": "^2.4.39",
+        "webmasters/doctrine-extensions": "^6.0.0",
         "planetteamspeak/ts3-php-framework": "^1.1",
         "phpfastcache/phpfastcache": "^7.0",
         "phpfastcache/phpssdb": "^1.0",
         "phpfastcache/couchdb": "^1.0",
         "phpfastcache/riak-client": "^3.4",
         "predis/predis": "^1.1",
-        "mongodb/mongodb": "^1.4",
         "ezyang/htmlpurifier": "^4.11",
         "guzzlehttp/guzzle": "^6.3",
         "twig/twig": "^2.11",
@@ -49,6 +70,12 @@
         "caseyamcl/configula": "^3.0",
         "gettext/gettext": "^4.6",
         "twig/extensions": "^1.5",
-        "blocktrail/cryptojs-aes-php": "^0.1.0"
+        "blocktrail/cryptojs-aes-php": "^0.1.0",
+        "mikechip/php-httpauth": "1.0.0",
+        "slim/flash": "^0.4.0",
+        "kanellov/slim-twig-flash": "^0.2.0"
+    },
+    "suggest": {
+        "mongodb/mongodb": "^1.4"
     }
 }
