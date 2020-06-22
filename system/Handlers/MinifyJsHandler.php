@@ -1,11 +1,27 @@
 <?php
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2019. DW Web-Engineering
-// https://www.teamspeak-interface.de
-// Developer: Daniel W.
-//
-// License Informations: This program may only be used in conjunction with a valid license.
-// To purchase a valid license please visit the website www.teamspeak-interface.de
+/**
+ * MIT License
+ *
+ * Copyright (c) 2020 DW Web-Engineering
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 namespace Handlers;
 
@@ -13,6 +29,7 @@ namespace Handlers;
 use Configula\ConfigValues;
 use Exception;
 use Exceptions\MinifyJsException;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use JShrink\Minifier;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -24,12 +41,17 @@ class MinifyJsHandler extends Minifier
     /**
      * @var string
      */
-    private static $md5checksum = "";
+    private static string $md5checksum = "";
 
     /**
      * @var string
      */
     private $baseDir = "";
+
+    /**
+     * @var array
+     */
+    private $defaultJsPaths = [];
 
     /**
      * @var string
@@ -39,12 +61,12 @@ class MinifyJsHandler extends Minifier
     /**
      * @var string
      */
-    private $defaultMinifyJsFile = "";
+    private string $defaultMinifyJsFile = "";
 
     /**
      * @var array
      */
-    private $jsContent = [];
+    private array $jsContent = [];
 
     /**
      * MinifyJsHandler constructor.
@@ -53,10 +75,16 @@ class MinifyJsHandler extends Minifier
     private final function __construct(ConfigValues $config)
     {
         $this->baseDir = $config->get("base_dir");
+        $this->defaultJsPaths = $config->get("default_js", []);
         $this->defaultMinifyJsDir = sprintf("%s/data/cache/js", $this->baseDir);
 
         FileHelper::init($this->defaultMinifyJsDir, MinifyJsException::class)
             ->isWritable(true);
+
+        /**
+         * Check and create directory restriction
+         */
+        DirHelper::init($this->defaultMinifyJsDir)->addDirectoryRestriction(["js"]);
     }
 
     /**
@@ -64,39 +92,13 @@ class MinifyJsHandler extends Minifier
      */
     private function setDefaults()
     {
-        $defaultJsPaths = array(
-            sprintf("%s/assets/js/libs/jquery-3.4.1.min.js", $this->baseDir),
-            sprintf("%s/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js", $this->baseDir),
-            sprintf("%s/bootstrap/js/bootstrap.min.js", $this->baseDir),
-            sprintf("%s/assets/js/libs/lodash.compat.min.js", $this->baseDir),
-            sprintf("%s/assets/js/libs/html5shiv.js", $this->baseDir),
-            sprintf("%s/plugins/touchpunch/jquery.ui.touch-punch.min.js", $this->baseDir),
-            sprintf("%s/plugins/event.swipe/jquery.event.move.js", $this->baseDir),
-            sprintf("%s/plugins/event.swipe/jquery.event.swipe.js", $this->baseDir),
-            sprintf("%s/assets/js/libs/breakpoints.js", $this->baseDir),
-            sprintf("%s/plugins/respond/respond.min.js", $this->baseDir),
-            sprintf("%s/plugins/cookie/jquery.cookie.min.js", $this->baseDir),
-            sprintf("%s/plugins/slimscroll/jquery.slimscroll.min.js", $this->baseDir),
-            sprintf("%s/plugins/slimscroll/jquery.slimscroll.horizontal.min.js", $this->baseDir),
-            sprintf("%s/assets/js/app.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins.js", $this->baseDir),
-            sprintf("%s/assets/js/plugins.form-components.js", $this->baseDir),
-            sprintf("%s/plugins/slimscroll/jquery.slimscroll.min.js", $this->baseDir)
-        );
-
-        foreach ($defaultJsPaths as $jsPath) {
-            $this->addJsContent($jsPath);
+        if(empty($this->defaultJsPaths)){
+            return;
         }
 
-        $this->addJsContent(
-            "$(document).ready(function(){
-                \"use strict\";
-
-                App.init(); // Init layout and core plugins
-                Plugins.init(); // Init all plugins
-                FormComponents.init(); // Init all form-specific plugins
-            });", true
-        );
+        foreach ($this->defaultJsPaths as $jsPath) {
+            $this->addJsContent($jsPath);
+        }
     }
 
     /**
@@ -119,8 +121,12 @@ class MinifyJsHandler extends Minifier
      * @return bool|int
      * @throws MinifyJsException
      */
-    public final function compileAndGet($clearOldFiles = true)
+    public final function compile($clearOldFiles = true)
     {
+        if(empty($this->jsContent)){
+            return false;
+        }
+
         $this->defaultMinifyJsFile = sprintf("%s/%s.js", $this->defaultMinifyJsDir, md5(self::$md5checksum));
 
         if ($clearOldFiles) {
@@ -138,7 +144,7 @@ class MinifyJsHandler extends Minifier
         if (!file_exists($this->getDefaultMinifyJsFile())) {
             $content = "";
             foreach ($this->jsContent as $item) {
-                $content .= is_file($item) ? file_get_contents($item) : trim($item);
+                $content .= strlen($item) < 999 && is_file($item) ? file_get_contents($item) : trim($item);
             }
 
             try {
@@ -161,12 +167,19 @@ class MinifyJsHandler extends Minifier
     }
 
     /**
-     * @param string $fileOrString
+     * @param string|null $fileOrString
      * @param bool $codeAsString
      */
-    public final function addJsContent(string $fileOrString, $codeAsString = false)
+    public final function addJsContent(?string $fileOrString, $codeAsString = false): void
     {
-        if ($codeAsString) {
+        if (is_null($fileOrString)) {
+            return;
+        }
+
+        if ($codeAsString || strcasecmp(substr($fileOrString, -3), ".js") != 0) {
+            self::$md5checksum .= trim(md5($fileOrString));
+        } elseif (strcasecmp(substr($fileOrString, 0, 4), "http") == 0) {
+            $fileOrString = @file_get_contents($fileOrString);
             self::$md5checksum .= trim(md5($fileOrString));
         } else {
             FileHelper::init($fileOrString, MinifyJsException::class)->isReadable();

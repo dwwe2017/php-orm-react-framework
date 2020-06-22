@@ -1,11 +1,27 @@
 <?php
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2019. DW Web-Engineering
-// https://www.teamspeak-interface.de
-// Developer: Daniel W.
-//
-// License Informations: This program may only be used in conjunction with a valid license.
-// To purchase a valid license please visit the website www.teamspeak-interface.de
+/**
+ * MIT License
+ *
+ * Copyright (c) 2020 DW Web-Engineering
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 namespace Configs;
 
@@ -16,6 +32,7 @@ use Exception;
 use Exceptions\CacheException;
 use Helpers\ArrayHelper;
 use Helpers\DeclarationHelper;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\VendorExtensionConfigInterface;
 use Managers\ModuleManager;
@@ -33,34 +50,6 @@ class CacheConfig implements VendorExtensionConfigInterface
 {
     use InstantiationStaticsUtilTrait;
     use VendorExtensionInitConfigTrait;
-
-    /**
-     *  @var array Array of driver names only for development
-     */
-    const DEV_CACHE_DRIVERS = [
-        "devfalse", "devtrue", "devnull"
-    ];
-
-    /**
-     *  @var array Array of memory-based driver names
-     */
-    const MEMORY_CACHE_DRIVERS = [
-        "apc", "apcu", "memcache", "memcached", "memstatic", "predis", "redis", "wincache", "xcache", "Zend Memory Cache"
-    ];
-
-    /**
-     * @var array Array of NoSql-based driver names
-     */
-    const NOSQL_CACHE_DRIVERS = [
-        "cassandra", "couchbase", "couchdb", "leveldb", "mongodb", "riak", "ssdb"
-    ];
-
-    /**
-     * @var array Array of file-based driver names
-     */
-    const FILE_CACHE_DRIVERS = [
-        "files", "zenddisk"
-    ];
 
     /**
      * @var array Contains the required Configuration Option class for specific drivers
@@ -82,7 +71,7 @@ class CacheConfig implements VendorExtensionConfigInterface
     /**
      * @var string|null
      */
-    private $moduleShortName;
+    private ?string $moduleShortName;
 
     /**
      * CacheConfig constructor.
@@ -110,12 +99,18 @@ class CacheConfig implements VendorExtensionConfigInterface
         /**
          * Check file permissions for system cache dir
          */
-        FileHelper::init($cacheSystemOptions->get("system.driver.driverConfig.path"), CacheException::class)
+        $driverConfigPath = $cacheSystemOptions->get("system.driver.driverConfig.path");
+        FileHelper::init($driverConfigPath, CacheException::class)
             ->isWritable(true);
+
+        /**
+         * Check and create directory protection
+         */
+        DirHelper::init($driverConfigPath)->addDirectoryProtection();
 
         $cacheModuleOptions = new ConfigValues([]);
 
-        if(!is_null($this->moduleShortName)){
+        if(!empty($this->moduleShortName)){
             /**
              * Build module cache options
              */
@@ -141,6 +136,11 @@ class CacheConfig implements VendorExtensionConfigInterface
                 $cacheModuleOptions = $cacheModuleOptions->mergeValues([
                     "module" => ["driver" => ["driverConfig" => ["path" => $cacheModuleDir], "driverClass" => $cacheModuleClass]]
                 ]);
+
+                /**
+                 * Check and create directory protection
+                 */
+                DirHelper::init($cacheModuleDir)->addDirectoryProtection();
             }
         }
 
@@ -167,7 +167,7 @@ class CacheConfig implements VendorExtensionConfigInterface
     public final function getOptionsDefault(): array
     {
         $isDebug = $this->config->get("debug_mode");
-        $dirName = is_null($this->moduleShortName) ? "system"
+        $dirName = empty($this->moduleShortName) ? "system"
             : sprintf("result/%s", strtolower($this->moduleShortName));
 
         $cacheDir = sprintf("data/cache/%s", $dirName);

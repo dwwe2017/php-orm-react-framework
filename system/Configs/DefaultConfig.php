@@ -1,11 +1,27 @@
 <?php
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2019. DW Web-Engineering
-// https://www.teamspeak-interface.de
-// Developer: Daniel W.
-//
-// License Informations: This program may only be used in conjunction with a valid license.
-// To purchase a valid license please visit the website www.teamspeak-interface.de
+/**
+ * MIT License
+ *
+ * Copyright (c) 2020 DW Web-Engineering
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 namespace Configs;
 
@@ -13,6 +29,7 @@ namespace Configs;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Exceptions\ConfigException;
+use Helpers\DirHelper;
 use Helpers\FileHelper;
 use Interfaces\ConfigInterfaces\ApplicationConfigInterface;
 use Managers\ModuleManager;
@@ -30,27 +47,27 @@ class DefaultConfig implements ApplicationConfigInterface
     /**
      * @var string
      */
-    private $baseDir = "";
+    private string $baseDir = "";
 
     /**
      * @var string
      */
-    private $moduleBaseDir = "";
+    private string $moduleBaseDir = "";
 
     /**
      * @var string
      */
-    private $moduleName = "";
+    private string $moduleName = "";
 
     /**
      * @var string|null
      */
-    private $moduleShortName = "";
+    private ?string $moduleShortName = "";
 
     /**
      * @var ConfigValues
      */
-    private $configValues = null;
+    private ?ConfigValues $configValues = null;
 
     /**
      * DefaultConfig constructor.
@@ -60,7 +77,11 @@ class DefaultConfig implements ApplicationConfigInterface
     public final function __construct(ModuleManager $moduleManager)
     {
         $this->baseDir = $moduleManager->getBaseDir();
+        DirHelper::init($this->baseDir)->addDirectoryRestriction("^|index\.php|\.(js|css|gif|jpeg|jpg|png|woff|svg)", true);
+
         $this->moduleBaseDir = $moduleManager->getModuleBaseDir();
+        DirHelper::init($this->moduleBaseDir)->addDirectoryRestriction();
+
         $this->moduleName = $moduleManager->getModuleName();
         $this->moduleShortName = $moduleManager->getModuleShortName();
 
@@ -69,6 +90,11 @@ class DefaultConfig implements ApplicationConfigInterface
          */
         $configDir = sprintf("%s/config", $this->baseDir);
         FileHelper::init($configDir, ConfigException::class)->isReadable();
+
+        /**
+         * Check and create directory protection
+         */
+        DirHelper::init($configDir)->addDirectoryProtection();
 
         $this->configValues = ConfigFactory::loadSingleDirectory($configDir, $this->getOptionsDefault());
     }
@@ -128,8 +154,12 @@ class DefaultConfig implements ApplicationConfigInterface
         return [
             //General properties
             "debug_mode" => false,
+            //Path of the main directory
             "base_dir" => $this->baseDir,
+            //Preset language
             "language" => "en_US",
+            //Entry module for page view without parameters
+            "entry_module" => "Dashboard",
             //Database configuration
             "connection_options" => [],
             //Doctrine configuration
