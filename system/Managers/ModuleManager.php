@@ -1,11 +1,27 @@
 <?php
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2019. DW Web-Engineering
-// https://www.teamspeak-interface.de
-// Developer: Daniel W.
-//
-// License Informations: This program may only be used in conjunction with a valid license.
-// To purchase a valid license please visit the website www.teamspeak-interface.de
+/**
+ * MIT License
+ *
+ * Copyright (c) 2020 DW Web-Engineering
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 namespace Managers;
 
@@ -14,10 +30,13 @@ use Configs\CacheConfig;
 use Configs\DefaultConfig;
 use Configs\DoctrineConfig;
 use Configs\LoggerConfig;
+use Configs\PortalConfig;
 use Configs\TemplateConfig;
 use Configula\ConfigFactory;
 use Configula\ConfigValues;
 use Controllers\AbstractBase;
+use Helpers\DirHelper;
+use Helpers\FileHelper;
 
 /**
  * Class ModuleManager
@@ -28,17 +47,22 @@ class ModuleManager
     /**
      * @var ModuleManager|null
      */
-    public static $instance = null;
+    public static ?ModuleManager $instance = null;
 
     /**
      * @var string
      */
-    public static $instanceKey = "";
+    public static string $instanceKey = "";
 
     /**
      * @var string
      */
-    private $baseDir = "";
+    private string $baseDir = "";
+
+    /**
+     * @var string
+     */
+    private $modulesDir = "";
 
     /**
      * @var string
@@ -48,12 +72,17 @@ class ModuleManager
     /**
      * @var string
      */
+    private string $entryModule = "";
+
+    /**
+     * @var string
+     */
     private $moduleBaseDir = "";
 
     /**
      * @var ConfigValues
      */
-    private $config;
+    private ConfigValues $config;
 
     /**
      * @var ConfigValues
@@ -63,27 +92,32 @@ class ModuleManager
     /**
      * @var ConfigValues
      */
-    private $templateConfig;
+    private ConfigValues $templateConfig;
 
     /**
      * @var ConfigValues
      */
-    private $doctrineConfig;
+    private ConfigValues $doctrineConfig;
 
     /**
      * @var ConfigValues
      */
-    private $loggerConfig;
+    private ConfigValues $loggerConfig;
 
     /**
      * @var ConfigValues
      */
-    private $moduleConfig;
+    private ConfigValues $moduleConfig;
 
     /**
      * @var CacheConfig
      */
     private $cacheConfig;
+
+    /**
+     * @var ConfigValues
+     */
+    private ConfigValues $portalConfig;
 
     /**
      * ModuleManager constructor.
@@ -95,9 +129,10 @@ class ModuleManager
         $this->moduleName = get_class($controllerInstance);
         $this->moduleConfig = new ConfigValues([]);
         $this->moduleBaseDir = $this->getBaseDir();
+        $this->modulesDir = sprintf("%s/modules", $this->getBaseDir());
 
         if ($this->isModule()) {
-            $this->moduleBaseDir = sprintf("%s/modules/%s", $this->getBaseDir(), $this->getModuleShortName());
+            $this->moduleBaseDir = sprintf("%s/%s", $this->getModulesDir(), $this->getModuleShortName());
             $moduleConfigPath = sprintf("%s/config", $this->moduleBaseDir);
 
             if (file_exists($moduleConfigPath) && is_readable($moduleConfigPath)) {
@@ -110,6 +145,7 @@ class ModuleManager
         $this->doctrineConfig = DoctrineConfig::init($this->defaultConfig);
         $this->loggerConfig = LoggerConfig::init($this->defaultConfig);
         $this->cacheConfig = CacheConfig::init($this->defaultConfig);
+        $this->portalConfig = PortalConfig::init($this->defaultConfig);
 
         $this->config = $this->moduleConfig
             ->merge($this->defaultConfig
@@ -117,7 +153,25 @@ class ModuleManager
             ->merge($this->templateConfig)
             ->merge($this->doctrineConfig)
             ->merge($this->loggerConfig)
-            ->merge($this->cacheConfig);
+            ->merge($this->cacheConfig)
+            ->merge($this->portalConfig);
+
+        /**
+         * @internal Set default modules whose index controller and index action are called when no parameters are called
+         * @example The field "entry_module" => "Dashboard" in the configuration file causes the
+         * link "index.php?module=dashboard&controller=index&action=index" to be called if there are no parameters
+         */
+        $this->entryModule = $this->getConfig()->get("entry_module", "Dashboard");
+
+        /**
+         * Correct entry point if specified module does not exist or an error exists
+         */
+        if(!class_exists(sprintf("Modules\\%s\\Controllers\\IndexController", ucfirst($this->getEntryModule())))){
+            foreach (DirHelper::init($this->getModulesDir())->getScan() as $moduleDir){
+                $this->entryModule = $moduleDir;
+                break;
+            }
+        }
     }
 
     /**
@@ -189,5 +243,74 @@ class ModuleManager
     public final function getModuleBaseDir(): string
     {
         return $this->moduleBaseDir;
+    }
+
+    /**
+     * @param bool $relative
+     * @return string
+     */
+    public final function getBaseUrl($relative = true): string
+    {
+        return $relative ? str_replace($this->getBaseDir(), "", $this->getModuleBaseDir()) : $this->getModuleBaseDir();
+    }
+
+    /**
+     * @param string $methodAction
+     * @param bool $relative
+     * @return string|null
+     */
+    public final function getMethodJsAction(string $methodAction, $relative = false)
+    {
+        $file = sprintf("%s/%s.js", $this->getJsAssetsPath(false), $methodAction);
+        return !FileHelper::init($file)->fileExists() ? null :
+            sprintf("%s/%s.js", $this->getJsAssetsPath($relative), $methodAction);
+    }
+
+    /**
+     * @param bool $relative
+     * @return string
+     */
+    public final function getJsAssetsPath($relative = false): string
+    {
+        return $relative ? sprintf("assets/js/%s", $this->getControllerShortName())
+            : sprintf("%s/assets/js/%s", $this->getModuleBaseDir(), $this->getControllerShortName());
+    }
+
+    /**
+     * @param string $methodAction
+     * @param bool $relative
+     * @return string|null
+     */
+    public final function getMethodCssAction(string $methodAction, $relative = false)
+    {
+        $file = sprintf("%s/%s.css", $this->getCssAssetsPath(false), $methodAction);
+        return !FileHelper::init($file)->fileExists() ? null :
+            sprintf("%s/%s.css", $this->getCssAssetsPath($relative), $methodAction);
+    }
+
+    /**
+     * @param bool $relative
+     * @return string
+     */
+    public final function getCssAssetsPath($relative = false): string
+    {
+        return $relative ? sprintf("assets/css/%s", $this->getControllerShortName())
+            : sprintf("%s/assets/css/%s", $this->getModuleBaseDir(), $this->getControllerShortName());
+    }
+
+    /**
+     * @return string
+     */
+    public function getModulesDir(): string
+    {
+        return $this->modulesDir;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntryModule(): string
+    {
+        return lcfirst($this->entryModule);
     }
 }
