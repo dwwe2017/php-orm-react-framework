@@ -24,7 +24,6 @@ $config = [
         "b_allow_stay_logged_in" => true,
         //Array of Js files that should not be minimized and permanently integrated
         "a_non_minified_js" => [
-            "assets/vendors/pace-progress/js/pace.min.js",
             "assets/vendors/@coreui/coreui/js/coreui.bundle.min.js"
         ],
         //Array of CSS files that should not be minimized and permanently integrated

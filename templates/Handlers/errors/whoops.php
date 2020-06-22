@@ -51,7 +51,6 @@
         </div>
     </div>
 </div>
-<script src="assets/vendors/pace-progress/js/pace.min.js"></script>
 <script src="assets/vendors/@coreui/coreui/js/coreui.bundle.min.js"></script>
 </body>
 </html>
