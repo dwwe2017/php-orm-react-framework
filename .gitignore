@@ -2,6 +2,7 @@
 /.idea
 /.todo
 /.coreUI
+/.coreUI Pro
 /assets/js/.scripts
 /config/*
 !/config/default-config.php.dist
