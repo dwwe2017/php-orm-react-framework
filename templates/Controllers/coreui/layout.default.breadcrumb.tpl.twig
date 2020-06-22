@@ -1,0 +1,10 @@
+{% block layout_breadcrumb %}
+    {% import "generic.nav.macro.lib.twig" as navigation %}
+
+    <div class="crumbs">
+        <!-- Breadcrumbs Menu -->
+        {{ navigation.breadcrumbs((breadcrumb_routes)) }}
+        <!-- /Breadcrumbs Menu -->
+    </div>
+
+{% endblock layout_breadcrumb %}

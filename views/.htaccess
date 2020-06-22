@@ -1,12 +1,5 @@
-# Apache 2.2
-<IfModule !authz_core_module>
-	Order deny,allow
-    Deny from all
-</IfModule>
-
-# Apache 2.4+
-<IfModule authz_core_module>
-	<RequireAll>
-		Require all denied
-	</RequireAll>
+# Prevent unauthorized access to non-user content
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule !\.(js)$ - [L,R=403]
 </IfModule>

@@ -14,7 +14,7 @@
 $config = [
     //Application configuration
     "debug_mode" => false,
-    "locale_default" => "en_GB"
+    "locale_default" => "en_GB",
     //Database configuration
     "connection_options" => [
         "default" => [
@@ -38,6 +38,10 @@ $config = [
         "autoescape" => "html",
         "optimizations" => -1,
     ],
+    //Default JS files (relative file paths, urls or code)
+    "default_js" => [],
+    //Default CSS files (relative file paths, urls or code)
+    "default_css" => [],
     //Logger configuration
     "logger_options" => [
         "log_level" => \Configs\LoggerConfig::ERROR

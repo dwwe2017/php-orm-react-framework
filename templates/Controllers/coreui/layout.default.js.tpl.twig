@@ -1,0 +1,75 @@
+{% block layout_js %}
+
+    {% if base_controller_react_entry_points is defined %}
+        {% if base_controller_react_entry_points != false %}
+            {#
+            @see assets/react
+            Here the Reactjs of the different BaseController is implemented to show for example the notifications in the sidebar
+            #}
+            {% for entry_point in base_controller_react_entry_points %}
+                <script src="{{ entry_point|raw }}" type="text/javascript"></script>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+
+    {% if module_controller_react_dom_id is defined %}
+        {% if module_controller_react_js_entry_points != false %}
+            {# @internal
+            @see https://symfonycasts.com/screencast/reactjs/server-pass-props
+            The only place where I want you to feel safe using the global window object is inside of your
+            entry point: it should grab all of the stuff you need, and pass it into your React app.
+            #}
+            <!--=== React.js ===-->
+            <script type="text/javascript">
+                window.INIT_PROPS = {
+                    reactDOM: "{{ module_controller_react_dom_id }}",
+                    langCode: "{{ lang_code }}",
+                    baseUrl: "{{ base_url|raw }}"
+                };
+            </script>
+            {# @internal
+            @see ReactHelper::getEntryScriptTags()
+            #}
+            {% for entry_point in module_controller_react_js_entry_points %}
+                <script src="{{ entry_point|raw }}" type="text/javascript"></script>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+
+    {# @internal
+    Non minified JS
+    @see PortalConfig::getOptionsDefault() ["a_non_minified_js"]
+    #}
+    {% if(a_non_minified_js is defined and a_non_minified_js != false) %}
+        {% for non_minified_js in a_non_minified_js %}
+            <script src="{{ non_minified_js|e }}" type="text/javascript"></script>
+        {% endfor %}
+    {% endif %}
+
+    {# @internal
+    Minified JS
+    @see TemplateConfig::getOptionsDefault() ["default_js"]
+    #}
+    {% if minified_js != false %}
+        <script type="text/javascript" src="{{ minified_js }}"></script>
+    {% endif %}
+
+    {% if(b_core_ui_pro is defined and b_core_ui_pro != false) %}
+        <script>
+            /**
+             * Here it is checked whether the aSide element exists, if so the corresponding
+             * button is also shown in order to be able to access it.
+             * @see templates/Controllers/coreui/layout.react.sidebar.aside.tpl.twig
+             */
+            let aside_li_loading = document.getElementById('aside_li_loading');
+            if(document.getElementById('aside').innerHTML.length > 0){
+                document.getElementById('aside_li').style.display = 'block';
+                aside_li_loading.style.display = 'none';
+            }else{
+                document.getElementById('aside_li_placeholder').style.display = 'block';
+                aside_li_loading.style.display = 'none';
+            }
+        </script>
+    {% endif %}
+
+{% endblock layout_js %}
