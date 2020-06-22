@@ -1,17 +1,36 @@
 <?php
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2019. DW Web-Engineering
-// https://www.teamspeak-interface.de
-// Developer: Daniel W.
-//
-// License Informations: This program may only be used in conjunction with a valid license.
-// To purchase a valid license please visit the website www.teamspeak-interface.de
+/**
+ * MIT License
+ *
+ * Copyright (c) 2020 DW Web-Engineering
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 namespace Services;
 
 
+use Configs\PortalConfig;
 use Interfaces\ServiceInterfaces\VendorExtensionServiceInterface;
+use Knlv\Slim\Views\TwigMessages;
 use Managers\ModuleManager;
+use Slim\Flash\Messages;
 use Traits\ServiceTraits\VendorExtensionInitServiceTraits;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
 use Twig\Environment;
@@ -31,12 +50,12 @@ class TemplateService implements VendorExtensionServiceInterface
     /**
      * @var FilesystemLoader
      */
-    private $loader;
+    private FilesystemLoader $loader;
 
     /**
      * @var Environment
      */
-    private $environment;
+    private Environment $environment;
 
     /**
      * @var string
@@ -72,6 +91,19 @@ class TemplateService implements VendorExtensionServiceInterface
         $envOptions = $config->get("template_options", []);
         $this->environment = new Environment($this->loader, $envOptions);
         $this->environment->addExtension(new Twig_Extensions_Extension_I18n());
+
+        $portalOptions = $config->get("portal_options", []);
+
+        /**
+         * A global variable is like any other template variable, except that it's available in all templates and macros:
+         * @see https://twig.symfony.com/doc/3.x/advanced.html#globals
+         * @see PortalConfig
+         */
+        if(!empty($portalOptions)){
+            foreach ($portalOptions as $key => $portalOption){
+                $this->environment->addGlobal($key, $portalOption);
+            }
+        }
     }
 
     /**
@@ -79,22 +111,69 @@ class TemplateService implements VendorExtensionServiceInterface
      */
     public final function getEnvironment(): Environment
     {
+        /**
+         * @author https://github.com/kanellov/slim-twig-flash
+         * @internal In templates use flash() or flash('some_key') to fetch messages from Flash service
+         */
+        $this->environment->addExtension(new TwigMessages(new Messages()));
+
+        /**
+         * @see sha1()
+         */
         $this->environment->addFunction(new TwigFunction("sha1", function (string $string){
             return sha1($string);
         }));
 
+        /**
+         * @see md5()
+         */
         $this->environment->addFunction(new TwigFunction("md5", function (string $string){
             return md5($string);
         }));
 
+        /**
+         * @internal For developement
+         * @see inc/helper.inc.php::print_pre()
+         */
+        $this->environment->addFunction(new TwigFunction("print_pre", function ($mixed){
+            return print_pre($mixed);
+        }));
+
+        /**
+         * @internal For output of user input that should support HTML code
+         * @see inc/helper.inc.php::purify()
+         */
+        $this->environment->addFunction(new TwigFunction("purify", function (string $string){
+            return purify($string);
+        }));
+
+        /**
+         * @internal Default view helper function for user input to be reissued or saved
+         * @see inc/helper.inc.php::clean()
+         */
+        $this->environment->addFunction(new TwigFunction("clean", function (string $string){
+            return clean($string);
+        }));
+
+        /**
+         * @internal Translation (singular)
+         * @see LocaleService::init()
+         */
         $this->environment->addFunction(new TwigFunction("__", function (string $original){
             return __($original);
         }));
 
+        /**
+         * @internal Translation (plural)
+         * @see LocaleService::init()
+         */
         $this->environment->addFunction(new TwigFunction("n__", function (string $original, string $plural, string $value){
             return n__($original, $plural, $value);
         }));
 
+        /**
+         * @example {{ asset("img/logo.png") }}
+         */
         $this->environment->addFunction(new TwigFunction("asset", function (string $file){
             return sprintf("%s%s", $this->assetBaseDir, $file);
         }));

@@ -1,0 +1,50 @@
+{% extends "layout.default.tpl.twig" %}
+
+{% block layout_body %}
+    <body class="c-app {% if(b_dark_layout is defined and b_dark_layout == true) %}c-dark-theme{% endif %}">
+
+    {% block layout_sidebar %}
+        {# block layout_sidebar #}
+        {% include "layout.default.sidebar.tpl.twig" %}
+    {% endblock layout_sidebar %}
+
+        <div class="c-wrapper">
+
+            {% block layout_header %}
+                {# block layout_header #}
+                {% include "layout.default.header.tpl.twig" %}
+            {% endblock layout_header %}
+
+            <div class="c-body">
+                <main class="c-main">
+                    <div class="container-fluid">
+                        <div class="fade-in">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {% block layout_flash %}
+                                        {# block layout_flash #}
+                                        {% include "layout.default.flash.tpl.twig" %}
+                                    {% endblock layout_flash %}
+                                    {% block page_content %}
+                                        {# block page_content #}
+                                    {% endblock page_content %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <footer class="c-footer">
+                <div><a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a> © 2020 DW <\> Web-Engineering</div>
+            </footer>
+        </div>
+
+        {% block layout_js %}
+            {# block layout_js #}
+            {% include "layout.default.js.tpl.twig" %}
+        {% endblock layout_js %}
+
+    </body>
+
+{% endblock layout_body %}

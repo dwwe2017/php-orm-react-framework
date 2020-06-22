@@ -1,0 +1,9 @@
+{% block layout_flash %}
+    {% import "generic.flash.macro.lib.twig" as flash %}
+
+    {% set flas_messages = flash() %}
+    {% for key, messages in flas_messages %}
+        {{ flash.message(messages, key) }}
+    {% endfor %}
+
+{% endblock layout_flash %}
