@@ -40,7 +40,7 @@
             </ul>
         {% endif %}
 
-        <ul class="c-header-nav">
+        <ul class="px-3 c-header-nav">
             {% block layout_header_notifications %}
                 {# block layout_header_notifications #}
                 {% include "layout.react.header.notifications.tpl.twig" %}
@@ -60,7 +60,7 @@
             {{ navigation.top_right(navigation_routes) }}
             <!-- Top Right User Menu -->
 
-            {% if(b_core_ui_pro is defined and b_core_ui_pro != false) %}
+            {# if(b_core_ui_pro is defined and b_core_ui_pro != false) #}
                 <!-- If an aSide was declared using React -->
                 <li id="aside_li" class="c-header-nav-item px-3" style="display: none;">
                     <button class="c-class-toggler c-header-nav-btn" type="button" data-target="#aside" data-class="c-sidebar-show">
@@ -88,7 +88,6 @@
                     </span>
                 </li>
                 <!-- aSide loading process -->
-            {% endif %}
         </ul>
 
         <div class="c-subheader justify-content-between px-3">

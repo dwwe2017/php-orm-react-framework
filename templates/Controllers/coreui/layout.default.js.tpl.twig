@@ -54,7 +54,7 @@
         <script type="text/javascript" src="{{ minified_js }}"></script>
     {% endif %}
 
-    {% if(b_core_ui_pro is defined and b_core_ui_pro != false) %}
+    {# if(b_core_ui_pro is defined and b_core_ui_pro != false) #}
         <script>
             /**
              * Here it is checked whether the aSide element exists, if so the corresponding
@@ -70,6 +70,6 @@
                 aside_li_loading.style.display = 'none';
             }
         </script>
-    {% endif %}
+    {# endif #}
 
 {% endblock layout_js %}

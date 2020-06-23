@@ -120,7 +120,7 @@
 @param navigation_routes array
  #}
 {% macro top_left(navigation_routes=[]) %}
-    <ul class="c-header-nav d-md-down-none">
+    <ul class="d-md-down-none mr-auto c-header-nav">
         {% if navigation_routes.top_left is defined and navigation_routes.top_left != false %}
             {% for top_left_navigation in navigation_routes.top_left %}
                 {% for key, item in top_left_navigation %}
