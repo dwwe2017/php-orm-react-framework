@@ -54,22 +54,20 @@
         <script type="text/javascript" src="{{ minified_js }}"></script>
     {% endif %}
 
-    {# if(b_core_ui_pro is defined and b_core_ui_pro != false) #}
-        <script>
-            /**
-             * Here it is checked whether the aSide element exists, if so the corresponding
-             * button is also shown in order to be able to access it.
-             * @see templates/Controllers/coreui/layout.react.sidebar.aside.tpl.twig
-             */
-            let aside_li_loading = document.getElementById('aside_li_loading');
-            if(document.getElementById('aside').innerHTML.length > 0){
-                document.getElementById('aside_li').style.display = 'block';
-                aside_li_loading.style.display = 'none';
-            }else{
-                document.getElementById('aside_li_placeholder').style.display = 'block';
-                aside_li_loading.style.display = 'none';
-            }
-        </script>
-    {# endif #}
+    <script>
+        /**
+         * Here it is checked whether the aSide element exists, if so the corresponding
+         * button is also shown in order to be able to access it.
+         * @see templates/Controllers/coreui/layout.react.sidebar.aside.tpl.twig
+         */
+        let aside_li_loading = document.getElementById('aside_li_loading');
+        if(document.getElementById('aside').innerHTML.length > 0){
+            document.getElementById('aside_li').style.display = 'block';
+            aside_li_loading.style.display = 'none';
+        }else{
+            document.getElementById('aside_li_placeholder').style.display = 'block';
+            aside_li_loading.style.display = 'none';
+        }
+    </script>
 
 {% endblock layout_js %}

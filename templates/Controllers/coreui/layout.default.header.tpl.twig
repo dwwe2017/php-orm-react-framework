@@ -60,34 +60,33 @@
             {{ navigation.top_right(navigation_routes) }}
             <!-- Top Right User Menu -->
 
-            {# if(b_core_ui_pro is defined and b_core_ui_pro != false) #}
-                <!-- If an aSide was declared using React -->
-                <li id="aside_li" class="c-header-nav-item px-3" style="display: none;">
-                    <button class="c-class-toggler c-header-nav-btn" type="button" data-target="#aside" data-class="c-sidebar-show">
-                        <svg class="c-icon c-icon-lg mfe-md-2">
-                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-applications-settings"/>
-                        </svg>
-                    </button>
-                </li>
-                <!-- If an aSide was declared using React -->
+            <!-- If an aSide was declared using React -->
+            <li id="aside_li" class="c-header-nav-item px-3" style="display: none;">
+                <button class="c-class-toggler c-header-nav-btn" type="button" data-target="#aside" data-class="c-sidebar-show">
+                    <svg class="c-icon c-icon-lg mfe-md-2">
+                        <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-applications-settings"/>
+                    </svg>
+                </button>
+            </li>
+            <!-- If an aSide was declared using React -->
 
-                <!-- Placeholder if no aSide has been declared -->
-                <li id="aside_li_placeholder" class="c-header-nav-item px-3" style="display: none;">
-                    <span class="c-class-toggler c-header-nav-btn">
-                        <svg class="c-icon c-icon-lg mfe-md-2"> </svg>
-                    </span>
-                </li>
-                <!-- Placeholder if no aSide has been declared -->
+            <!-- Placeholder if no aSide has been declared -->
+            <li id="aside_li_placeholder" class="c-header-nav-item px-3" style="display: none;">
+                <span class="c-class-toggler c-header-nav-btn">
+                    <svg class="c-icon c-icon-lg mfe-md-2"> </svg>
+                </span>
+            </li>
+            <!-- Placeholder if no aSide has been declared -->
 
-                <!-- aSide loading process -->
-                <li id="aside_li_loading" class="c-header-nav-item px-3" style="display: block;">
-                    <span class="c-class-toggler c-header-nav-btn">
-                        <span class="spinner-grow c-icon c-icon-lg mfe-md-2" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </span>
+            <!-- aSide loading process -->
+            <li id="aside_li_loading" class="c-header-nav-item px-3" style="display: block;">
+                <span class="c-class-toggler c-header-nav-btn">
+                    <span class="spinner-grow c-icon c-icon-lg mfe-md-2" role="status">
+                        <span class="sr-only">Loading...</span>
                     </span>
-                </li>
-                <!-- aSide loading process -->
+                </span>
+            </li>
+            <!-- aSide loading process -->
         </ul>
 
         <div class="c-subheader justify-content-between px-3">
