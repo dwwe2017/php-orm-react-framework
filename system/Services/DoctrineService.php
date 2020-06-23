@@ -64,7 +64,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
     /**
      * @var string|null
      */
-    private ?string $currentConnectionOption;
+    private ?string $currentConnectionOption = "";
 
     /**
      * @var self
