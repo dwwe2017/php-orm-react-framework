@@ -30,7 +30,7 @@ $config = [
     ],
     //Template configuration
     "template_options" => [
-        "template" => "default",
+        "template" => "coreui",
         "charset " => "utf-8",
         "base_template_class" => "\\Twig\\Template",
         "auto_reload" => true,
@@ -44,7 +44,7 @@ $config = [
     "default_css" => [],
     //Logger configuration
     "logger_options" => [
-        "log_level" => \Configs\LoggerConfig::ERROR
+        "log_level" => 400
     ],
     //PhpFastCache configuration (Fallback drivers are set automatically!)
     "cache_options" => [
