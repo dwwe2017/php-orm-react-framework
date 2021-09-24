@@ -128,6 +128,38 @@ class TemplateConfig implements VendorExtensionConfigInterface
         }
 
         /**
+         * Remove default non minified js source if set manually
+         */
+        $defaultNonMinifiedJs = $this->config->get("default_non_minified_js", []);
+        $tplConfig = $tplConfig->mergeValues([
+            "default_non_minified_js" => empty($defaultNonMinifiedJs) ? $tplConfig->get("default_non_minified_js", []) : $defaultNonMinifiedJs
+        ]);
+
+        /**
+         * Remove default non minified css source if set manually
+         */
+        $defaultNonMinifiedCss = $this->config->get("default_non_minified_css", []);
+        $tplConfig = $tplConfig->mergeValues([
+            "default_non_minified_css" => empty($defaultNonMinifiedCss) ? $tplConfig->get("default_non_minified_css", []) : $defaultNonMinifiedCss
+        ]);
+
+        /**
+         * Remove default CDN js source if set manually
+         */
+        $defaultCdnJs = $this->config->get("default_cdn_js", []);
+        $tplConfig = $tplConfig->mergeValues([
+            "default_cdn_js" => empty($defaultCdnJs) ? $tplConfig->get("default_cdn_js", []) : $defaultCdnJs
+        ]);
+
+        /**
+         * Remove default CDN css source if set manually
+         */
+        $defaultCdnCss = $this->config->get("default_cdn_css", []);
+        $tplConfig = $tplConfig->mergeValues([
+            "default_cdn_css" => empty($defaultCdnCss) ? $tplConfig->get("default_cdn_css", []) : $defaultCdnCss
+        ]);
+
+        /**
          * Finished
          */
         $this->configValues = $tplConfig;
@@ -153,7 +185,115 @@ class TemplateConfig implements VendorExtensionConfigInterface
                 "optimizations" => $isDebug ? 0 : -1,
             ],
             "default_js" => [],
-            "default_css" => []
+            "default_css" => [],
+            "default_non_minified_js" => [],
+            "default_non_minified_css" => [],
+            "default_cdn_js" => [
+                [
+                    /**
+                     * @see https://www.jsdelivr.com/package/npm/@coreui/coreui
+                     * @author @coreui/coreui
+                     * @file coreui.bundle.min.js
+                     * @version 3.4.0
+                     */
+                    "href" => "https://cdn.jsdelivr.net/npm/@coreui/coreui@3.4.0/dist/js/coreui.bundle.min.js",
+                    "integrity" => "sha256-pNVhsgAxflakVHYrSm+g0qX/Mg/OozmqIPlcA/UmWaY=",
+                    "crossorigin" => "anonymous"
+                ],
+                [
+                    /**
+                     * @see https://www.jsdelivr.com/package/npm/@coreui/chartjs?version=2.0.0&path=dist%2Fjs
+                     * @author @coreui/chartjs
+                     * @version 2.0.0
+                     * @file coreui-chartjs.min.js
+                     */
+                    "href" => "https://cdn.jsdelivr.net/npm/@coreui/chartjs@2.0.0/dist/js/coreui-chartjs.min.js",
+                    "integrity" => "sha256-BYNHBo+f3ti8HRrA9Gr55e5wo5qeZVzZJheEjPAgmaw=",
+                    "crossorigin" => "anonymous"
+                ],
+                [
+                    /**
+                     * @see https://www.jsdelivr.com/package/npm/@coreui/utils?path=dist
+                     * @author @coreui/utils
+                     * @version 1.3.1
+                     * @file coreui-utils.js
+                     */
+                    "href" => "https://cdn.jsdelivr.net/npm/@coreui/utils@1.3.1/dist/coreui-utils.js",
+                    "integrity" => "sha256-NVrkdvRh8oXb52THPYm46LAZWIqzJKxlJYaN6p3PzHk=",
+                    "crossorigin" => "anonymous"
+                ]
+            ],
+            "default_cdn_css" => [
+                [
+                    /**
+                     * @see https://www.jsdelivr.com/package/npm/@coreui/coreui
+                     * @author @coreui/coreui
+                     * @file coreui.min.css
+                     * @version 3.4.0
+                     */
+                    "href" => "https://cdn.jsdelivr.net/npm/@coreui/coreui@3.4.0/dist/css/coreui.min.css",
+                    "integrity" => "sha256-ymLt+ThGD+jSN1VPjDdI1onY9UVinS39bJuWRzM94t8=",
+                    "crossorigin" => "anonymous"
+                ],
+                [
+                    /**
+                     * @see https://www.jsdelivr.com/package/npm/@coreui/chartjs?version=2.0.0&path=dist%2Fcss
+                     * @author @coreui/chartjs
+                     * @version 2.0.0
+                     * @file coreui-chartjs.min.css
+                     */
+                    "href" => "https://cdn.jsdelivr.net/npm/@coreui/chartjs@2.0.0/dist/css/coreui-chartjs.min.css",
+                    "integrity" => "sha256-r+WaegrEE/v+hab/ZL7pfs8DbAfvyYM0F9atxcLYnn8=",
+                    "crossorigin" => "anonymous"
+                ],
+                [
+                    /**
+                     * @link https://www.jsdelivr.com/package/npm/@coreui/icons?path=css
+                     * @author @coreui/icons
+                     * @file all.min.css
+                     * @version 2.0.1
+                     */
+                    "href" => "https://cdn.jsdelivr.net/npm/@coreui/icons@2.0.1/css/all.min.css",
+                    "integrity" => "sha256-W6Lexo8XTtkIn8nOCBocGu6Ty3ZZnraK550Ie8iuLAg=",
+                    "crossorigin" => "anonymous"
+                ],
+                [
+                    /**
+                     * @link https://www.jsdelivr.com/package/npm/@coreui/icons?path=css
+                     * @author @coreui/icons
+                     * @file brand.min.css
+                     * @version 2.0.1
+                     * @notice Use cib- prefix for linear icons
+                     */
+                    "href" => "https://cdn.jsdelivr.net/npm/@coreui/icons@2.0.1/css/brand.min.css",
+                    "integrity" => "sha256-5iRAOmCdbiRkYuvul6+RXXt8VvbgJ7P2kxvABrWa1jk=",
+                    "crossorigin" => "anonymous"
+                ],
+                [
+                    /**
+                     * @link https://www.jsdelivr.com/package/npm/@coreui/icons?path=css
+                     * @author @coreui/icons
+                     * @file flag.min.css
+                     * @version 2.0.1
+                     * @notice Use cif- prefix for linear icons
+                     */
+                    "href" => "https://cdn.jsdelivr.net/npm/@coreui/icons@2.0.1/css/flag.min.css",
+                    "integrity" => "sha256-vPcHAKo5V7+PU63JSYsUaudKZdfLYkFobV8ssUm8yg8=",
+                    "crossorigin" => "anonymous"
+                ],
+                [
+                    /**
+                     * @link https://www.jsdelivr.com/package/npm/@coreui/icons?path=css
+                     * @author @coreui/icons
+                     * @file free.min.css
+                     * @version 2.0.1
+                     * @notice Use cil- prefix for linear icons
+                     */
+                    "href" => "https://cdn.jsdelivr.net/npm/@coreui/icons@2.0.1/css/free.min.css",
+                    "integrity" => "sha256-6uqhzNLi3RU8WNmSSpqxMHkwlXFSNJH+H8L5rb4XQTg=",
+                    "crossorigin" => "anonymous"
+                ]
+            ]
         ];
     }
 }

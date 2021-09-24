@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -64,17 +64,17 @@ class LocaleService implements VendorExtensionServiceInterface
     /**
      * @var string
      */
-    private $sysLocaleDir = "";
+    private string $sysLocaleDir;
 
     /**
      * @var string
      */
-    private $modLocaleDir = "";
+    private string $modLocaleDir;
 
     /**
      * @var string
      */
-    private $languageCode = "";
+    private $languageCode;
 
     /**
      * LocaleService constructor.
@@ -148,7 +148,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * @param string $localeCode
      * @return Translations
      */
-    private function getSystemTranslations(string $localeCode)
+    private function getSystemTranslations(string $localeCode): Translations
     {
         $poFile = sprintf("%s/%s/LC_%s/%s.po", $this->sysLocaleDir,
             $localeCode, strtoupper(self::DOMAIN), self::DOMAIN);
@@ -164,7 +164,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * @param string $localeCode
      * @return Translations
      */
-    private function getModuleTranslations(string $localeCode)
+    private function getModuleTranslations(string $localeCode): Translations
     {
         $poFile = sprintf("%s/%s/LC_%s/%s.po", $this->modLocaleDir,
             $localeCode, strtoupper(self::DOMAIN), self::DOMAIN);
@@ -180,7 +180,7 @@ class LocaleService implements VendorExtensionServiceInterface
      * @param string|null $localeCode
      * @return Translations
      */
-    public function getTranslations(?string $localeCode = null)
+    public function getTranslations(?string $localeCode = null): Translations
     {
         $localeCode = is_null($localeCode) ? $this->getLanguageCode() : $localeCode;
         return $this->getSystemTranslations($localeCode)->mergeWith($this->getModuleTranslations($localeCode));

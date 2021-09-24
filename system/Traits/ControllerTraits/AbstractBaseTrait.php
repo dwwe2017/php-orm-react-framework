@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -37,7 +37,9 @@ use Gettext\Translations;
 use Gettext\Translator;
 use Handlers\CacheHandler;
 use Handlers\BufferHandler;
+use Handlers\CssHandler;
 use Handlers\FlashHandler;
+use Handlers\JsHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
@@ -61,6 +63,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use Twig\TemplateWrapper;
+use Whoops\Handler\JsonResponseHandler;
 
 /**
  * Trait AbstractBaseTrait
@@ -124,14 +127,24 @@ trait AbstractBaseTrait
     private string $view = "";
 
     /**
+     * @var CssHandler
+     */
+    private CssHandler $cssHandler;
+
+    /**
      * @var MinifyCssHandler
      */
-    private MinifyCssHandler $cssHandler;
+    private MinifyCssHandler $minifyCssHandler;
+
+    /**
+     * @var JsHandler
+     */
+    private JsHandler $jsHandler;
 
     /**
      * @var MinifyJsHandler
      */
-    private MinifyJsHandler $jsHandler;
+    private MinifyJsHandler $minifyJsHandler;
 
     /**
      * @var ReactHandler
@@ -299,7 +312,7 @@ trait AbstractBaseTrait
      */
     protected final function contextPush(array $context): void
     {
-        foreach ($context as $key => $value){
+        foreach ($context as $key => $value) {
             $this->context[$key] = $value;
         }
     }
@@ -313,7 +326,7 @@ trait AbstractBaseTrait
     }
 
     /**
-     * @param $message
+     * @param string $message
      */
     protected final function setMessage(string $message): void
     {
@@ -378,7 +391,7 @@ trait AbstractBaseTrait
      * @see LocaleService::getModuleTranslator()
      * @example $this->getModuleLocaleService()->setLanguage("de_DE")
      */
-    protected final function getModuleLocaleService()
+    protected final function getModuleLocaleService(): GettextTranslator
     {
         return $this->moduleLocaleService;
     }
@@ -387,9 +400,9 @@ trait AbstractBaseTrait
      * @param string|null $fileOrString
      * @param bool $codeAsString
      * @param bool $fromSystem
-     * @example $this->addCss("assets/css/custom.css")
+     * @example $this->addMinifiedCss("assets/css/custom.css")
      */
-    protected final function addCss(?string $fileOrString, bool $codeAsString = false, bool $fromSystem = false): void
+    protected final function addMinifiedCss(?string $fileOrString, bool $codeAsString = false, bool $fromSystem = false): void
     {
         if (is_null($fileOrString)) {
             return;
@@ -398,35 +411,57 @@ trait AbstractBaseTrait
         $fileOrString = $codeAsString ? $fileOrString
             : sprintf("%s/%s", $fromSystem ? $this->getBaseDir() : $this->getModuleBaseDir(), $fileOrString);
 
-        $this->getCssHandler()->addCss($fileOrString, $codeAsString);
+        $this->getMinifyCssHandler()->addCss($fileOrString, $codeAsString);
     }
 
     /**
      * @param array $cssFiles
-     * @example $this->setCss([
+     * @example $this->setMinifiedCss([
      *  "assets/css/custom1.css",
      *  "assets/css/custom2.css",
      *  "assets/css/custom3.css",
      *  ".."
      * ])
      */
-    protected final function setCss(array $cssFiles)
+    protected final function setMinifiedCss(array $cssFiles)
     {
         $files = [];
         foreach ($cssFiles as $file) {
             $files[] = sprintf("%s/%s", $this->getModuleBaseDir(), $file);
         }
 
-        $this->getCssHandler()->setCssContent($files);
+        $this->getMinifyCssHandler()->setCssContent($files);
+    }
+
+    /**
+     * @param string $href
+     * @param string $integrity
+     * @param string $crossorigin
+     * @example $this->addCdnCss("https://cdn.jsdelivr.net/npm/@coreui/coreui@3.4.0/dist/css/coreui.min.css", "sha256-ymLt+ThGD+jSN1VPjDdI1onY9UVinS39bJuWRzM94t8=", "anonymous")
+     */
+    protected final function addCdnCss(string $href, string $integrity = "", string $crossorigin = "")
+    {
+        $this->getCssHandler()->addCdnCss($href, $integrity, $crossorigin);
+    }
+
+    /**
+     * @param string $file
+     * @param bool $fromSystem
+     * @example $this->addNonMinifiedCss("assets/js/custom.css")
+     */
+    protected final function addNonMinifiedCss(string $file, bool $fromSystem = false)
+    {
+        $file = sprintf("%s/%s", $fromSystem ? $this->getBaseDir() : $this->getModuleBaseDir(), $file);
+        $this->getCssHandler()->addNonMinifiedCss($file);
     }
 
     /**
      * @param string|null $fileOrString
      * @param bool $codeAsString
      * @param bool $fromSystem
-     * @example $this->addJs("assets/js/custom.js")
+     * @example $this->addMinifiedJs("assets/js/custom.js")
      */
-    protected final function addJs(?string $fileOrString, bool $codeAsString = false, bool $fromSystem = false): void
+    protected final function addMinifiedJs(?string $fileOrString, bool $codeAsString = false, bool $fromSystem = false): void
     {
         if (is_null($fileOrString)) {
             return;
@@ -435,26 +470,48 @@ trait AbstractBaseTrait
         $fileOrString = $codeAsString ? $fileOrString
             : sprintf("%s/%s", $fromSystem ? $this->getBaseDir() : $this->getModuleBaseDir(), $fileOrString);
 
-        $this->getJsHandler()->addJsContent($fileOrString, $codeAsString);
+        $this->getMinifyJsHandler()->addJsContent($fileOrString, $codeAsString);
     }
 
     /**
      * @param array $jsFiles
-     * @example $this->setJs([
+     * @example $this->setMinifiedJs([
      *  "assets/js/custom1.js",
      *  "assets/js/custom2.js",
      *  "assets/js/custom3.js",
      *  ".."
      * ])
      */
-    protected final function setJs(array $jsFiles)
+    protected final function setMinifiedJs(array $jsFiles)
     {
         $files = [];
         foreach ($jsFiles as $file) {
             $files[] = sprintf("%s/%s", $this->getModuleBaseDir(), $file);
         }
 
-        $this->getJsHandler()->setJsContent($files);
+        $this->getMinifyJsHandler()->setJsContent($files);
+    }
+
+    /**
+     * @param string $href
+     * @param string $integrity
+     * @param string $crossorigin
+     * @example $this->addCdnJs("https://cdn.jsdelivr.net/npm/@coreui/coreui@3.4.0/dist/js/coreui.bundle.min.js", "sha256-pNVhsgAxflakVHYrSm+g0qX/Mg/OozmqIPlcA/UmWaY=", "anonymous")
+     */
+    protected final function addCdnJs(string $href, string $integrity = "", string $crossorigin = "")
+    {
+        $this->getJsHandler()->addCdnJs($href, $integrity, $crossorigin);
+    }
+
+    /**
+     * @param string $file
+     * @param bool $fromSystem
+     * @example $this->addNonMinifiedJs("assets/js/custom.js")
+     */
+    protected final function addNonMinifiedJs(string $file, bool $fromSystem = false)
+    {
+        $file = sprintf("%s/%s", $fromSystem ? $this->getBaseDir() : $this->getModuleBaseDir(), $file);
+        $this->getJsHandler()->addNonMinifiedJs($file);
     }
 
     /**
@@ -481,7 +538,7 @@ trait AbstractBaseTrait
     /**
      * @return string
      */
-    protected final function getControllerAccessLevel()
+    protected final function getControllerAccessLevel(): string
     {
         if ($this instanceof RestrictedController) {
             return "restricted";
@@ -559,7 +616,7 @@ trait AbstractBaseTrait
      * @param string|null $localeCode
      * @return Translations
      */
-    protected function getTranslations(?string $localeCode = null)
+    protected function getTranslations(?string $localeCode = null): Translations
     {
         return $this->getLocaleService()->getTranslations($localeCode);
     }
@@ -632,7 +689,7 @@ trait AbstractBaseTrait
         if (!$this->isDebugMode()) {
             try {
                 $this->template = $this->templateService->getEnvironment()->load($this->getView());
-            } catch (LoaderError|RuntimeError|SyntaxError $e) {
+            } catch (LoaderError | RuntimeError | SyntaxError $e) {
                 $this->getLoggerService()->error($e->getMessage(), $e->getTrace());
                 $this->render404();
             }
@@ -667,20 +724,33 @@ trait AbstractBaseTrait
         return $this->systemDbService;
     }
 
-    /**
-     * @return MinifyCssHandler
-     */
-    private function getCssHandler(): MinifyCssHandler
+    private function getCssHandler(): CssHandler
     {
         return $this->cssHandler;
     }
 
     /**
-     * @return MinifyJsHandler
+     * @return MinifyCssHandler
      */
-    private function getJsHandler(): MinifyJsHandler
+    private function getMinifyCssHandler(): MinifyCssHandler
+    {
+        return $this->minifyCssHandler;
+    }
+
+    /**
+     * @return JsHandler
+     */
+    private function getJsHandler(): JsHandler
     {
         return $this->jsHandler;
+    }
+
+    /**
+     * @return MinifyJsHandler
+     */
+    private function getMinifyJsHandler(): MinifyJsHandler
+    {
+        return $this->minifyJsHandler;
     }
 
     /**
@@ -705,7 +775,7 @@ trait AbstractBaseTrait
      * @return Translator
      * @see LocaleService::getSystemTranslator()
      */
-    private function getSystemLocaleService()
+    private function getSystemLocaleService(): Translator
     {
         return $this->systemLocaleService;
     }
@@ -729,7 +799,7 @@ trait AbstractBaseTrait
     /**
      * @return ExtendedCacheItemPoolInterface
      */
-    private function getSystemCacheService()
+    private function getSystemCacheService(): ExtendedCacheItemPoolInterface
     {
         return $this->systemCacheService;
     }
@@ -737,7 +807,7 @@ trait AbstractBaseTrait
     /**
      * @return ExtendedCacheItemPoolInterface
      */
-    private final function getModuleCacheService()
+    private final function getModuleCacheService(): ExtendedCacheItemPoolInterface
     {
         return $this->moduleCacheService;
     }
@@ -798,7 +868,7 @@ trait AbstractBaseTrait
      * @return mixed
      * @example $this->fromSystemCache($this->getNavigationHandler(), "getRoutes", [], 60)
      */
-    private function fromSystemCache($object, string $method, array $args = array(), $expiration = 3600)
+    private function fromSystemCache($object, string $method, array $args = array(), int $expiration = 3600)
     {
         try {
             $itemKey = session_id();
@@ -822,14 +892,13 @@ trait AbstractBaseTrait
             $this->getLoggerService()->error($e->getMessage(), $e->getTrace());
         }
 
-        $result = call_user_func_array([$object, $method], $args);
-        return $result;
+        return call_user_func_array([$object, $method], $args);
     }
 
     /**
      * @return HttpAuth
      */
-    public function getHttpAuthWrapper()
+    public function getHttpAuthWrapper(): HttpAuth
     {
         if (isset($_SERVER["HTTP_AUTHORIZATION"]) && !empty($_SERVER["HTTP_AUTHORIZATION"])) {
             list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));

@@ -131,7 +131,7 @@ class SessionHandler
      * @return SessionHandler|null
      * @throws Exception
      */
-    public static final function init(DoctrineService $doctrineService, Logger $loggerService)
+    public static final function init(DoctrineService $doctrineService, Logger $loggerService): ?SessionHandler
     {
         if (is_null(self::$instance)) {
             self::$instance = new self($doctrineService, $loggerService);
@@ -233,7 +233,7 @@ class SessionHandler
     /**
      * @return bool
      */
-    public final function isRoot()
+    public final function isRoot(): bool
     {
         return $this->getRole() === Group::ROLE_ROOT;
     }
@@ -274,7 +274,7 @@ class SessionHandler
     /**
      * @return User|null
      */
-    public final function getParentUser()
+    public final function getParentUser(): ?User
     {
         return $this->getUser()->getBy();
     }
@@ -295,7 +295,7 @@ class SessionHandler
      * @param array $users
      * @return array
      */
-    public final function getUsersArray(array $users = [])
+    public final function getUsersArray(array $users = []): array
     {
         $result = array();
         $users = empty($users) ? $this->getUsers() : $users;
@@ -329,7 +329,7 @@ class SessionHandler
     /**
      * @return ClassMetadata
      */
-    public function getDefaultMeta()
+    public function getDefaultMeta(): ClassMetadata
     {
         return $this->getEm()->getClassMetadata(User::class);
     }
@@ -361,7 +361,7 @@ class SessionHandler
          * Check if user exists and password is valid
          * @see User::isValidPassword()
          */
-        if ($user && $user instanceof User && $user->isValidPassword($password)) {
+        if ($user instanceof User && $user->isValidPassword($password)) {
 
             /**
              * @internal Declare variables and set the session uid
@@ -396,7 +396,7 @@ class SessionHandler
     {
         $repo = $this->em->getRepository("Entities\User");
         $user = $repo->find($uid);
-        if ($user && $user instanceof User) {
+        if ($user instanceof User) {
             $this->sessionCreate($user);
         }
     }

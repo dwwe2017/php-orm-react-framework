@@ -12,9 +12,7 @@
                             {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
                         >
                             <a class="c-sidebar-nav-label" href="{% if(item.disabled is defined and item.disabled != false) %}javascript:void(0){% else %}{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}">
-                                <svg class="c-sidebar-nav-icon {% if(item.options.labelClass is defined and item.options.labelClass != false) %}text-{{ item.options.labelClass }}{% endif %}">
-                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{% if(item.options.labelIcon is defined and item.options.labelIcon != false) %}{{ item.options.labelIcon }}{% else %}cil-bookmark{% endif %}"/>
-                                </svg>
+                                <i class="c-sidebar-nav-icon {% if(item.options.labelClass is defined and item.options.labelClass != false) %}text-{{ item.options.labelClass }}{% endif %} {% if(item.options.labelIcon is defined and item.options.labelIcon != false) %}{{ item.options.labelIcon }}{% else %}cil-bookmark{% endif %}"></i>
                                 {% if(item.options.text is defined and item.options.text != false) %}
                                     {{ item.options.text|trans }}
                                 {% endif %}
@@ -32,9 +30,7 @@
                                     {% if(item.disabled is defined and item.disabled != false) %}disabled="disabled"{% endif %}
                             >
                                 {% if(item.options.icon is defined and item.options.icon != false) %}
-                                    <svg class="c-sidebar-nav-icon">
-                                        <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ item.options.icon }}"/>
-                                    </svg>
+                                    <i class="c-sidebar-nav-icon {{ item.options.icon }}"></i>
                                 {% endif %}
                                 {% if(item.options.text is defined and item.options.text != false) %}
                                     {{ item.options.text|trans }}
@@ -71,9 +67,7 @@
                         {% if(item.options.hidden is defined and item.options.hidden != false) %}style="display: none;"{% endif %}
                     >
                         <a class="c-sidebar-nav-label" href="{% if(item.disabled is defined and item.disabled != false) %}javascript:void(0){% else %}{% if(item.options.href is defined and item.options.href != false) %}{{ item.options.href }}{% endif %}{% endif %}">
-                            <svg class="c-sidebar-nav-icon {% if(item.options.labelClass is defined and item.options.labelClass != false) %}text-{{ item.options.labelClass }}{% endif %}">
-                                <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{% if(item.options.labelIcon is defined and item.options.labelIcon != false) %}{{ item.options.labelIcon }}{% else %}cil-bookmark{% endif %}"/>
-                            </svg>
+                            <i class="c-sidebar-nav-icon {% if(item.options.labelIcon is defined and item.options.labelIcon != false) %}{{ item.options.labelIcon }}{% else %}cil-bookmark{% endif %} {% if(item.options.labelClass is defined and item.options.labelClass != false) %}text-{{ item.options.labelClass }}{% endif %}"></i>
                             {% if(item.options.text is defined and item.options.text != false) %}
                                 {{ item.options.text|trans }}
                             {% endif %}
@@ -91,9 +85,7 @@
                                 {% if(item.disabled is defined and item.disabled != false) %}disabled="disabled"{% endif %}
                         >
                             {% if(item.options.icon is defined and item.options.icon != false) %}
-                                <svg class="c-sidebar-nav-icon">
-                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ item.options.icon }}"/>
-                                </svg>
+                                <i class="c-sidebar-nav-icon {{ item.options.icon }}"></i>
                             {% endif %}
                             {% if(item.options.text is defined and item.options.text != false) %}
                                 {{ item.options.text|trans }}
@@ -179,9 +171,7 @@
                                             >
                                                 {% if(route.options.icon is defined) %}
                                                     {% if(route.options.icon != false) %}
-                                                        <svg class="c-icon mfe-2">
-                                                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ route.options.icon }}"/>
-                                                        </svg>
+                                                        <i class="fc-icon mfe-2 {{ route.options.icon }}"></i>
                                                     {% endif %}
                                                 {% endif %}
                                                 {% if(route.options.text is defined) %}
@@ -217,9 +207,7 @@
                     >
                         {% if(item.options.icon is defined) %}
                             {% if(item.options.icon != false) %}
-                                <svg class="c-icon">
-                                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#{{ item.options.icon }}"/>
-                                </svg>
+                                <i class="c-icon {{ item.options.icon }}"></i>
                             {% endif %}
                         {% endif %}
                         {% if(item.options.text is defined) %}

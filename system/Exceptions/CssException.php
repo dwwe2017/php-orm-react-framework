@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * MIT License
  *
  * Copyright (c) 2020 DW Web-Engineering
@@ -22,25 +23,24 @@
  * SOFTWARE.
  */
 
-let Encore = require('@symfony/webpack-encore');
+namespace Exceptions;
 
-/*
-Encore
-    .setOutputPath('./views')
-    .setPublicPath('/')
-    .addEntry('ExampleController/exampleAction', './_fronted/ExampleController/exampleAction/index.js')
-    .enableSingleRuntimeChunk()
-    .cleanupOutputBeforeBuild()
-    .enableBuildNotifications()
-    .enableSourceMaps(!Encore.isProduction())
-    .enableReactPreset()
-    .cleanupOutputBeforeBuild(['*.js'], (options) => {
-        options.dry = true;
-    })
-    .configureBabel(function (babelConfig) {
-        babelConfig.plugins.push("@babel/plugin-proposal-class-properties");
-    })
-;
+use Exception;
+use Interfaces\ExceptionInterfaces\CustomExceptionInterface;
+use Throwable;
 
-module.exports = Encore.getWebpackConfig();
-*/
+class CssException extends Exception implements CustomExceptionInterface
+{
+    /**
+     * TemplateException constructor.
+     * @param string $message
+     * @param int $code
+     * @param Throwable|null $previous
+     */
+    public final function __construct($message = "", $code = 0, Throwable $previous = null)
+    {
+        $message = is_array($message) ? json_encode($message) : $message;
+
+        parent::__construct($message, $code, $previous);
+    }
+}

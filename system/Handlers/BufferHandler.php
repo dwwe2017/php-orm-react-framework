@@ -61,11 +61,6 @@ class BufferHandler
     private int $maxLifetime = 300;
 
     /**
-     * @var string
-     */
-    private string $itemKey = "";
-
-    /**
      * @var ExtendedCacheItemInterface|null
      */
     private ?ExtendedCacheItemInterface $bufferItem;
@@ -75,7 +70,7 @@ class BufferHandler
      * @param Logger $loggerService
      * @return BufferHandler
      */
-    public static function init(CacheHandler $cacheHandler, Logger $loggerService)
+    public static function init(CacheHandler $cacheHandler, Logger $loggerService): BufferHandler
     {
         if (is_null(self::$instance) || serialize($cacheHandler).serialize($loggerService) !== self::$instanceKey) {
             self::$instance = new self($cacheHandler, $loggerService);
@@ -120,13 +115,13 @@ class BufferHandler
         }
 
         try {
-            $this->itemKey = session_id();
-            $this->itemKey .= get_class($this->object);
-            $this->itemKey .= $method;
-            $this->itemKey .= serialize($args);
+            $itemKey = session_id();
+            $itemKey .= get_class($this->object);
+            $itemKey .= $method;
+            $itemKey .= serialize($args);
 
             $systemCache = $this->cacheHandler;
-            $this->bufferItem = $systemCache->getItem($this->itemKey);
+            $this->bufferItem = $systemCache->getItem($itemKey);
 
             if (!$this->bufferItem->isHit()) {
                 $result = call_user_func_array([$this->object, $method], $args);
@@ -141,15 +136,14 @@ class BufferHandler
             $this->loggerService->error($e->getMessage(), $e->getTrace());
         }
 
-        $result = call_user_func_array([$this->object, $method], $args);
-        return $result;
+        return call_user_func_array([$this->object, $method], $args);
     }
 
     /**
      * @param object $object
      * @return $this
      */
-    public function setObject(object $object)
+    public function setObject(object $object): BufferHandler
     {
         $this->object = $object;
 
@@ -165,9 +159,9 @@ class BufferHandler
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getMaxLifetime()
+    public function getMaxLifetime(): int
     {
         return $this->maxLifetime;
     }

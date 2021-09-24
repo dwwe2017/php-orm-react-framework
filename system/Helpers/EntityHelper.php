@@ -56,7 +56,7 @@ class EntityHelper
      * @param EntityManager $entityManager
      * @return EntityHelper|null
      */
-    public static final function init(EntityManager $entityManager)
+    public static final function init(EntityManager $entityManager): ?EntityHelper
     {
         if (is_null(self::$instance) || serialize($entityManager->getConnection()->getParams()) !== self::$instanceKey) {
             self::$instance = new self($entityManager);
@@ -70,7 +70,7 @@ class EntityHelper
      * @param string $className
      * @return ClassMetadata
      */
-    public function getClassMetaData(string $className)
+    public function getClassMetaData(string $className): ClassMetadata
     {
         return $this->entityManager->getClassMetadata($className);
     }
@@ -79,7 +79,7 @@ class EntityHelper
      * @param string $className
      * @return array
      */
-    public function getFieldNames(string $className)
+    public function getFieldNames(string $className): array
     {
         return $this->getClassMetaData($className)->getFieldNames();
     }
@@ -88,7 +88,7 @@ class EntityHelper
      * @param string $className
      * @return array
      */
-    public function getGetterFieldNames(string $className)
+    public function getGetterFieldNames(string $className): array
     {
         $result = [];
         $fieldNames = $this->getFieldNames($className);
@@ -111,7 +111,7 @@ class EntityHelper
      * @param array $attrs
      * @return array
      */
-    public function getGetterFieldNamesColumn(string $className, $sort = true, $attrs = ["data-class" => "expand"])
+    public function getGetterFieldNamesColumn(string $className, bool $sort = true, array $attrs = ["data-class" => "expand"]): array
     {
         $result = [];
         $getterFields = $this->getGetterFieldNames($className);
@@ -133,7 +133,7 @@ class EntityHelper
      * @param array $exclude
      * @return array
      */
-    public function getGetterMethods(string $className, array $exclude = [])
+    public function getGetterMethods(string $className, array $exclude = []): array
     {
         $result = [];
         $fieldNames = $this->getFieldNames($className);

@@ -52,7 +52,8 @@ Webpack Encore is a simpler way to integrate Webpack into your application. It w
 
 CoreUI is the fastest way to build a modern dashboard for any platforms, browser, or device. A complete Dashboard UI Kit that allows you to quickly build eye-catching, high-quality, high-performance responsive applications.
 
-[https://coreui.io/docs/getting-started/introduction/](https://coreui.io/docs/getting-started/introduction/)
+- Bootstrap: [https://coreui.io/docs/getting-started/introduction/](https://coreui.io/docs/getting-started/introduction/)
+- React: [https://coreui.io/react/docs/3.3/](https://coreui.io/react/docs/3.3/)
 
 ***
 
@@ -60,17 +61,17 @@ CoreUI is the fastest way to build a modern dashboard for any platforms, browser
 
 Here you can get an overview of all available elements and get an impression of the way of representation above
 
-- Bootstrap: [https://coreui.io/demo/3.0-alpha.1/#main.html](https://coreui.io/demo/3.0-alpha.1/#main.html)
-- React JS: [https://coreui.io/react/demo/#/dashboard](https://coreui.io/react/demo/#/dashboard)
+- Bootstrap: [https://coreui.io/demo/free/3.4.0/](https://coreui.io/demo/free/3.4.0/)
+- React JS: [https://coreui.io/react/demo/free/3.1.1/#/dashboard](https://coreui.io/react/demo/free/3.1.1/#/dashboard)
 
 ***
 
-## CoreUI Free React and Bootstrap Admin Template v2/3
+## CoreUI Free React and Bootstrap Admin Template v2.6.1 (React) and v3.4.0 (Bootstrap)
 
 CoreUI is an Open Source Bootstrap Admin Template. But CoreUI is not just another Admin Template. It goes way beyond hitherto admin templates thanks to transparent code and file structure. And if that's not enough, let’s just add that CoreUI consists bunch of unique features and over 1000 high quality icons. In the folder ```src/views/``` you will find a lot of examples of how an implementation with React can look like. 
 
-- Bootstrap: [https://github.com/coreui/coreui-free-bootstrap-admin-template/tree/v3-next](https://github.com/coreui/coreui-free-bootstrap-admin-template/tree/v3-next)
-- React: [https://github.com/coreui/coreui-free-react-admin-template](https://github.com/coreui/coreui-free-react-admin-template)
+- Bootstrap: [https://github.com/coreui/coreui-free-bootstrap-admin-template/tree/v3.4.0](https://github.com/coreui/coreui-free-bootstrap-admin-template/tree/v3.4.0)
+- React: [https://github.com/coreui/coreui-free-react-admin-template/tree/v2.6.1](https://github.com/coreui/coreui-free-react-admin-template/tree/v2.6.1)
 
 #### Please note that we use both CoreUI and CoreUI Pro in our framwork. We have acquired a valid license for CoreUI Pro. If you want to use the Pro version of the CoreUI template in your project, you will most likely need to purchase a license. You can find more information at https://coreui.io/pro/.
 

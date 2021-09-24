@@ -43,7 +43,7 @@ class ClassHelper
     private ReflectionClass $reflectionClass;
 
     /**
-     * @var string
+     * @var string|null
      */
     private ?string $exceptionClass;
 
@@ -63,7 +63,7 @@ class ClassHelper
      * @param string|null $exceptionClass
      * @return ClassHelper|null
      */
-    public static final function init(ReflectionClass $class, ?string $exceptionClass = null)
+    public static final function init(ReflectionClass $class, ?string $exceptionClass = null): ?ClassHelper
     {
         if (is_null(self::$instance) || serialize($class . $exceptionClass) !== self::$instanceKey) {
             self::$instance = new self($class, $exceptionClass);
@@ -77,7 +77,7 @@ class ClassHelper
      * @param string $interfaceClass
      * @return bool
      */
-    public final function hasInterface(string $interfaceClass)
+    public final function hasInterface(string $interfaceClass): bool
     {
         $result = $this->reflectionClass->implementsInterface($interfaceClass);
 
@@ -92,7 +92,7 @@ class ClassHelper
      * @param string $traitClass
      * @return bool
      */
-    public final function hasTrait(string $traitClass)
+    public final function hasTrait(string $traitClass): bool
     {
         $result = in_array($traitClass, $this->reflectionClass->getTraitNames());
 
@@ -106,7 +106,7 @@ class ClassHelper
     /**
      * @return bool
      */
-    public final function isModule()
+    public final function isModule(): bool
     {
         return strcasecmp(substr($this->reflectionClass->getName(), 0, 8), "Modules\\") === 0;
     }

@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -84,7 +84,7 @@ class AutoloadHandler
      * @param ClassLoader $classLoader
      * @return AutoloadHandler|null
      */
-    public static final function init(string $baseDir, ClassLoader $classLoader)
+    public static final function init(string $baseDir, ClassLoader $classLoader): ?AutoloadHandler
     {
         if (is_null(self::$instance) || serialize($baseDir) . serialize($classLoader) !== self::$instanceKey) {
             self::$instance = new self($baseDir, $classLoader);
@@ -97,7 +97,7 @@ class AutoloadHandler
     /**
      * @param bool $prepend
      */
-    public function register($prepend = false): void
+    public function register(bool $prepend = false): void
     {
         $this->classLoader->register($prepend);
     }

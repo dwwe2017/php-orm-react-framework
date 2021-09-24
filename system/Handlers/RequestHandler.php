@@ -85,22 +85,22 @@ class RequestHandler
     /**
      * @var bool
      */
-    private bool $xmlRequest = false;
+    private bool $xmlRequest;
 
     /**
      * @var bool
      */
-    private bool $xml = false;
+    private bool $xml;
 
     /**
      * @var bool
      */
-    private bool $api = false;
+    private bool $api;
 
     /**
      * @var string
      */
-    private string $baseUrl = "";
+    private string $baseUrl;
 
     /**
      * RequestHandler constructor.
@@ -161,7 +161,7 @@ class RequestHandler
      * @param AbstractBase $controllerInstance
      * @return RequestHandler|null
      */
-    public static function init(AbstractBase $controllerInstance)
+    public static function init(AbstractBase $controllerInstance): ?RequestHandler
     {
         if (is_null(self::$instance) || serialize(get_class($controllerInstance)) !== self::$instanceKey) {
             self::$instance = new self($controllerInstance);
@@ -174,7 +174,7 @@ class RequestHandler
     /**
      * @return bool
      */
-    public function isPost()
+    public function isPost(): bool
     {
         return $this->post->count() > 0;
     }

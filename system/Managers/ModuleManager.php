@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -57,27 +57,27 @@ class ModuleManager
     /**
      * @var string
      */
-    private string $baseDir = "";
+    private string $baseDir;
 
     /**
      * @var string
      */
-    private $modulesDir = "";
+    private string $modulesDir;
 
     /**
      * @var string
      */
-    private $moduleName = "";
+    private string $moduleName;
 
     /**
      * @var string
      */
-    private string $entryModule = "";
+    private string $entryModule;
 
     /**
      * @var string
      */
-    private $moduleBaseDir = "";
+    private string $moduleBaseDir;
 
     /**
      * @var ConfigValues
@@ -178,7 +178,7 @@ class ModuleManager
      * @param AbstractBase $controllerInstance
      * @return ModuleManager|null
      */
-    public static final function init(AbstractBase $controllerInstance)
+    public static final function init(AbstractBase $controllerInstance): ?ModuleManager
     {
         if (is_null(self::$instance) || serialize($controllerInstance) !== self::$instanceKey) {
             self::$instance = new self($controllerInstance);
@@ -249,7 +249,7 @@ class ModuleManager
      * @param bool $relative
      * @return string
      */
-    public final function getBaseUrl($relative = true): string
+    public final function getBaseUrl(bool $relative = true): string
     {
         return $relative ? str_replace($this->getBaseDir(), "", $this->getModuleBaseDir()) : $this->getModuleBaseDir();
     }
@@ -259,9 +259,9 @@ class ModuleManager
      * @param bool $relative
      * @return string|null
      */
-    public final function getMethodJsAction(string $methodAction, $relative = false)
+    public final function getMethodJsAction(string $methodAction, bool $relative = false): ?string
     {
-        $file = sprintf("%s/%s.js", $this->getJsAssetsPath(false), $methodAction);
+        $file = sprintf("%s/%s.js", $this->getJsAssetsPath(), $methodAction);
         return !FileHelper::init($file)->fileExists() ? null :
             sprintf("%s/%s.js", $this->getJsAssetsPath($relative), $methodAction);
     }
@@ -270,7 +270,7 @@ class ModuleManager
      * @param bool $relative
      * @return string
      */
-    public final function getJsAssetsPath($relative = false): string
+    public final function getJsAssetsPath(bool $relative = false): string
     {
         return $relative ? sprintf("assets/js/%s", $this->getControllerShortName())
             : sprintf("%s/assets/js/%s", $this->getModuleBaseDir(), $this->getControllerShortName());
@@ -281,9 +281,9 @@ class ModuleManager
      * @param bool $relative
      * @return string|null
      */
-    public final function getMethodCssAction(string $methodAction, $relative = false)
+    public final function getMethodCssAction(string $methodAction, bool $relative = false): ?string
     {
-        $file = sprintf("%s/%s.css", $this->getCssAssetsPath(false), $methodAction);
+        $file = sprintf("%s/%s.css", $this->getCssAssetsPath(), $methodAction);
         return !FileHelper::init($file)->fileExists() ? null :
             sprintf("%s/%s.css", $this->getCssAssetsPath($relative), $methodAction);
     }
@@ -292,7 +292,7 @@ class ModuleManager
      * @param bool $relative
      * @return string
      */
-    public final function getCssAssetsPath($relative = false): string
+    public final function getCssAssetsPath(bool $relative = false): string
     {
         return $relative ? sprintf("assets/css/%s", $this->getControllerShortName())
             : sprintf("%s/assets/css/%s", $this->getModuleBaseDir(), $this->getControllerShortName());

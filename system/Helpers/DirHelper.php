@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -39,12 +39,12 @@ class DirHelper
     /**
      * @var string
      */
-    private string $dir = "";
+    private string $dir;
 
     /**
      * @var string|null
      */
-    private ?string $exceptionClass = null;
+    private ?string $exceptionClass;
 
     /**
      * DirHelper constructor.
@@ -62,7 +62,7 @@ class DirHelper
      * @param string|null $exceptionClass
      * @return DirHelper|null
      */
-    public static final function init(string $dir, ?string $exceptionClass = null)
+    public static final function init(string $dir, ?string $exceptionClass = null): ?DirHelper
     {
         if (is_null(self::$instance) || serialize($dir . $exceptionClass) !== self::$instanceKey) {
             self::$instance = new self($dir, $exceptionClass);
@@ -77,7 +77,7 @@ class DirHelper
      * @param array $withOut
      * @return array
      */
-    public function getScan(array $filter = [], array $withOut = [".", ".."])
+    public function getScan(array $filter = [], array $withOut = [".", ".."]): array
     {
         $result = [];
 
@@ -107,7 +107,7 @@ class DirHelper
      * @param array $withOut
      * @return string
      */
-    public function getMd5CheckSum(array $filter = [], array $withOut = [".", ".."])
+    public function getMd5CheckSum(array $filter = [], array $withOut = [".", ".."]): string
     {
         if ($this->exceptionClass) {
             FileHelper::init($this->dir, $this->exceptionClass)->isReadable();
@@ -134,7 +134,7 @@ class DirHelper
     /**
      * @return bool
      */
-    public function addDirectoryProtection()
+    public function addDirectoryProtection(): bool
     {
         FileHelper::init($this->dir)->isWritable(true);
         $htaccess = sprintf("%s/.htaccess", $this->dir);
@@ -158,11 +158,11 @@ class DirHelper
     }
 
     /**
-     * @param string $allowed_files_types_regex
+     * @param string|array $allowed_files_types_regex
      * @param bool $with_http_auth_rewrite
      * @return bool
      */
-    public function addDirectoryRestriction($allowed_files_types_regex = "^|index\.php|\.(js|css|gif|jpeg|jpg|png|woff|svg)", $with_http_auth_rewrite = false)
+    public function addDirectoryRestriction($allowed_files_types_regex = "^|index\.php|\.(js|css|gif|jpeg|jpg|png|woff|svg)", bool $with_http_auth_rewrite = false): bool
     {
         FileHelper::init($this->dir)->isWritable(true);
         $htaccess = sprintf("%s/.htaccess", $this->dir);

@@ -26,7 +26,6 @@
 namespace Helpers;
 
 
-use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Exceptions\InvalidArgumentException;
 use ReflectionClass;
@@ -59,7 +58,7 @@ class AnnotationHelper
     /**
      * @var string
      */
-    private $annotationName;
+    private string $annotationName;
 
     /**
      * @var bool
@@ -72,9 +71,9 @@ class AnnotationHelper
     private bool $reflectionMethod;
 
     /**
-     * @var
+     * @var object|null
      */
-    private $annotationInstance;
+    private ?object $annotationInstance;
 
     /**
      * @var bool
@@ -85,7 +84,6 @@ class AnnotationHelper
      * AnnotationHelper constructor.
      * @param ReflectionClass|ReflectionMethod $reflectionInstance
      * @param string $annotationName
-     * @throws AnnotationException
      * @throws InvalidArgumentException
      */
     private function __construct($reflectionInstance, string $annotationName)
@@ -112,10 +110,9 @@ class AnnotationHelper
      * @param ReflectionClass|ReflectionMethod $reflectionInstance
      * @param string $annotationName
      * @return AnnotationHelper|null
-     * @throws AnnotationException
      * @throws InvalidArgumentException
      */
-    public static final function init($reflectionInstance, string $annotationName)
+    public static final function init($reflectionInstance, string $annotationName): ?AnnotationHelper
     {
         if (is_null(self::$instance) || serialize($reflectionInstance->getName() . $annotationName) !== self::$instanceKey) {
             self::$instance = new self($reflectionInstance, $annotationName);
@@ -162,7 +159,7 @@ class AnnotationHelper
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $result = [];
 
@@ -206,9 +203,9 @@ class AnnotationHelper
     }
 
     /**
-     * @return mixed
+     * @return object|null
      */
-    public function getAnnotationInstance()
+    public function getAnnotationInstance(): ?object
     {
         return $this->annotationInstance;
     }

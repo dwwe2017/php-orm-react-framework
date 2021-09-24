@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -53,7 +53,7 @@ class DeclarationHelper
     /**
      * @var string|null
      */
-    private ?string $exceptionClass = null;
+    private ?string $exceptionClass;
 
     /**
      * DeclarationHelper constructor.
@@ -77,7 +77,7 @@ class DeclarationHelper
      * @param string|null $exceptionClass
      * @return DeclarationHelper|null
      */
-    public static final function init(?string $extension = null, ?string $class = null, ?string $function = null, ?string $exceptionClass = null)
+    public static final function init(?string $extension = null, ?string $class = null, ?string $function = null, ?string $exceptionClass = null): ?DeclarationHelper
     {
         if (is_null(self::$instance) || serialize($extension.$class.$function.$exceptionClass) !== self::$instanceKey) {
             self::$instance = new self($extension, $class, $function, $exceptionClass);
@@ -92,8 +92,7 @@ class DeclarationHelper
      */
     public final function extensionLoaded(): bool
     {
-        return extension_loaded($this->extension) ? true
-            : $this->throwOrFalse(sprintf("The required extension %s could not be loaded", $this->extension));
+        return extension_loaded($this->extension) || $this->throwOrFalse(sprintf("The required extension %s could not be loaded", $this->extension));
     }
 
     /**
@@ -101,8 +100,7 @@ class DeclarationHelper
      */
     public final function functionExists(): bool
     {
-        return function_exists($this->function) ? true
-            : $this->throwOrFalse(sprintf("The required function %s could not be loaded", $this->function));
+        return function_exists($this->function) || $this->throwOrFalse(sprintf("The required function %s could not be loaded", $this->function));
     }
 
     /**
@@ -110,8 +108,7 @@ class DeclarationHelper
      */
     public final function classExists(): bool
     {
-        return class_exists($this->class) ? true
-            : $this->throwOrFalse(sprintf("The required class %s could not be loaded", $this->class));
+        return class_exists($this->class) || $this->throwOrFalse(sprintf("The required class %s could not be loaded", $this->class));
     }
 
     /**
@@ -138,7 +135,7 @@ class DeclarationHelper
      * @param string $message
      * @return bool
      */
-    private function throwOrFalse(string $message = "")
+    private function throwOrFalse(string $message = ""): bool
     {
         if(!is_null($this->exceptionClass))
         {

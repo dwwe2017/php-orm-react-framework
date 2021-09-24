@@ -39,7 +39,7 @@ class StringHelper
     /**
      * @var string
      */
-    private string $string = "";
+    private string $string;
 
     /**
      * StringHelper constructor.
@@ -54,7 +54,7 @@ class StringHelper
      * @param string $string
      * @return StringHelper|null
      */
-    public static final function init(string $string)
+    public static final function init(string $string): ?StringHelper
     {
         if (is_null(self::$instance) || serialize($string) !== self::$instanceKey) {
             self::$instance = new self($string);
@@ -67,29 +67,21 @@ class StringHelper
     /**
      * @return $this
      */
-    public function decamelize()
+    public function decamelize(): StringHelper
     {
-        $this->string = ltrim(
-            strtolower(
-                preg_replace('/([A-Z])/', '_$1', $this->string)
-            ),
-            '_'
-        );
-
+        $this->string = ltrim(strtolower(preg_replace('/([A-Z])/', '_$1', $this->string)), '_');
         return $this;
     }
 
     /**
      * @return $this
      */
-    public function camelize()
+    public function camelize(): StringHelper
     {
-        $this->string =  str_replace(
+        $this->string = str_replace(
             ' ',
             '',
-            ucwords(
-                str_replace('_', ' ', $this->string)
-            )
+            ucwords(str_replace('_', ' ', $this->string))
         );
 
         return $this;
@@ -98,13 +90,15 @@ class StringHelper
     /**
      * @return $this
      */
-    public function camelizeLcFirst()
+    public function camelizeLcFirst(): StringHelper
     {
-        $this->string = lcfirst(
-            $this->camelize()
-        );
+        $this->string = lcfirst(str_replace(
+            ' ',
+            '',
+            ucwords(str_replace('_', ' ', $this->string))
+        ));
 
-        return  $this;
+        return $this;
     }
 
     /**
@@ -112,7 +106,7 @@ class StringHelper
      * @param $replace
      * @return $this
      */
-    public function replace($search, $replace)
+    public function replace($search, $replace): StringHelper
     {
         $this->string = str_replace($search, $replace, $this->string);
         return $this;
@@ -121,7 +115,7 @@ class StringHelper
     /**
      * @return $this
      */
-    public function toLower()
+    public function toLower(): StringHelper
     {
         $this->string = strtolower($this->string);
         return $this;
@@ -139,7 +133,7 @@ class StringHelper
      * @param string $filter
      * @return bool
      */
-    public function hasFilter(string $filter)
+    public function hasFilter(string $filter): bool
     {
         return strpos($this->string, $filter) !== false;
     }
@@ -147,7 +141,7 @@ class StringHelper
     /**
      * @return $this
      */
-    public function lcFirst()
+    public function lcFirst(): StringHelper
     {
         $this->string = lcfirst($this->string);
         return $this;
@@ -156,7 +150,7 @@ class StringHelper
     /**
      * @return $this
      */
-    public function ucFirst()
+    public function ucFirst(): StringHelper
     {
         $this->string = ucfirst($this->string);
         return $this;
@@ -165,9 +159,9 @@ class StringHelper
     /**
      * @return $this
      */
-    public function rmNamespace()
+    public function rmNamespace(): StringHelper
     {
-        $lastSeparator = strripos($this->string, "\\")+1;
+        $lastSeparator = strripos($this->string, "\\") + 1;
         $this->string = substr($this->string, $lastSeparator);
 
         return $this;

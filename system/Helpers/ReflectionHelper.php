@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -58,7 +58,7 @@ class ReflectionHelper
      * @param object $object
      * @param bool $onlyProperties
      */
-    private function __construct(object $object, $onlyProperties = true)
+    private function __construct(object $object, bool $onlyProperties = true)
     {
         $this->object = $object;
         $this->setAttributes($onlyProperties);
@@ -70,7 +70,7 @@ class ReflectionHelper
      * @param bool $onlyProperties
      * @return ReflectionHelper|null
      */
-    public static final function init(object $object, $onlyProperties = true)
+    public static final function init(object $object, bool $onlyProperties = true): ?ReflectionHelper
     {
         if (is_null(self::$instance) || serialize($object).serialize($onlyProperties) !== self::$instanceKey) {
             self::$instance = new self($object, $onlyProperties);
@@ -83,7 +83,7 @@ class ReflectionHelper
     /**
      * @param bool $onlyProperties
      */
-    public final function setAttributes($onlyProperties = true): void
+    public final function setAttributes(bool $onlyProperties = true): void
     {
         $className = get_class($this->object);
         foreach ((array)$this->object as $name => $value) {

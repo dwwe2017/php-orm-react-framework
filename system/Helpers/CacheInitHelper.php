@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -61,7 +61,7 @@ class CacheInitHelper
     /**
      * CacheHelper constructor.
      * @param ConfigValues $config
-     * @param string $instanceId
+     * @param string|null $instanceId
      * @throws CacheException
      * @throws PhpfastcacheDriverCheckException
      * @throws PhpfastcacheDriverException
@@ -161,7 +161,7 @@ class CacheInitHelper
      * @throws PhpfastcacheInvalidArgumentException
      * @throws PhpfastcacheInvalidConfigurationException
      */
-    public static final function init(ConfigValues $config, ?string $instanceId = null)
+    public static final function init(ConfigValues $config, ?string $instanceId = null): ?CacheInitHelper
     {
         if (is_null(self::$instance) || serialize($config).serialize($instanceId) !== self::$instanceKey) {
             self::$instance = new self($config, $instanceId);

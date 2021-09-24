@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -50,12 +50,14 @@ class PortalConfig implements VendorExtensionConfigInterface
     public final function __construct(DefaultConfig $defaultConfig)
     {
         $this->config = $defaultConfig->getConfigValues();
+        $defaultOptions = $this->getOptionsDefault();
+        $portalOptions = $this->config->get("portal_options", []);
 
         /**
          * Build portal options
          */
-        $portalConfig = ["portal_options" => $this->config->get("portal_options", [])];
-        $portalConfig = ConfigFactory::fromArray($this->getOptionsDefault())->mergeValues($portalConfig);
+        $portalConfig = ["portal_options" => $portalOptions];
+        $portalConfig = ConfigFactory::fromArray($defaultOptions)->mergeValues($portalConfig);
 
         /**
          * Finished
@@ -68,7 +70,7 @@ class PortalConfig implements VendorExtensionConfigInterface
      */
     public final function getOptionsDefault(): array
     {
-        $isDebug = $this->config->get("debug_mode");
+        //$isDebug = $this->config->get("debug_mode");
         $htmlLang = strtolower(substr($this->config->get("language"), 0, 2));
 
         return [
@@ -84,18 +86,7 @@ class PortalConfig implements VendorExtensionConfigInterface
                 //Any visitor can register themselves
                 "b_allow_registration" => false,
                 //When logging in, users can select the option to remain permanently logged on
-                "b_allow_stay_logged_in" => true,
-                //Array of Js files that should not be minimized and permanently integrated
-                "a_non_minified_js" => [
-                    "assets/vendors/@coreui/coreui/js/coreui.bundle.min.js"
-                ],
-                //Array of CSS files that should not be minimized and permanently integrated
-                "a_non_minified_css" => [
-                    "assets/vendors/@coreui/coreui/css/style.min.css",
-                    "assets/vendors/@coreui/icons/css/brand.min.css",
-                    "assets/vendors/@coreui/icons/css/flag.min.css",
-                    "assets/vendors/@coreui/icons/css/free.min.css"
-                ],
+                "b_allow_stay_logged_in" => true
             ]
         ];
     }

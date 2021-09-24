@@ -56,7 +56,7 @@ class EntityViewHelper
      * @param EntityManager $entityManager
      * @return EntityViewHelper|null
      */
-    public static final function init(EntityManager $entityManager)
+    public static final function init(EntityManager $entityManager): ?EntityViewHelper
     {
         if (is_null(self::$instance) || serialize($entityManager->getConnection()->getParams()) !== self::$instanceKey) {
             self::$instance = new self($entityManager);
@@ -85,7 +85,7 @@ class EntityViewHelper
      *  ["module", "controller", "deleteAction"]
      * );
      */
-    public final function getResponsiveTableArrayFromEntity(string $className, $entities = null, $icon = "icon-reorder", $checkbox_column = true, $toolbar = true, array $addModuleControllerAction = array(), array $editModuleControllerAction = array(), array $deleteModuleControllerAction = array())
+    public final function getResponsiveTableArrayFromEntity(string $className, $entities = null, string $icon = "icon-reorder", bool $checkbox_column = true, bool $toolbar = true, array $addModuleControllerAction = array(), array $editModuleControllerAction = array(), array $deleteModuleControllerAction = array()): array
     {
         $thead = array();
         $tbody = array();

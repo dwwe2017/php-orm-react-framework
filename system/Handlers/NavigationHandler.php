@@ -33,7 +33,6 @@ use Annotations\SubNavigation;
 use Annotations\SubRoute;
 use Annotations\SubRoutes;
 use Controllers\AbstractBase;
-use Doctrine\Common\Annotations\AnnotationException;
 use Entities\Group;
 use Exceptions\InvalidArgumentException;
 use Exceptions\NavigationException;
@@ -92,7 +91,7 @@ class NavigationHandler
     /**
      * @var string
      */
-    private $currentAction = "index";
+    private string $currentAction;
 
     /**
      * @var array
@@ -113,7 +112,6 @@ class NavigationHandler
      * NavigationHandler constructor.
      * @param AbstractBase $controllerInstance
      * @param SessionHandler $sessionInstance
-     * @throws AnnotationException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -146,11 +144,10 @@ class NavigationHandler
      * @param AbstractBase $controllerInstance
      * @param SessionHandler $sessionInstance
      * @return NavigationHandler|null
-     * @throws AnnotationException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public static function init(AbstractBase $controllerInstance, SessionHandler $sessionInstance)
+    public static function init(AbstractBase $controllerInstance, SessionHandler $sessionInstance): ?NavigationHandler
     {
         if (is_null(self::$instance) || serialize(get_class($controllerInstance) . get_class($sessionInstance)) !== self::$instanceKey) {
             self::$instance = new self($controllerInstance, $sessionInstance);
@@ -164,7 +161,7 @@ class NavigationHandler
      * @param ReflectionClass $class
      * @return string
      */
-    private function getNavTypeFromReflection(ReflectionClass $class)
+    private function getNavTypeFromReflection(ReflectionClass $class): string
     {
         $parentClassName = lcfirst($class->getParentClass()->getShortName());
         if (StringHelper::init($parentClassName)->hasFilter(self::PUBLIC_NAV)) {
@@ -178,7 +175,6 @@ class NavigationHandler
 
     /**
      * @param AbstractBase $controllerInstance
-     * @throws AnnotationException
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
@@ -493,7 +489,7 @@ class NavigationHandler
      * @param string $classSiteAccessLevel
      * @return array
      */
-    public final function getRoutes($classSiteAccessLevel = self::PUBLIC_NAV): array
+    public final function getRoutes(string $classSiteAccessLevel = self::PUBLIC_NAV): array
     {
         $result = array();
 
@@ -565,11 +561,11 @@ class NavigationHandler
     }
 
     /**
-     * @param $parent
+     * @param int $parent
      * @param $child
      * @return int
      */
-    private function getAtLeastParentRole(int $parent, $child)
+    private function getAtLeastParentRole(int $parent, $child): int
     {
         $parent = $parent ?? Group::ROLE_ANY;
         $child = $child->role ?? Group::ROLE_ANY;
@@ -581,7 +577,7 @@ class NavigationHandler
      * @param string $reflectionClassSiteAccessLevel
      * @return int
      */
-    private function getMinimalAccessRole(string $reflectionClassSiteAccessLevel)
+    private function getMinimalAccessRole(string $reflectionClassSiteAccessLevel): int
     {
         $result = Group::ROLE_ANY;
 

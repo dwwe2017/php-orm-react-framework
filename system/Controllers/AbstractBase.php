@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -28,7 +28,6 @@ namespace Controllers;
 
 use Annotations\Navigation;
 use Annotations\SubNavigation;
-use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Exception;
 use Exceptions\CacheException;
@@ -38,8 +37,10 @@ use Exceptions\MinifyCssException;
 use Exceptions\MinifyJsException;
 use Handlers\BufferHandler;
 use Handlers\CacheHandler;
+use Handlers\CssHandler;
 use Handlers\ErrorHandler;
 use Handlers\FlashHandler;
+use Handlers\JsHandler;
 use Handlers\MinifyCssHandler;
 use Handlers\MinifyJsHandler;
 use Handlers\NavigationHandler;
@@ -71,7 +72,6 @@ abstract class AbstractBase
     /**
      * AbstractBase constructor.
      * @param string $baseDir
-     * @throws AnnotationException
      * @throws CacheException
      * @throws DoctrineException
      * @throws InvalidArgumentException
@@ -169,7 +169,6 @@ abstract class AbstractBase
     }
 
     /**
-     * @throws AnnotationException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws Exception
@@ -227,11 +226,15 @@ abstract class AbstractBase
         /**
          * Asset handlers
          * @see AbstractBaseTrait::getCssHandler() // !Only available for system
+         * @see AbstractBaseTrait::getMinifyCssHandler() // !Only available for system
          * @see AbstractBaseTrait::getJsHandler() // !Only available for system
+         * @see AbstractBaseTrait::getMinifyJsHandler() // !Only available for system
          * @see AbstractBaseTrait::getReactHandler() // !Only available for system
          */
-        $this->cssHandler = MinifyCssHandler::init($this->getConfig());
-        $this->jsHandler = MinifyJsHandler::init($this->getConfig());
+        $this->cssHandler = CssHandler::init($this->getConfig());
+        $this->minifyCssHandler = MinifyCssHandler::init($this->getConfig());
+        $this->jsHandler = JsHandler::init($this->getConfig());
+        $this->minifyJsHandler = MinifyJsHandler::init($this->getConfig());
         $this->reactHandler = ReactHandler::init($this, $this->getModuleManager());
 
         /**
@@ -257,8 +260,6 @@ abstract class AbstractBase
     }
 
     /**
-     * @throws AnnotationException
-     * @throws ReflectionException
      */
     private function initHelpers(): void
     {
@@ -297,7 +298,6 @@ abstract class AbstractBase
 
     /**
      * @param string $action
-     * @throws AnnotationException
      * @throws InvalidArgumentException
      * @throws LoaderError
      * @throws MinifyCssException
@@ -312,7 +312,7 @@ abstract class AbstractBase
         $this->getReactHandler()->setModuleControllerAction($methodName);
 
         if ($this->getReactHandler()->hasModuleEntryPoint()) {
-            $this->getReactHandler()->addReactCss($this->getCssHandler());
+            $this->getReactHandler()->addReactCss($this->getMinifyCssHandler());
         } elseif (!method_exists($this, $methodName)) {
             $this->render404();
         }
@@ -322,7 +322,6 @@ abstract class AbstractBase
 
     /**
      * @param string $action
-     * @throws AnnotationException
      * @throws InvalidArgumentException
      * @throws LoaderError
      * @throws MinifyCssException
@@ -342,7 +341,6 @@ abstract class AbstractBase
 
     /**
      * @param string $action
-     * @throws AnnotationException
      * @throws InvalidArgumentException
      * @throws LoaderError
      * @throws MinifyCssException
@@ -389,15 +387,15 @@ abstract class AbstractBase
             $methodRedirect = AnnotationHelper::init($selfReflection->getMethod($methodName), "Redirect");
             if (!$methodRedirect->isEmpty()) {
                 $this->redirect(
-                    $methodRedirect->get("module", null),
-                    $methodRedirect->get("controller", null),
-                    $methodRedirect->get("action", null),
+                    $methodRedirect->get("module"),
+                    $methodRedirect->get("controller"),
+                    $methodRedirect->get("action"),
                     $methodRedirect->get("querys", []),
                     $methodRedirect->get("tab", "")
                 );
             }
 
-        } catch (AnnotationException|InvalidArgumentException|ReflectionException $e) {
+        } catch (InvalidArgumentException|ReflectionException $e) {
             /**
              * @internal If an error occurs here, the entire system should not crash during live operation
              */
@@ -416,14 +414,14 @@ abstract class AbstractBase
          * @see ModuleManager::getJsAssetsPath()
          * @see ModuleManager::getMethodJsAction()
          */
-        $this->addJs($this->getModuleManager()->getMethodJsAction($methodName, true));
+        $this->addMinifiedJs($this->getModuleManager()->getMethodJsAction($methodName, true));
 
         /**
          * @internal Auto-inclusion for CSS
          * @see ModuleManager::getCssAssetsPath()
          * @see ModuleManager::getMethodCssAction()
          */
-        $this->addCss($this->getModuleManager()->getMethodCssAction($methodName, true));
+        $this->addMinifiedCss($this->getModuleManager()->getMethodCssAction($methodName, true));
 
         /**
          * Run method
@@ -447,14 +445,12 @@ abstract class AbstractBase
     public function render404(): void
     {
         $this->contextClear();
+        header(XmlControllerInterface::HEADER_ERROR_404);
         if ($this->getRequestHandler()->isXml()) {
-            header(XmlControllerInterface::HEADER_ERROR_404);
             header(XmlControllerInterface::HEADER_CONTENT_TYPE_JSON);
             $this->addContext("error", "Not Found");
             die(json_encode($this->getContext()));
         } else {
-            header(XmlControllerInterface::HEADER_ERROR_404);
-            /** @noinspection PhpIncludeInspection */
             $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error404.php");
             exit($html ?? "Not Found");
         }
@@ -463,7 +459,7 @@ abstract class AbstractBase
     /**
      * @param bool $loginRedirect
      */
-    public function render403($loginRedirect = false): void
+    public function render403(bool $loginRedirect = false): void
     {
         $this->contextClear();
         if ($this->getRequestHandler()->isApi()) {
@@ -486,7 +482,6 @@ abstract class AbstractBase
             die(json_encode($this->getContext()));
         } elseif (!$loginRedirect) {
             header(XmlControllerInterface::HEADER_ERROR_403);
-            /** @noinspection PhpIncludeInspection */
             $html = include_once $this->getAbsolutePathHelper()->get("templates/Handlers/errors/error403.php");
             exit($html ?? "Forbidden");
         } else {
@@ -514,7 +509,7 @@ abstract class AbstractBase
      * @param array $querys
      * @param string $tab
      */
-    protected function redirect(?string $module = null, ?string $controller = null, ?string $action = null, array $querys = [], $tab = ""): void
+    protected function redirect(?string $module = null, ?string $controller = null, ?string $action = null, array $querys = [], string $tab = ""): void
     {
         $params = [];
 
@@ -597,21 +592,37 @@ abstract class AbstractBase
 
         /**
          * CSS vars
-         * @see AbstractBaseTrait::getCssHandler()
+         * @see AbstractBaseTrait::getMinifyCssHandler()
          */
-        $this->getCssHandler()->compile();
-        $this->addContext("minified_css", $this->getCssHandler()
+        $this->getMinifyCssHandler()->compile();
+        $this->addContext("minified_css", $this->getMinifyCssHandler()
             ->getDefaultMinifyCssFile(true)
         );
 
         /**
-         * JS vars
-         * @see AbstractBaseTrait::getJsHandler()
+         * @see AbstractBaseTrait::getCssHandler();
          */
-        $this->getJsHandler()->compile();
-        $this->addContext("minified_js", $this->getJsHandler()
+        $this->contextPush(array(
+            "a_cdn_css" => $this->getCssHandler()->getCdnCss(),
+            "a_non_minified_css" => $this->getCssHandler()->getNonMinifiedCss()
+        ));
+
+        /**
+         * JS vars
+         * @see AbstractBaseTrait::getMinifyJsHandler()
+         */
+        $this->getMinifyJsHandler()->compile();
+        $this->addContext("minified_js", $this->getMinifyJsHandler()
             ->getDefaultMinifyJsFile(true)
         );
+
+        /**
+         * @see AbstractBaseTrait::getJsHandler()
+         */
+        $this->contextPush(array(
+            "a_cdn_js" => $this->getJsHandler()->getCdnJs(),
+            "a_non_minified_js" => $this->getJsHandler()->getNonMinifiedJs()
+        ));
 
         /**
          * Navigation vars

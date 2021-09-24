@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -35,17 +35,17 @@ class FileHelper
     /**
      * @var string
      */
-    private string $file = "";
+    private string $file;
 
     /**
      * @var string
      */
-    private string $fileType = "file";
+    private string $fileType;
 
     /**
      * @var string|null
      */
-    private ?string $exceptionClass = null;
+    private ?string $exceptionClass;
 
     /**
      * FileHelper constructor.
@@ -64,7 +64,7 @@ class FileHelper
      * @param string|null $exceptionClass
      * @return FileHelper|null
      */
-    public static final function init(string $file, ?string $exceptionClass = null)
+    public static final function init(string $file, ?string $exceptionClass = null): ?FileHelper
     {
         if (is_null(self::$instance) || serialize($file.$exceptionClass) !== self::$instanceKey) {
             self::$instance = new self($file, $exceptionClass);
@@ -78,7 +78,7 @@ class FileHelper
      * @param bool $mkdir
      * @return bool
      */
-    public final function fileExists($mkdir = false)
+    public final function fileExists(bool $mkdir = false): bool
     {
         if (!file_exists($this->file)) {
             if ($mkdir) {
@@ -101,7 +101,7 @@ class FileHelper
     /**
      * @return bool
      */
-    public final function isReadable()
+    public final function isReadable(): bool
     {
         if (!$this->fileExists()) {
             return false;
@@ -120,7 +120,7 @@ class FileHelper
      * @param bool $mkdirAndSetChmod
      * @return bool
      */
-    public final function isWritable($mkdirAndSetChmod = false)
+    public final function isWritable(bool $mkdirAndSetChmod = false): bool
     {
         if (!$this->fileExists($mkdirAndSetChmod)) {
             return false;
@@ -155,9 +155,9 @@ class FileHelper
 
     /**
      * @param null $default
-     * @return mixed
+     * @return string|null
      */
-    public final function getContents($default = null)
+    public final function getContents($default = null): ?string
     {
         if($this->isReadable())
         {
@@ -174,7 +174,7 @@ class FileHelper
      * @param null $context
      * @return false|int|null
      */
-    public final function putContents($data, $flags = 0, $context = null)
+    public final function putContents($data, int $flags = 0, $context = null)
     {
         return @file_put_contents($this->file, $data, $flags, $context);
     }

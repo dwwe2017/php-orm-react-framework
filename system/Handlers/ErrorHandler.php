@@ -143,7 +143,7 @@ class ErrorHandler
      * @param Logger|null $logger
      * @return ErrorHandler|null
      */
-    public static final function init(ConfigValues $config = null, Logger $logger = null)
+    public static final function init(ConfigValues $config = null, Logger $logger = null): ?ErrorHandler
     {
         if (is_null(self::$instance) || serialize($config) . serialize($logger) !== self::$instanceKey) {
             self::$instance = new self($config, $logger);

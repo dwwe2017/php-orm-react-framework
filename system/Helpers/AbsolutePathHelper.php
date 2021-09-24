@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -40,7 +40,7 @@ class AbsolutePathHelper
     /**
      * @var string
      */
-    private string $baseDir = "";
+    private string $baseDir;
 
     /**
      * AbsolutePathHelper constructor.
@@ -55,7 +55,7 @@ class AbsolutePathHelper
      * @param string $baseDir
      * @return AbsolutePathHelper|null
      */
-    public static final function init(string $baseDir)
+    public static final function init(string $baseDir): ?AbsolutePathHelper
     {
         if (is_null(self::$instance) || serialize($baseDir) !== self::$instanceKey) {
             self::$instance = new self($baseDir);
@@ -70,7 +70,7 @@ class AbsolutePathHelper
      * @param bool $throw_e
      * @return string
      */
-    public final function get(string $relativePath, $throw_e = true)
+    public final function get(string $relativePath, bool $throw_e = true): string
     {
         $absolutePath = sprintf("%s/%s", $this->getBaseDir(), $relativePath);
         FileHelper::init($absolutePath, $throw_e ? FileFactoryException::class : null)->isReadable();

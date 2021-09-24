@@ -45,22 +45,22 @@ class ReactHandler
     /**
      * @var string
      */
-    private string $baseDir = "";
+    private string $baseDir;
 
     /**
      * @var string
      */
-    private string $moduleBaseDir = "";
+    private string $moduleBaseDir;
 
     /**
      * @var string
      */
-    private string $moduleBaseUrl = "";
+    private string $moduleBaseUrl;
 
     /**
      * @var string
      */
-    private ?string $moduleControllerShortName = "";
+    private string $moduleControllerShortName;
 
     /**
      * @var FileHelper|null
@@ -152,7 +152,7 @@ class ReactHandler
     /**
      * @return bool
      */
-    public function hasModuleEntryPoint()
+    public function hasModuleEntryPoint(): bool
     {
         $manifestTag = ucfirst(sprintf("%s/%s.js", $this->moduleControllerShortName, $this->getModuleControllerAction()));
         return $this->moduleControllerManifestConfig->has($manifestTag);
@@ -162,7 +162,7 @@ class ReactHandler
      * @param $file
      * @return string
      */
-    public function addRelativeBaseAssetJsReactPath($file)
+    public function addRelativeBaseAssetJsReactPath($file): string
     {
         return sprintf("assets/react%s", $file);
     }
@@ -171,7 +171,7 @@ class ReactHandler
      * @param $file
      * @return string
      */
-    public function addRelativeModuleViewsPath($file)
+    public function addRelativeModuleViewsPath($file): string
     {
         $path = sprintf("%s/views%s", substr($this->moduleBaseUrl, 1), $file);
         return empty($this->moduleBaseUrl) ? substr($path, 1) : $path;
@@ -182,7 +182,7 @@ class ReactHandler
      * @param ModuleManager $moduleManager
      * @return ReactHandler|null
      */
-    public static final function init(AbstractBase $controllerInstance, ModuleManager $moduleManager)
+    public static final function init(AbstractBase $controllerInstance, ModuleManager $moduleManager): ?ReactHandler
     {
         if (is_null(self::$instance) || serialize(get_class($controllerInstance) . get_class($moduleManager)) !== self::$instanceKey) {
             self::$instance = new self($controllerInstance, $moduleManager);

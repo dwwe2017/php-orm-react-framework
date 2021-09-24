@@ -3,9 +3,7 @@
 
     <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
         <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show">
-            <svg class="c-icon c-icon-lg">
-                <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-menu"/>
-            </svg>
+            <i class="c-icon c-icon-lg cil-menu"></i>
         </button>
         <a class="c-header-brand d-lg-none c-header-brand-sm-up-center" href="#">
             {% if(b_core_ui_pro is defined and b_core_ui_pro != false) %}
@@ -15,9 +13,7 @@
         </a>
         {% if(navigation_routes is defined and navigation_routes.sidebar is defined) %}
             <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
-                <svg class="c-icon c-icon-lg">
-                    <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-menu"/>
-                </svg>
+                <i class="c-icon c-icon-lg cil-menu"></i>
             </button>
         {% endif %}
 
@@ -29,12 +25,8 @@
             <ul class="c-header-nav mfs-auto">
                 <li class="c-header-nav-item px-3">
                     <button class="c-class-toggler c-header-nav-btn" type="button" id="header-tooltip" data-target="body" data-class="c-dark-theme" data-toggle="c-tooltip" data-placement="bottom" title="Toggle Light/Dark Mode">
-                        <svg class="c-icon c-d-dark-none">
-                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-moon"/>
-                        </svg>
-                        <svg class="c-icon c-d-default-none">
-                            <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-sun"/>
-                        </svg>
+                        <i class="c-icon c-d-dark-none cil-moon"></i>
+                        <i class="c-icon c-d-default-none cil-sun"></i>
                     </button>
                 </li>
             </ul>
@@ -63,9 +55,7 @@
             <!-- If an aSide was declared using React -->
             <li id="aside_li" class="c-header-nav-item px-3" style="display: none;">
                 <button class="c-class-toggler c-header-nav-btn" type="button" data-target="#aside" data-class="c-sidebar-show">
-                    <svg class="c-icon c-icon-lg mfe-md-2">
-                        <use xlink:href="assets/vendors/@coreui/icons/svg/free.svg#cil-applications-settings"/>
-                    </svg>
+                    <i class="c-icon c-icon-lg mfe-md-2 cil-applications-settings"></i>
                 </button>
             </li>
             <!-- If an aSide was declared using React -->

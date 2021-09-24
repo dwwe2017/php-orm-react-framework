@@ -45,7 +45,7 @@ class FlashHandler
     /**
      * @return FlashHandler
      */
-    public static function init()
+    public static function init(): FlashHandler
     {
         if (is_null(self::$instance)) {
             self::$instance = new self();

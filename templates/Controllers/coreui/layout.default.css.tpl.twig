@@ -3,8 +3,20 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
     {# @internal
+    CDN CSS
+    @see TemplateConfig::getOptionsDefault() ["default_cdn_css"]
+    #}
+    {% if(a_cdn_css is defined and a_cdn_css != false) %}
+        {% for cdn_css in a_cdn_css %}
+            {% if(cdn_css.href is defined and cdn_css.href != "") %}
+                <link href="{{ cdn_css.href|e }}" rel="stylesheet"{% if(cdn_css.integrity is defined) %} integrity="{{ cdn_css.integrity|e }}"{% endif %}{% if(cdn_css.crossorigin is defined) %} crossorigin="{{ cdn_css.crossorigin|e }}"{% endif %}>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {# @internal
     Non minified CSS
-    @see PortalConfig::getOptionsDefault() ["a_non_minified_css"]
+    @see TemplateConfig::getOptionsDefault() ["default_non_minified_css"]
     #}
     {% if(a_non_minified_css is defined and a_non_minified_css != false) %}
         {% for non_minified_css in a_non_minified_css %}

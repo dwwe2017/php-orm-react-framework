@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -46,17 +46,17 @@ class MinifyCssHandler
     /**
      * @var string
      */
-    private $baseDir = "";
+    private $baseDir;
 
     /**
      * @var array
      */
-    private $defaultCssPaths = [];
+    private $defaultCssPaths;
 
     /**
      * @var string
      */
-    private $defaultMinifyCssDir = "";
+    private string $defaultMinifyCssDir;
 
     /**
      * @var string
@@ -119,7 +119,7 @@ class MinifyCssHandler
      * @param ConfigValues $config
      * @return MinifyCssHandler|null
      */
-    public static final function init(ConfigValues $config)
+    public static final function init(ConfigValues $config): ?MinifyCssHandler
     {
         if (is_null(self::$instance) || serialize($config) !== self::$instanceKey) {
             self::$instance = new self($config);
@@ -135,7 +135,7 @@ class MinifyCssHandler
      * @return bool|int
      * @throws MinifyCssException
      */
-    public final function compile($clearOldFiles = true)
+    public final function compile(bool $clearOldFiles = true)
     {
         if(empty($this->cssContent)){
             return false;
@@ -175,7 +175,7 @@ class MinifyCssHandler
      * @param bool $relative
      * @return string|null
      */
-    public final function getDefaultMinifyCssFile($relative = false): ?string
+    public final function getDefaultMinifyCssFile(bool $relative = false): ?string
     {
         return $relative ? substr(str_replace($this->baseDir, "", $this->defaultMinifyCssFile), 1) : $this->defaultMinifyCssFile;
     }
@@ -184,7 +184,7 @@ class MinifyCssHandler
      * @param string|null $fileOrString
      * @param bool $codeAsString
      */
-    public final function addCss(?string $fileOrString, $codeAsString = false): void
+    public final function addCss(?string $fileOrString, bool $codeAsString = false): void
     {
         if (is_null($fileOrString)) {
             return;
@@ -198,7 +198,7 @@ class MinifyCssHandler
         } else {
             FileHelper::init($fileOrString, MinifyCssException::class)->isReadable();
             $fileMtime = @filemtime($fileOrString);
-            self::$md5checksum .= date('YmdHis', $fileMtime ? $fileMtime : NULL) . $fileOrString;
+            self::$md5checksum .= date('YmdHis', $fileMtime ?: NULL) . $fileOrString;
         }
 
         $this->cssContent[] = $fileOrString;

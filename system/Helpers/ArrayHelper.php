@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -38,7 +38,7 @@ class ArrayHelper
     /**
      * @var array
      */
-    private array $array = [];
+    private array $array;
 
     /**
      * ArrayHelper constructor.
@@ -53,7 +53,7 @@ class ArrayHelper
      * @param array $array
      * @return ArrayHelper|null
      */
-    public static final function init(array $array)
+    public static final function init(array $array): ?ArrayHelper
     {
         if (is_null(self::$instance) || serialize($array) !== self::$instanceKey) {
             self::$instance = new self($array);
@@ -68,7 +68,7 @@ class ArrayHelper
      * @param null $key
      * @return $this
      */
-    public final function append($array, $key = null)
+    public final function append($array, $key = null): ArrayHelper
     {
         is_null($key)
             ? $this->array += $array
@@ -87,7 +87,7 @@ class ArrayHelper
      * @param $class
      * @param bool $camelize
      */
-    public final function mapClass($class, $camelize = true)
+    public final function mapClass($class, bool $camelize = true)
     {
         foreach ($this->array as $key => $value) {
             if ($camelize) {

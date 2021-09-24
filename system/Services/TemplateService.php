@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -60,12 +60,12 @@ class TemplateService implements VendorExtensionServiceInterface
     /**
      * @var string
      */
-    private $assetBaseDir = "";
+    private $assetBaseDir;
 
     /**
      * TemplateService constructor.
-     * @see ServiceManager::__construct()
      * @param ModuleManager $moduleManager
+     * @see ServiceManager::__construct()
      */
     public final function __construct(ModuleManager $moduleManager)
     {
@@ -99,8 +99,8 @@ class TemplateService implements VendorExtensionServiceInterface
          * @see https://twig.symfony.com/doc/3.x/advanced.html#globals
          * @see PortalConfig
          */
-        if(!empty($portalOptions)){
-            foreach ($portalOptions as $key => $portalOption){
+        if (!empty($portalOptions)) {
+            foreach ($portalOptions as $key => $portalOption) {
                 $this->environment->addGlobal($key, $portalOption);
             }
         }
@@ -120,30 +120,30 @@ class TemplateService implements VendorExtensionServiceInterface
         /**
          * @see sha1()
          */
-        $this->environment->addFunction(new TwigFunction("sha1", function (string $string){
+        $this->environment->addFunction(new TwigFunction("sha1", function (string $string) {
             return sha1($string);
         }));
 
         /**
          * @see md5()
          */
-        $this->environment->addFunction(new TwigFunction("md5", function (string $string){
+        $this->environment->addFunction(new TwigFunction("md5", function (string $string) {
             return md5($string);
         }));
 
         /**
-         * @internal For developement
+         * @internal For development
          * @see inc/helper.inc.php::print_pre()
          */
-        $this->environment->addFunction(new TwigFunction("print_pre", function ($mixed){
-            return print_pre($mixed);
+        $this->environment->addFunction(new TwigFunction("print_pre", function ($mixed) {
+            print_pre($mixed);
         }));
 
         /**
          * @internal For output of user input that should support HTML code
          * @see inc/helper.inc.php::purify()
          */
-        $this->environment->addFunction(new TwigFunction("purify", function (string $string){
+        $this->environment->addFunction(new TwigFunction("purify", function (string $string) {
             return purify($string);
         }));
 
@@ -151,7 +151,7 @@ class TemplateService implements VendorExtensionServiceInterface
          * @internal Default view helper function for user input to be reissued or saved
          * @see inc/helper.inc.php::clean()
          */
-        $this->environment->addFunction(new TwigFunction("clean", function (string $string){
+        $this->environment->addFunction(new TwigFunction("clean", function (string $string) {
             return clean($string);
         }));
 
@@ -159,7 +159,7 @@ class TemplateService implements VendorExtensionServiceInterface
          * @internal Translation (singular)
          * @see LocaleService::init()
          */
-        $this->environment->addFunction(new TwigFunction("__", function (string $original){
+        $this->environment->addFunction(new TwigFunction("__", function (string $original) {
             return __($original);
         }));
 
@@ -167,14 +167,14 @@ class TemplateService implements VendorExtensionServiceInterface
          * @internal Translation (plural)
          * @see LocaleService::init()
          */
-        $this->environment->addFunction(new TwigFunction("n__", function (string $original, string $plural, string $value){
+        $this->environment->addFunction(new TwigFunction("n__", function (string $original, string $plural, string $value) {
             return n__($original, $plural, $value);
         }));
 
         /**
          * @example {{ asset("img/logo.png") }}
          */
-        $this->environment->addFunction(new TwigFunction("asset", function (string $file){
+        $this->environment->addFunction(new TwigFunction("asset", function (string $file) {
             return sprintf("%s%s", $this->assetBaseDir, $file);
         }));
 

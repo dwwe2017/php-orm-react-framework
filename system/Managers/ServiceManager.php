@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -45,7 +45,7 @@ class ServiceManager
     use InstantiationStaticsUtilTrait;
 
     /**
-     * @var DoctrineService
+     * @var DoctrineService|null
      */
     private ?DoctrineService $doctrineService;
 
@@ -88,7 +88,7 @@ class ServiceManager
      * @return ServiceManager|null
      * @throws DoctrineException
      */
-    public static final function init(ModuleManager $moduleManager)
+    public static final function init(ModuleManager $moduleManager): ?ServiceManager
     {
         if (is_null(self::$instance) || serialize($moduleManager) !== self::$instanceKey) {
             self::$instance = new self($moduleManager);
@@ -131,9 +131,9 @@ class ServiceManager
     }
 
     /**
-     * @return mixed
+     * @return LocaleService
      */
-    public final function getLocaleService()
+    public final function getLocaleService(): LocaleService
     {
         return $this->localeService;
     }

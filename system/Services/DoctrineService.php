@@ -91,7 +91,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * @return DoctrineService|null
      * @throws DoctrineException
      */
-    public static final function init(ModuleManager $moduleManager)
+    public static final function init(ModuleManager $moduleManager): ?DoctrineService
     {
         if (is_null(self::$instance) || serialize($moduleManager) !== self::$instanceKey) {
             self::$instance = new self($moduleManager);
@@ -152,7 +152,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * @return EntityRepository
      * @throws DoctrineException
      */
-    public final function getRepository($repositoryName, $connectionOption = null)
+    public final function getRepository($repositoryName, $connectionOption = null): EntityRepository
     {
         $entity_namespace = $this->getOption("entity_namespace");
         return $this->getEntityManager($connectionOption)->getRepository(
@@ -165,7 +165,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * @return EntityManager
      * @throws DoctrineException
      */
-    public final function getEntityManager($connectionOption = null)
+    public final function getEntityManager($connectionOption = null): EntityManager
     {
         if (!is_null($connectionOption) && $this->currentConnectionOption !== $connectionOption) {
             $config = $this->moduleManager->getConfig();
@@ -291,7 +291,7 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * @return array
      * @see DoctrineService::setConnectionOptions()
      */
-    private function getEntitySchemas(EntityManager $em)
+    private function getEntitySchemas(EntityManager $em): array
     {
         try {
             $result = [];
@@ -316,10 +316,10 @@ class DoctrineService extends WDB implements VendorExtensionServiceInterface
      * @param $event
      * @param string $instanceof
      */
-    private function removeEventListener(EntityManager $em, $event, $instanceof = self::class): void
+    private function removeEventListener(EntityManager $em, $event, string $instanceof = self::class): void
     {
-        foreach ($em->getEventManager()->getListeners() as $key => $listeners) {
-            foreach ($listeners as $hash => $listener) {
+        foreach ($em->getEventManager()->getListeners() as $listeners) {
+            foreach ($listeners as $listener) {
                 if ($listener instanceof $instanceof) {
                     $em->getEventManager()->removeEventListener([$event], $listener);
                     break 2;

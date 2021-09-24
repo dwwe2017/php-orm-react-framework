@@ -16,7 +16,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -46,17 +46,17 @@ class MinifyJsHandler extends Minifier
     /**
      * @var string
      */
-    private $baseDir = "";
+    private $baseDir;
 
     /**
      * @var array
      */
-    private $defaultJsPaths = [];
+    private $defaultJsPaths;
 
     /**
      * @var string
      */
-    private $defaultMinifyJsDir = "";
+    private string $defaultMinifyJsDir;
 
     /**
      * @var string
@@ -105,7 +105,7 @@ class MinifyJsHandler extends Minifier
      * @param ConfigValues $config
      * @return MinifyJsHandler|null
      */
-    public static final function init(ConfigValues $config)
+    public static final function init(ConfigValues $config): ?MinifyJsHandler
     {
         if (is_null(self::$instance) || serialize($config) !== self::$instanceKey) {
             self::$instance = new self($config);
@@ -121,7 +121,7 @@ class MinifyJsHandler extends Minifier
      * @return bool|int
      * @throws MinifyJsException
      */
-    public final function compile($clearOldFiles = true)
+    public final function compile(bool $clearOldFiles = true)
     {
         if(empty($this->jsContent)){
             return false;
@@ -161,7 +161,7 @@ class MinifyJsHandler extends Minifier
      * @param bool $relative
      * @return string|null
      */
-    public final function getDefaultMinifyJsFile($relative = false): ?string
+    public final function getDefaultMinifyJsFile(bool $relative = false): ?string
     {
         return $relative ? substr(str_replace($this->baseDir, "", $this->defaultMinifyJsFile), 1) : $this->defaultMinifyJsFile;
     }
@@ -170,7 +170,7 @@ class MinifyJsHandler extends Minifier
      * @param string|null $fileOrString
      * @param bool $codeAsString
      */
-    public final function addJsContent(?string $fileOrString, $codeAsString = false): void
+    public final function addJsContent(?string $fileOrString, bool $codeAsString = false): void
     {
         if (is_null($fileOrString)) {
             return;
@@ -184,7 +184,7 @@ class MinifyJsHandler extends Minifier
         } else {
             FileHelper::init($fileOrString, MinifyJsException::class)->isReadable();
             $fileMtime = @filemtime($fileOrString);
-            self::$md5checksum .= date('YmdHis', $fileMtime ? $fileMtime : NULL) . $fileOrString;
+            self::$md5checksum .= date('YmdHis', $fileMtime ?: NULL) . $fileOrString;
         }
 
         $this->jsContent[] = $fileOrString;

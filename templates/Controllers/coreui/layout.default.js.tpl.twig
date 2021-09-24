@@ -37,6 +37,18 @@
     {% endif %}
 
     {# @internal
+    CDN JS
+    @see PortalConfig::getOptionsDefault() ["a_cdn_js"]
+    #}
+    {% if(a_cdn_js is defined and a_cdn_js != false) %}
+        {% for cdn_js in a_cdn_js %}
+            {% if(cdn_js.href is defined and cdn_js.href != "") %}
+                <script src="{{ cdn_js.href|e }}" {% if(cdn_js.integrity is defined) %} integrity="{{ cdn_js.integrity|e }}"{% endif %}{% if(cdn_js.crossorigin is defined) %} crossorigin="{{ cdn_js.crossorigin|e }}"{% endif %}></script>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {# @internal
     Non minified JS
     @see PortalConfig::getOptionsDefault() ["a_non_minified_js"]
     #}
