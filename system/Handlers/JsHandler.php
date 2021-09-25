@@ -3,7 +3,6 @@
 namespace Handlers;
 
 use Configula\ConfigValues;
-use Exceptions\CssException;
 use Exceptions\JsException;
 use Helpers\FileHelper;
 use Traits\UtilTraits\InstantiationStaticsUtilTrait;
@@ -84,7 +83,10 @@ class JsHandler
      */
     public function addNonMinifiedJs(string $file)
     {
-        FileHelper::init($file, JsException::class)->isReadable();
+        if (strcasecmp(substr($file, 0, 4), "http") != 0) {
+            FileHelper::init($file, JsException::class)->isReadable();
+        }
+
         $this->nonMinifiedJs[] = $file;
     }
 

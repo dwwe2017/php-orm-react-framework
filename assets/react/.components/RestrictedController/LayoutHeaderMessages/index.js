@@ -55,9 +55,7 @@ export default class LayoutHeaderMessages extends Component {
             <li className="c-header-nav-item dropdown d-md-down-none mx-2">
                 <a className="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                    aria-expanded="false">
-                    <svg className="c-icon">
-                        <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-envelope-open"/>
-                    </svg>
+                    <i className="c-icon cil-envelope-open"> </i>
                     <span className="badge badge-pill badge-info">{this.state.messages.toString()}</span></a>
                 <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg pt-0">
                     <div className="dropdown-header bg-light"><strong>You

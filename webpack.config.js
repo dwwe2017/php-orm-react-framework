@@ -28,7 +28,7 @@ let Encore = require('@symfony/webpack-encore');
 Encore
     .setOutputPath('./views')
     .setPublicPath('/')
-    .addEntry('ExampleController/exampleAction', './_fronted/ExampleController/exampleAction/index.js')
+    .addEntry('ExampleController/exampleAction', './.fronted/ExampleController/exampleAction/index.js')
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
     .enableBuildNotifications()

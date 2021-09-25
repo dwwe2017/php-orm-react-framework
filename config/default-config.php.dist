@@ -42,9 +42,9 @@ $config = [
     "default_js" => [],
     //Default CSS files (relative file paths, urls or code)
     "default_css" => [],
-    //Default JS files that should not be minimized (relative file paths, urls or code)
+    //Default JS files that should not be minimized (relative file paths or urls)
     "default_non_minified_js" => [],
-    //Default CSS files that should not be minimized (relative file paths, urls or code)
+    //Default CSS files that should not be minimized (relative file paths or urls)
     "default_non_minified_css" => [],
     //Default JS CDN sources (Caution! If specified, the default core ui sources of the framework will be overwritten!)
     "default_cdn_js" => [

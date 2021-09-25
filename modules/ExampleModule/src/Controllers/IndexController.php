@@ -27,6 +27,7 @@ namespace Modules\ExampleModule\Controllers;
 
 
 use Annotations\Navigation;
+use Annotations\Redirect;
 use Annotations\SubNavigation;
 use Annotations\SubRoute;
 use Annotations\SubRoutes;
@@ -35,12 +36,12 @@ use Controllers\PublicFrontController;
 /**
  * Class ExampleController
  * @package Modules\Example\Controllers
- * @Navigation(text="Example Page", position="sidebar")
+ * @Navigation(text="Example Public Menu", position="sidebar")
  */
 class IndexController extends PublicFrontController
 {
     /**
-     * @SubNavigation(text="Example Box")
+     * @SubNavigation(text="Public Menu Link")
      */
     public function indexAction(): void
     {
@@ -48,7 +49,7 @@ class IndexController extends PublicFrontController
     }
 
     /**
-     * @SubNavigation(text="Disabled Link", hidden=true)
+     * @SubNavigation(text="Public Disabled Link", icon="cil-ban", requiredGetParams={"required_param_1", "required_param_2"})
      */
     public function disabledAction(): void {}
 

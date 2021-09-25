@@ -95,9 +95,7 @@ export default class LayoutHeaderTasks extends Component {
                                                                               data-toggle="dropdown" href="#"
                                                                               role="button" aria-haspopup="true"
                                                                               aria-expanded="false">
-                <svg className="c-icon">
-                    <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-list-rich"/>
-                </svg>
+                <i className="c-icon cil-list-rich"> </i>
                 <span className="badge badge-pill badge-warning">15</span></a>
                 <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg pt-0">
                     <div className="dropdown-header bg-light"><strong>You have 5 pending tasks</strong></div>
@@ -140,7 +138,7 @@ export default class LayoutHeaderTasks extends Component {
                     <div className="small mb-1">Angular 8 Version<span
                         className="float-right"><strong>100%</strong></span></div>
                     <span className="progress progress-xs">
-                  <div className="progress-bar bg-success" role="progressbar" style={{width: 100 +"%"}}
+                  <div className="progress-bar bg-success" role="progressbar" style={{width: 100 + "%"}}
                        aria-valuemin="0" aria-valuemax="100"/>
                 </span>
                 </a><a className="dropdown-item text-center border-top" href="#"><strong>View all tasks</strong></a>

@@ -29,11 +29,11 @@
 
 /**
  * Default view helper function for user input to be reissued or saved
- * @param $string
+ * @param string $string
  * @param string $encoding
  * @return string
  */
-function clean($string, $encoding = "UTF-8")
+function clean(string $string, string $encoding = "UTF-8"): string
 {
     return htmlspecialchars(
         strip_tags($string),
@@ -44,10 +44,10 @@ function clean($string, $encoding = "UTF-8")
 
 /**
  * For output of user input that should support HTML code
- * @param $string
+ * @param string $string
  * @return string
  */
-function purify($string)
+function purify(string $string): string
 {
     $config = HTMLPurifier_Config::createDefault();
     $purifier = new HTMLPurifier($config);

@@ -56,33 +56,21 @@ export default class LayoutHeaderNotifications extends Component {
                                                                               data-toggle="dropdown" href="#"
                                                                               role="button" aria-haspopup="true"
                                                                               aria-expanded="false">
-                <svg className="c-icon">
-                    <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-bell"/>
-                </svg>
+                <i className="c-icon cil-bell"> </i>
                 <span className="badge badge-pill badge-danger">{this.state.messages.toString()}</span></a>
                 <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg pt-0">
                     <div className="dropdown-header bg-light"><strong>You
                         have {this.state.messages.toString()} notifications</strong></div>
                     <a className="dropdown-item" href="#">
-                        <svg className="c-icon mfe-2 text-success">
-                            <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-user-follow"/>
-                        </svg>
+                        <i className="c-icon mfe-2 text-success cil-user-follow"> </i>
                         New user registered</a><a className="dropdown-item" href="#">
-                    <svg className="c-icon mfe-2 text-danger">
-                        <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-user-unfollow"/>
-                    </svg>
+                    <i className="c-icon mfe-2 text-danger cil-user-unfollow"> </i>
                     User deleted</a><a className="dropdown-item" href="#">
-                    <svg className="c-icon mfe-2 text-info">
-                        <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-chart"/>
-                    </svg>
+                    <i className="c-icon mfe-2 text-info cil-chart"> </i>
                     Sales report is ready</a><a className="dropdown-item" href="#">
-                    <svg className="c-icon mfe-2 text-success">
-                        <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-basket"/>
-                    </svg>
+                    <i className="c-icon mfe-2 text-success cil-basket"> </i>
                     New client</a><a className="dropdown-item" href="#">
-                    <svg className="c-icon mfe-2 text-warning">
-                        <use xlinkHref="assets/vendors/@coreui/icons/svg/free.svg#cil-speedometer"/>
-                    </svg>
+                    <i className="c-icon mfe-2 text-warning cil-speedometer"> </i>
                     Server overloaded</a>
                     <div className="dropdown-header bg-light"><strong>Server</strong></div>
                     <a className="dropdown-item d-block" href="#">

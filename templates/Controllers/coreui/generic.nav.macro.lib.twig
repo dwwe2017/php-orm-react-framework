@@ -147,10 +147,9 @@
                 </a>
                 {% if navigation_routes.top_right is defined and navigation_routes.top_right != false %}
                     <div class="dropdown-menu dropdown-menu-right pt-0">
-
                         {% for top_right_navigation in navigation_routes.top_right %}
                             {% for key, item in top_right_navigation %}
-                                <div class="{% if(item.options.class is defined) %}{% if(item.options.class != false) %}{{ item.options.class }}{% endif %}{% endif %}">
+                                <div class="{% if(item.options.class is defined) %}{% if(item.options.class != false) %}{{ item.options.class }}{% else%}dropdown-header bg-light py-2{% endif %}{% else%}dropdown-header bg-light py-2{% endif %}">
                                     {% if(item.options.icon is defined) %}
                                         {% if(item.options.icon != false) %}
                                             <i class="c-icon {{ item.options.icon }}"> </i>

@@ -447,7 +447,7 @@ trait AbstractBaseTrait
     /**
      * @param string $file
      * @param bool $fromSystem
-     * @example $this->addNonMinifiedCss("assets/js/custom.css")
+     * @example $this->addNonMinifiedCss("assets/css/custom.css")
      */
     protected final function addNonMinifiedCss(string $file, bool $fromSystem = false)
     {

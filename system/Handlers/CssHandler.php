@@ -84,7 +84,10 @@ class CssHandler
      */
     public function addNonMinifiedCss(string $file)
     {
-        FileHelper::init($file, CssException::class)->isReadable();
+        if (strcasecmp(substr($file, 0, 4), "http") != 0) {
+            FileHelper::init($file, CssException::class)->isReadable();
+        }
+
         $this->nonMinifiedCss[] = $file;
     }
 
